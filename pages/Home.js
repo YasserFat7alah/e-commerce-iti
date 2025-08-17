@@ -1,4 +1,4 @@
-import LoginModal from '../components/auth/LoginModal.js';
+// import LoginModal from '../components/auth/LoginModal.js';
 
 export default function Home() {
     return `
