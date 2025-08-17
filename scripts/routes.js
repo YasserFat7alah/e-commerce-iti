@@ -1,5 +1,5 @@
 
-import Navbar from './../components/ui/NavBar.js';
+import Navbar from './../components/ui/Navbar.js';
 import AdminDashboard from '../pages/AdminDashboard.js';
 import Home from '../pages/Home.js';
 import Cart from '../pages/Cart.js';
