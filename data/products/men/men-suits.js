@@ -223,7 +223,6 @@ const menProductSuits = [
   }
 ];
 
-
 const MenSuits = [];
 
 for (const ele of menProductSuits) {
