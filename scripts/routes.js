@@ -12,7 +12,7 @@ const routes = {
     seller: SellerDashbaord,
     home: Home,
     catalog: Catalog,
-    cart: Cart
+    cart: Cart ,
 };
 
 /* ---List of user privilages and pages each can access--- */

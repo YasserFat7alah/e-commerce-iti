@@ -20,12 +20,16 @@ const accessories = [
             {
                 color: "Gold",
                 imgs: ['acs1-gold.png'],
-                qty: 5 ,
+                sizes: [
+                    {name: '', qty: 5 },
+                ] ,
             },
             {
                 color: "ٍSilver",
                 imgs: ['acs1-silver.png'],
-                qty: 7 ,
+                sizes: [
+                    {name: '', qty: 9},
+                ] ,
             },
         ],
 
@@ -50,12 +54,16 @@ const accessories = [
                 {
                 color: "Gold",
                 imgs: ['acs2-gold.png'],
-                qty: 5 ,
+                sizes: [
+                    {name: '', qty: 5 },
+                ] ,
                 },
                 {
                 color: "ٍSilver",
                 imgs: ['acs2-silver.png'],
-                qty: 7 ,
+                sizes: [
+                    {name: '', qty: 12},
+                ] ,
                 },
         ],
 
@@ -80,12 +88,16 @@ const accessories = [
             {
               color: "Gold",
               imgs: ['acs3-gold.png'],
-              qty: 6 ,
+              sizes: [
+                    {name: '', qty: 2 },
+                ] ,
             },
             {
               color: "ٍSilver",
               imgs: ['acs3-silver.png'],
-              qty: 7 ,
+              sizes: [
+                    {name: '', qty: 8 },
+                ] ,
             },
         ],
 
@@ -111,12 +123,16 @@ const accessories = [
                 {
                 color: "Gold",
                 imgs: ['acs4-gold.png'],
-                qty: 12 ,
+                sizes: [
+                    {name: '', qty: 9 },
+                ] ,
                 },
                 {
                 color: "ٍSilver",
                 imgs: ['acs4-silver.png'],
-                qty: 10 ,
+                sizes: [
+                    {name: '', qty: 5 },
+                ] ,
                 },
         ],
 
@@ -141,7 +157,9 @@ const accessories = [
             {
               color: "ٍSilver",
               imgs: ['acs5-silver.png'],
-              qty: 7 ,
+              sizes: [
+                    {name: '', qty: 3},
+                ] ,
             },
         ],
 
@@ -166,12 +184,16 @@ const accessories = [
                 {
                 color: "Gold",
                 imgs: ['acs6-gold.png'],
-                qty: 6 ,
+                sizes: [
+                    {name: '', qty: 6 },
+                ] ,
                 },
                 {
                 color: "ٍSilver",
                 imgs: ['acs6-silver.png'],
-                qty: 7 ,
+                sizes: [
+                    {name: '', qty: 5 },
+                ] ,
                 },
         ],
 
@@ -196,12 +218,16 @@ const accessories = [
                 {
                 color: "Gold",
                 imgs: ['acs7-gold.png'],
-                qty: 6 ,
+                sizes: [
+                    {name: '', qty: 8 },
+                ] ,
                 },
                 {
                 color: "ٍSilver",
                 imgs: ['acs7-silver.png'],
-                qty: 7 ,
+                sizes: [
+                    {name: '', qty: 3},
+                ] ,
                 },
         ],
 
@@ -224,14 +250,18 @@ const accessories = [
         
         stock:[
                 {
-                color: "Gold",
-                imgs: ['acs8-gold.png'],
-                qty: 5 ,
+                    color: "Gold",
+                    imgs: ['acs8-gold.png'],
+                    sizes: [
+                        {name: '', qty: 9 },
+                    ] ,
                 },
                 {
-                color: "ٍSilver",
-                imgs: ['acs8-silver.png'],
-                qty: 6 ,
+                    color: "ٍSilver",
+                    imgs: ['acs8-silver.png'],
+                    sizes: [
+                        {name: '', qty: 5 },
+                    ] ,
                 },
     ],
 
@@ -256,12 +286,16 @@ const accessories = [
                 {
                 color: "Gold",
                 imgs: ['acs9-gold.png'],
-                qty: 12 ,
+                sizes: [
+                    {name: '', qty: 10 },
+                ] ,
                 },
                 {
                 color: "ٍSilver",
                 imgs: ['acs9-silver.png'],
-                qty: 10 ,
+                sizes: [
+                    {name: '', qty: 12},
+                ] ,
                 },
         ],
 
@@ -284,14 +318,18 @@ const accessories = [
         
         stock:[
                 {
-                color: "Gold",
-                imgs: ['acs3-gold.png'],
-                qty: 6 ,
+                    color: "Gold",
+                    imgs: ['acs3-gold.png'],
+                    sizes: [
+                        {name: '', qty: 10},
+                    ] ,
                 },
                 {
-                color: "ٍSilver",
-                imgs: ['acs3-silver.png'],
-                qty: 7 ,
+                    color: "ٍSilver",
+                    imgs: ['acs3-silver.png'],
+                    sizes: [
+                        {name: '', qty: 12 },
+                    ] ,
                 },
             ],
 

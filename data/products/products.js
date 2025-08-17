@@ -5,10 +5,10 @@
 import { womenShoes } from "./women/women-shoes.js";
 
     // Dresses
-import { womenDresses } from "./women/women-dresses.js";
+import { womenDresses} from "./women/women-dresses.js";
 
     // Accessories
-import { womenAccessories } from "./women/women-accessories.js";
+import { womenAccessories} from "./women/women-accessories.js";
 
 
 /* -----------PRODUCTS---------- */
