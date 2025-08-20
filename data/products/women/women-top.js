@@ -14,6 +14,7 @@ const data =
         category: "Women",
         subCategory: "Blouses",
         status: "pending",
+        sale:0,
         stock: [
             {
                 color: "Black",
@@ -39,6 +40,7 @@ const data =
         category: "Women",
         subCategory: "Blouses",
         status: "pending",
+        sale:0,
         stock: [
             {
                 color: "Mint Green",
@@ -73,6 +75,7 @@ const data =
         category: "Women",
         subCategory: "Blouses",
         status: "pending",
+        sale:0,
         stock: [
             {
                 color: "White",
@@ -98,6 +101,7 @@ const data =
         category: "Women",
         subCategory: "Blouses",
         status: "pending",
+        sale:0,
         stock: [
             {
                 color: "Mint Green",
@@ -131,6 +135,7 @@ const data =
         category: "Women",
         subCategory: "Blouses",
         status: "pending",
+        sale:0,
         stock: [
             {
                 color: "Blue",
@@ -157,6 +162,7 @@ const data =
         category: "Women",
         subCategory: "Blouses",
         status: "pending",
+        sale:0,
         stock: [
             {
                 color: "Black",
@@ -192,6 +198,7 @@ const data =
         category: "Women",
         subCategory: "Blouses",
         status: "pending",
+        sale:0,
         stock: [
             {
                 color: "White",
@@ -217,6 +224,7 @@ const data =
         category: "Women",
         subCategory: "Blouses",
         status: "pending",
+        sale:0,
         stock: [
             {
                 color: "Pink",
@@ -252,6 +260,7 @@ const data =
         category: "Women",
         subCategory: "Blouses",
         status: "pending",
+        sale:0,
         stock: [
             {
                 color: "Multicolor",
@@ -276,6 +285,7 @@ const data =
         category: "Women",
         subCategory: "Blouses",
         status: "pending",
+        sale:0,
         stock: [
             {
                 color: "White",
@@ -299,6 +309,7 @@ const data =
         category: "Women",
         subCategory: "Blouses",
         status: "pending",
+        sale:0,
         stock: [
             {
                 color: "Striped",

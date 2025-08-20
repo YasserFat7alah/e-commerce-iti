@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Product List</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="productlist.css">
+</head>
+<body>
+  <div class="container py-4">
+
+    <div class="d-flex align-items-center justify-content-between mb-3">
+      <h2 class="mb-0">Products</h2>
+      <div class="d-none d-lg-flex align-items-center gap-2">
+        <label for="sort-by" class="small mb-0">Sort</label>
+        <select id="sort-by" class="form-select form-select-sm">
+          <option value="">Featured</option>
+          <option value="price-asc">Price: Low → High</option>
+          <option value="price-desc">Price: High → Low</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="row">
+      <!-- LEFT: Filters -->
+      <aside class="col-12 col-lg-3 mb-4 mb-lg-0" id="filter-sidebar">
+        <!-- mobile toggle -->
+        <button class="btn btn-outline-dark w-100 d-lg-none mb-3" data-bs-toggle="collapse" data-bs-target="#filtersCollapse">
+          <i class="fa-solid fa-filter me-2"></i> Filters
+        </button>
+
+        <div id="filtersCollapse" class="collapse d-lg-block">
+          <form id="filters" class="small">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <strong>Filters</strong>
+              <button type="button" id="clear-filters" class="btn btn-link btn-sm p-0">Clear all</button>
+            </div>
+
+            <div class="accordion accordion-flush" id="filtersAccordion">
+
+              <!-- Category -->
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingCat">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#filterCategory">
+                    Category
+                  </button>
+                </h2>
+                <div id="filterCategory" class="accordion-collapse collapse show" data-bs-parent="#filtersAccordion">
+                  <div class="accordion-body" id="filterByCategory">
+                    <div class="form-check">
+                      <input class="form-check-input filter-input" type="radio" name="category" id="cat-all" value="" checked>
+                      <label class="form-check-label" for="cat-all">All</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Product Type / Subcategory  -->
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingSub">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#filterSubCategory">
+                    Product Type
+                  </button>
+                </h2>
+                <div id="filterSubCategory" class="accordion-collapse collapse" data-bs-parent="#filtersAccordion">
+                  <div class="accordion-body" id="subcat-options">
+                    <!-- JS will inject checkboxes based on products -->
+                    <div class="form-text">Select a category to load product types.</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Brand -->
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingBrand">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#filterBrand">
+                    Brand
+                  </button>
+                </h2>
+                <div id="filterBrand" class="accordion-collapse collapse" data-bs-parent="#filtersAccordion">
+                  <div class="accordion-body" id="brand-options">
+                    <!-- JS will inject brand checkboxes -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- Size -->
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingSize">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#filterSize">
+                    Size
+                  </button>
+                </h2>
+                <div id="filterSize" class="accordion-collapse collapse" data-bs-parent="#filtersAccordion">
+                  <div class="accordion-body">
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input filter-input" type="checkbox" value="S" id="size-s" name="sizes">
+                      <label class="form-check-label" for="size-s">S</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input filter-input" type="checkbox" value="M" id="size-m" name="sizes">
+                      <label class="form-check-label" for="size-m">M</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input filter-input" type="checkbox" value="L" id="size-l" name="sizes">
+                      <label class="form-check-label" for="size-l">L</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input filter-input" type="checkbox" value="XL" id="size-xl" name="sizes">
+                      <label class="form-check-label" for="size-xl">XL</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Color -->
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingColor">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#filterColor">
+                    Color
+                  </button>
+                </h2>
+                <div id="filterColor" class="accordion-collapse collapse" data-bs-parent="#filtersAccordion">
+                  <div class="accordion-body" id="color-options">
+                    <div class="form-check">
+                      <input class="form-check-input filter-input" type="checkbox" value="Black" id="color-black" name="colors">
+                      <label class="form-check-label" for="color-black">Black</label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input filter-input" type="checkbox" value="Grey" id="color-grey" name="colors">
+                      <label class="form-check-label" for="color-grey">Grey</label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input filter-input" type="checkbox" value="White" id="color-white" name="colors">
+                      <label class="form-check-label" for="color-white">White</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Price -->
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingPrice">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#filterPrice">
+                    Price
+                  </button>
+                </h2>
+                <div id="filterPrice" class="accordion-collapse collapse" data-bs-parent="#filtersAccordion">
+                  <div class="accordion-body">
+                    <div class="row g-2">
+                      <div class="col-6">
+                        <input type="number" class="form-control form-control-sm filter-input" id="min-price" placeholder="Min">
+                      </div>
+                      <div class="col-6">
+                        <input type="number" class="form-control form-control-sm filter-input" id="max-price" placeholder="Max">
+                      </div>
+                    </div>
+                    <div class="form-text mt-1">Sale discounts are applied automatically.</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Discount -->
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingDiscount">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#filterDiscount">
+                    Discount
+                  </button>
+                </h2>
+                <div id="filterDiscount" class="accordion-collapse collapse" data-bs-parent="#filtersAccordion">
+                  <div class="accordion-body">
+                    <div class="form-check">
+                      <input class="form-check-input filter-input" type="radio" name="discount" id="disc-any" value="" checked>
+                      <label class="form-check-label" for="disc-any">Any</label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input filter-input" type="radio" name="discount" id="disc-10" value="0.10">
+                      <label class="form-check-label" for="disc-10">10% & up</label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input filter-input" type="radio" name="discount" id="disc-20" value="0.20">
+                      <label class="form-check-label" for="disc-20">20% & up</label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input filter-input" type="radio" name="discount" id="disc-40" value="0.40">
+                      <label class="form-check-label" for="disc-40">40% & up</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Offers -->
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingOffers">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#filterOffers">
+                    Offers
+                  </button>
+                </h2>
+                <div id="filterOffers" class="accordion-collapse collapse" data-bs-parent="#filtersAccordion">
+                  <div class="accordion-body">
+                    <div class="form-check">
+                      <input class="form-check-input filter-input" type="checkbox" id="offer-free-shipping" value="free shipping" name="offers">
+                      <label class="form-check-label" for="offer-free-shipping">Free shipping</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div><!-- /accordion -->
+          </form>
+        </div>
+      </aside>
+
+
+
+
+
+      <!-- RIGHT: Products -->
+      <section class="col-12 col-lg-9">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <div id="results-count" class="text-muted small"></div>
+          <div class="d-flex d-lg-none align-items-center gap-2">
+            <label for="sort-by" class="small mb-0">Sort</label>
+            <select id="sort-by-mobile" class="form-select form-select-sm">
+              <option value="">Featured</option>
+              <option value="price-asc">Price: Low → High</option>
+              <option value="price-desc">Price: High → Low</option>
+              <option value="discount-desc">Biggest Discount</option>
+              <option value="newest">Newest</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row g-3" id="product-list"></div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Your JS (wire filters + render list) -->
+  <script type="module" src="filterProduct.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

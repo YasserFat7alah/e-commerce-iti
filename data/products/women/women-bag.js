@@ -14,6 +14,7 @@ const data =
         category: "Women",
         subCategory: "Bags",
         status: "pending",
+        sale:0,
         stock: [
             {
                 color: "Brown",
@@ -50,6 +51,7 @@ const data =
         category: "Women",
         subCategory: "Bags",
         status: "pending",
+        sale:0,
         stock: [
             {
                 color: "Khaki",
@@ -79,6 +81,7 @@ const data =
         category: "Women",
         subCategory: "Bags",
         status: "pending",
+        sale:0,
         stock: [
             {
                 color: "Pink",
@@ -108,6 +111,7 @@ const data =
         category: "Women",
         subCategory: "Bags",
         status: "pending",
+        sale:0,
         stock: [
             {
                 color: "Beige",
@@ -130,6 +134,7 @@ const data =
         category: "Women",
         subCategory: "Bags",
         status: "pending",
+        sale:0,
         stock: [
             {
                 color: "Black",
@@ -152,6 +157,7 @@ const data =
         category: "Women",
         subCategory: "Bags",
         status: "pending",
+        sale:0,
         stock: [
             {
                 color: "White",
@@ -174,6 +180,7 @@ const data =
         category: "Women",
         subCategory: "Bags",
         status: "pending",
+        sale:0,
         stock: [
             {
                 color: "White",
@@ -203,6 +210,7 @@ const data =
         category: "Women",
         subCategory: "Bags",
         status: "pending",
+        sale:0,
         stock: [
             {
                 color: "Green",

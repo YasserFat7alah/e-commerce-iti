@@ -340,7 +340,7 @@ const dresses = [
         sellerId: 'seller_3', 
         category: "Women", 
         subCategory: "Dresses",
-        
+        sale:0,        
         stock:[
                 {
                     color: "Blue",

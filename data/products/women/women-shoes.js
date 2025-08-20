@@ -14,6 +14,7 @@ const data =
         category: "Women",
         subCategory: "Shoes",
         status: "pending",
+        sale:0,
         stock: [
             {
                 color: "Black",
@@ -49,6 +50,7 @@ const data =
         category: "Women",
         subCategory: "Shoes",
         status: "pending",
+        sale:0,
         stock: [
             {
                 color: "Beige",
@@ -74,6 +76,7 @@ const data =
         category: "Women",
         subCategory: "Shoes",
         status: "pending",
+        sale:0,
         stock: [
             {
                 color: "Black",
@@ -101,6 +104,7 @@ const data =
         category: "Women",
         subCategory: "Shoes",
         status: "pending",
+        sale:0,
         stock: [
             {
                 color: "Black",
@@ -127,6 +131,7 @@ const data =
         category: "Women",
         subCategory: "Shoes",
         status: "pending",
+        sale:0,
         stock: [
             {
                 color: "Black",
@@ -162,6 +167,7 @@ const data =
         category: "Women",
         subCategory: "Shoes",
         status: "pending",
+        sale:0,
         stock: [
             {
                 color: "Beige",
@@ -187,6 +193,7 @@ const data =
         category: "Women",
         subCategory: "Shoes",
         status: "pending",
+        sale:0,
         stock: [
             {
                 color: "Navy",
@@ -221,6 +228,7 @@ const data =
         category: "Women",
         subCategory: "Shoes",
         status: "pending",
+        sale:0,
         stock: [
             {
                 color: "White",
@@ -246,6 +254,7 @@ const data =
         category: "Women",
         subCategory: "Shoes",
         status: "pending",
+        sale:0,
         stock: [
             {
                 color: "Khaki",
@@ -271,6 +280,7 @@ const data =
         category: "Women",
         subCategory: "Shoes",
         status: "pending",
+        sale:0,
         stock: [
             {
                 color: "White",
@@ -297,6 +307,7 @@ const data =
         category: "Women",
         subCategory: "Shoes",
         status: "pending",
+        sale:0,
         stock: [
             {
                 color: "Brown",
@@ -332,6 +343,7 @@ const data =
         category: "Women",
         subCategory: "Shoes",
         status: "pending",
+        sale:0,
         stock: [
             {
                 color: "Beige",

@@ -21,6 +21,6 @@ export function toProduct(_obj) {
     product.Material = _obj.material;
     product.SellerId = _obj.sellerId;
     product.Status = _obj.status;
-
+    product.Sale = _obj.sale;
     return product;
 }

@@ -14,6 +14,7 @@ const data =
         category: "Women",
         subCategory: "Skirts",
         status: "pending",
+        sale:0,
         stock: [
             {
                 color: "Beige",
@@ -39,6 +40,7 @@ const data =
         category: "Women",
         subCategory: "Skirts",
         status: "pending",
+        sale:0,
         stock: [
             {
                 color: "Printed",
@@ -65,6 +67,7 @@ const data =
         category: "Women",
         subCategory: "Skirts",
         status: "pending",
+        sale:0,
         stock: [
             {
                 color: "Yellow",
@@ -91,6 +94,7 @@ const data =
         category: "Women",
         subCategory: "Skirts",
         status: "pending",
+        sale:0,
         stock: [
             {
                 color: "Khaki",
@@ -117,6 +121,7 @@ const data =
         category: "Women",
         subCategory: "Skirts",
         status: "pending",
+        sale:0,
         stock: [
             {
                 color: "Plaid",
@@ -142,6 +147,7 @@ const data =
         category: "Women",
         subCategory: "Skirts",
         status: "pending",
+        sale:0,
         stock: [
             {
                 color: "Brown Plaid",
@@ -168,6 +174,7 @@ const data =
     category: "Women",
     subCategory: "Skirts",
     status: "pending",
+    sale:0,
     stock: [
         {
             color: "Brown Leopard",
