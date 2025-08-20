@@ -42,17 +42,27 @@ function filterProductByCategory() {
             const selectedCategory = e.target.value.trim();
             state.category = selectedCategory || null;
 
+            // Reset other filters when category changes
+            state.subCategories.clear();
+
+            filterProductByProductType();
+
             ProductList("product-list", state);;
         });
     });
 };
 
 
-
-
 function filterProductByProductType() {
-    const productTypes = [...new Set(products.map(p => p.subcategory))];
     const productSubCat = document.getElementById("subcat-options");
+    let availableTypes = products;
+    
+    if (state.category) {
+    availableTypes = availableTypes.filter(p => p.category === state.category);
+   };
+
+    const productTypes = [...new Set(availableTypes.map(p => p.subcategory))];
+    
     productSubCat.innerHTML = productTypes.map(type => `
     <div class="form-check form-check-inline">
       <input class="form-check-input filter-input" type="checkbox" value="${type}" id="pType-${type}" name="subcategory">
@@ -72,28 +82,24 @@ function filterProductByProductType() {
 
 
 
+// -********************************
+function filterProductByBrand(){
+   const productBrand = [...new Set(products.map(p => p.brand))];
+   const brandOptions = document.getElementById("brand-options");
 
+   brandOptions.innerHTML = productBrand.map(brand => `
+    <div class="form-check form-check-inline">
+      <input class="form-check-input filter-input" type="checkbox" value="${brand}" id="brand-${brand}" name="brand">
+      <label class="form-check-label" for="brand-${brand}">${brand}</label>
+    </div>
+    `).join("")
 
+   
 
+   console.log(productBrand);
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// make the filters dependent:
 
 
 
@@ -103,6 +109,9 @@ function filterProductByProductType() {
 filterProductByCategory();
 
 filterProductByProductType();
+
+filterProductByBrand();
+
 
 
 // Initial product list load

@@ -31,10 +31,10 @@ card.innerHTML = `
         ${product.brand} - ${product.name.slice(0, 20)}
       </h6>
       <p class="card-text text-muted mb-2 product-cart-description">
-        ${product.description.slice(0, 100)}...
+        ${product.description.slice(0, 70)}...
       </p>
 
-      <div class="d-flex justify-content-between align-items-center">
+      <div class="d-flex justify-content-between align-items-start">
         ${discounted
           ? `
             <div class="d-flex flex-column">
