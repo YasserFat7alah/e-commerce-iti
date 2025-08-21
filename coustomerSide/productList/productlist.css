@@ -134,3 +134,17 @@
   z-index: 1000;;
 }
 
+#clear-filters{
+  text-decoration: none;
+  color: black;
+  background-color: white;
+  transition: all 0.3s ease ;
+  padding: 2px 10px;
+  border-radius: 3px;
+  border: 1px solid rgba(0,0,0,0.2);
+}
+
+#clear-filters:hover {
+  background-color: rgba(0,0,0,0.95);
+  color: white;
+}

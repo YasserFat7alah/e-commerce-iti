@@ -1,6 +1,5 @@
 import { ProductCard } from "../productCard/productCard.js";
 
-
 // handles rendering list of products
 
 export function ProductList(containerId,productNumsId, state) {
@@ -42,9 +41,49 @@ export function ProductList(containerId,productNumsId, state) {
     );
   }
 
-  // 
+
+  // Filter by color (if any selected)
+if (state.color && state.color.size > 0) {
+  filtered = filtered.filter(p =>
+    (p.stock || []).some(variant =>
+      state.color.has(variant.color)
+    )
+  );
+}
 
 
+// Filter by Price (if min/max are set)
+if (state.minPrice !== null || state.maxPrice !== null) {
+  filtered = filtered.filter(p => {
+    const price = p.price || 0;
+
+    const meetsMin = state.minPrice !== null ? price >= state.minPrice : true;
+    const meetsMax = state.maxPrice !== null ? price <= state.maxPrice : true;
+
+    return meetsMin && meetsMax;
+  });
+}
+
+
+
+// Filter by discount
+if (state.discount !== null) {
+  if (state.discount === "any") {
+    filtered = filtered.filter(p => (p.sale || 0) > 0);
+  } else {
+    const threshold = parseFloat(state.discount);
+    filtered = filtered.filter(p => (p.sale || 0) >= threshold);
+  }
+}
+
+
+
+// Filter by offers
+if (state.offers.size > 0) {
+  filtered = filtered.filter(p =>
+    (p.offers || []).some(offer => state.offers.has(offer))
+  );
+}
 
 
 
@@ -62,7 +101,7 @@ export function ProductList(containerId,productNumsId, state) {
     container.appendChild(card);
   });
 
-
+  //  Update the product count after filtering
   productNums.textContent = `${filtered.length} products`;
 
 

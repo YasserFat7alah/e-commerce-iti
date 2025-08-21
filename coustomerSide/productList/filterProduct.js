@@ -1,15 +1,8 @@
 import { ProductList } from "./ProductList.js";
 
-// const catList = document.querySelector("#product-list");
-// const productNums = document.getElementById("results-count");
 const products = JSON.parse(localStorage.getItem("products")) || [];
 
-
-// productNums.textContent = `${products.length} products`;
-
-
-// Central filter state (add more keys later: brand, size, color...)
-
+// Central filter state
 const state = {
     category: null,
     subCategories: new Set(),
@@ -19,7 +12,7 @@ const state = {
     minPrice: null,
     maxPrice: null,
     discount: null,
-    offers: null,
+    offers: new Set(),
 };
 
 
@@ -49,12 +42,15 @@ function filterProductByCategory() {
             state.brand.clear();
             state.size.clear();
 
-
             filterProductByProductType();
             filterProductByBrand();
             filterProductBySize();
+            filterProductByColor();
+            filterProductByPrice();
+            filterProductByDiscount();
+            filterProductByOffers();
 
-            ProductList("product-list","results-count", state);;
+            ProductList("product-list", "results-count", state);;
         });
     });
 };
@@ -67,7 +63,7 @@ function filterProductByProductType() {
     if (state.category) {
         availableTypes = availableTypes.filter(p => p.category === state.category);
     };
-    
+
     const productTypes = [...new Set(availableTypes.map(p => p.subcategory))];
 
     productSubCat.innerHTML = productTypes.map(type => `
@@ -81,9 +77,58 @@ function filterProductByProductType() {
         checkbox.addEventListener("change", () => {
             if (checkbox.checked) state.subCategories.add(checkbox.value);
             else state.subCategories.delete(checkbox.value);
+
+
+            // --- NEW LOGIC: Remove brands not available in the new subcategory selection ---
+            let availableProducts = products;
+            if (state.category) {
+                availableProducts = availableProducts.filter(p => p.category === state.category);
+            }
+            if (state.subCategories.size > 0) {
+                availableProducts = availableProducts.filter(p => state.subCategories.has(p.subcategory));
+            }
+            const availableBrands = new Set(availableProducts.map(p => p.brand));
+            // Remove brands from state.brand that are not in availableBrands
+            state.brand.forEach(brand => {
+                if (!availableBrands.has(brand)) {
+                    state.brand.delete(brand);
+                }
+            });
+
+
+            // --- Remove unavailable sizes ---
+            const availableSizes = new Set(
+                availableProducts.flatMap(product =>
+                    (product.stock || []).flatMap(variant =>
+                        (variant.sizes || []).map(size => size && size.name ? size.name.trim() : null)
+                    )
+                ).filter(name => name && name.length > 0)
+            );
+            state.size.forEach(size => {
+                if (!availableSizes.has(size)) {
+                    state.size.delete(size);
+                }
+            });
+
+            // --- Remove unavailable colors ---
+            const availableColors = new Set(
+                availableProducts.flatMap(product =>
+                    (product.stock || []).map(variant => variant.color?.trim())
+                ).filter(c => c && c.length > 0)
+            );
+            state.color.forEach(color => {
+                if (!availableColors.has(color)) {
+                    state.color.delete(color);
+                }
+            });
+            // --- END NEW LOGIC ---
+
+
             filterProductBySize();
             filterProductByBrand();
-            ProductList("product-list","results-count",state);
+            filterProductByColor();
+            filterProductByPrice();
+            ProductList("product-list", "results-count", state);
         });
     })
 };
@@ -114,7 +159,8 @@ function filterProductByBrand() {
         checkbox.addEventListener("change", () => {
             if (checkbox.checked) state.brand.add(checkbox.value);
             else state.brand.delete(checkbox.value);
-            ProductList("product-list","results-count", state);
+            filterProductByColor();
+            ProductList("product-list", "results-count", state);
         });
     })
 };
@@ -156,10 +202,198 @@ function filterProductBySize() {
         checkbox.addEventListener("change", () => {
             if (checkbox.checked) state.size.add(checkbox.value);
             else state.size.delete(checkbox.value);
-            ProductList("product-list","results-count", state);
+            filterProductByColor();
+            ProductList("product-list", "results-count", state);
         });
     });
 };
+
+
+
+function filterProductByColor() {
+    const colorOptions = document.getElementById("color-options");
+    let availableProducts = products;
+
+    // Filter by category
+    if (state.category) {
+        availableProducts = availableProducts.filter(p => p.category === state.category);
+    }
+    // Filter by subcategory
+    if (state.subCategories.size > 0) {
+        availableProducts = availableProducts.filter(p => state.subCategories.has(p.subcategory));
+    }
+    // Filter by brand
+    if (state.brand.size > 0) {
+        availableProducts = availableProducts.filter(p => state.brand.has(p.brand));
+    }
+    // Filter by size
+    if (state.size && state.size.size > 0) {
+        availableProducts = availableProducts.filter(p =>
+            (p.stock || []).some(variant =>
+                (variant.sizes || []).some(size =>
+                    state.size.has(size.name)
+                )
+            )
+        );
+    }
+
+    // Extract all unique colors from stock
+    const availableColors = [
+        ...new Set(
+            availableProducts.flatMap(product =>
+                (product.stock || [])
+                    .map(variant => variant.color?.trim())
+            )
+        )
+    ].filter(c => c && c.length > 0);
+
+    colorOptions.innerHTML = availableColors.map(color => `
+        <div class="form-check form-check-inline">
+            <input class="form-check-input filter-input" type="checkbox" value="${color}" id="color-${color}" name="colors">
+            <label class="form-check-label" for="color-${color}">${color}</label>
+        </div>`).join('');
+
+    const ColorCheck = document.querySelectorAll('input[name="colors"]');
+    ColorCheck.forEach(checkbox => {
+        checkbox.addEventListener("change", () => {
+            if (checkbox.checked) state.color.add(checkbox.value);
+            else state.color.delete(checkbox.value);
+            ProductList("product-list", "results-count", state);
+        });
+    });
+};
+
+
+
+
+function filterProductByPrice() {
+    const minPriceInput = document.getElementById("min-price");
+    const maxPriceInput = document.getElementById("max-price");
+    [minPriceInput, maxPriceInput].forEach(input => {
+        input.addEventListener("input", () => {
+            const min = parseFloat(minPriceInput.value);
+            const max = parseFloat(maxPriceInput.value);
+
+            // Prevent negative values
+            if (!isNaN(min) && min < 0) min = 0;
+            if (!isNaN(max) && max < 0) max = 0;
+
+            // Prevent invalid ranges (min > max)
+            if (!isNaN(min) && !isNaN(max) && min > max) {
+                max = min;
+                maxPriceInput.value = min; // auto correct for UI
+            };
+
+            state.minPrice = isNaN(min) ? null : min;
+            state.maxPrice = isNaN(max) ? null : max;
+
+            ProductList("product-list", "results-count", state);
+        });
+    });
+
+};
+
+
+
+function filterProductByDiscount() {
+
+    const discountRadios = document.querySelectorAll("input[name='discount']");
+    discountRadios.forEach(radio => {
+        radio.addEventListener("change", () => {
+            const value = parseFloat(radio.value);
+            state.discount = isNaN(value) ? null : value;
+            ProductList("product-list", "results-count", state);
+        });
+    });
+
+};
+
+
+
+
+
+function filterProductByOffers() {
+
+    const filterOffersBody = document.getElementById('filterOffersBody');
+
+    const offersSet = new Set();
+    products.forEach(p => {
+        (p.offers || []).forEach( o =>{
+            if (o && o.trim().length > 0) {
+                offersSet.add(o.trim());
+            }
+        }   
+        );
+    });
+
+    if (offersSet.size === 0) {
+        filterOffersBody.innerHTML = `
+        <span class="text-muted">No Offers Available Now</span>
+        `;
+        return;
+    } else {
+        filterOffersBody.innerHTML = Array.from(offersSet).map(offer => `
+        <div class="form-check">
+            <input class="form-check-input filter-input" type="checkbox" id="offer-${offer}" value="${offer}" name="offers">
+            <label class="form-check-label" for="offer-${offer}">${offer}</label>
+        </div>`).join("");
+    }
+    const offerCheckboxes = document.querySelectorAll("input[name='offers']");
+    offerCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener("change", () => {
+            if (checkbox.checked) {
+                state.offers.add(checkbox.value);
+                console.log("Added offer:", checkbox.value);
+            } else {
+                state.offers.delete(checkbox.value);
+            }
+            ProductList("product-list", "results-count", state);
+        });
+    });
+}
+
+
+
+
+
+// Clear all filters
+document.getElementById("clear-filters").addEventListener("click", () => {
+    state.category = null;
+    state.subCategories.clear();
+    state.brand.clear();
+    state.size.clear();
+    state.color.clear();
+    state.minPrice = null;
+    state.maxPrice = null;
+    state.discount = null;
+    state.offers.clear();
+
+    // Reset all filter inputs
+    document.querySelectorAll('.filter-input').forEach(input => {
+        if (input.type === 'checkbox' || input.type === 'radio') {
+            input.checked = false;
+        } else {
+            input.value = '';
+        }
+    });
+
+    const allCatRadio = document.getElementById("cat-all");
+    if (allCatRadio) allCatRadio.checked = true
+
+    // Re-render all filters if needed
+    filterProductByProductType();
+    filterProductByBrand();
+    filterProductBySize();
+    filterProductByColor();
+    filterProductByPrice();
+    filterProductByDiscount();
+    filterProductByOffers();
+
+
+    // Re-render the product list with no filters
+    ProductList("product-list", "results-count", state);
+
+});
 
 
 
@@ -180,8 +414,25 @@ filterProductByBrand();
 filterProductBySize();
 
 
+// depend on category, subcategory, brand and size  filter
+filterProductByColor();
+
+
+// depend on category filter
+filterProductByPrice();
+
+
+// depend on category
+filterProductByDiscount();
+
+
+// depend on category
+filterProductByOffers();
+
+
+
 // Initial product list load
-ProductList("product-list","results-count", state);
+ProductList("product-list", "results-count", state);
 
 
 

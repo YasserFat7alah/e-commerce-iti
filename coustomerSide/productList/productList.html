@@ -12,15 +12,7 @@
   <div class="container py-4">
 
     <div class="d-flex align-items-center justify-content-between mb-3">
-      <h2 class="mb-0">Products</h2>
-      <div class="d-none d-lg-flex align-items-center gap-2">
-        <label for="sort-by" class="small mb-0">Sort</label>
-        <select id="sort-by" class="form-select form-select-sm">
-          <option value="">Featured</option>
-          <option value="price-asc">Price: Low → High</option>
-          <option value="price-desc">Price: High → Low</option>
-        </select>
-      </div>
+      <h2 class="mb-0 text-uppercase fw-light">Shop Our Amazing Products</h2>
     </div>
 
     <div class="row">
@@ -35,7 +27,7 @@
           <form id="filters" class="small">
             <div class="d-flex justify-content-between align-items-center mb-2">
               <strong>Filters</strong>
-              <button type="button" id="clear-filters" class="btn btn-link btn-sm p-0">Clear all</button>
+              <button type="button" id="clear-filters" class="btn btn-link btn-sm">Clear all</button>
             </div>
 
             <div class="accordion accordion-flush" id="filtersAccordion">
@@ -102,29 +94,21 @@
               </div>
 
               <!-- Color -->
-              <!-- <div class="accordion-item">
-                <h2 class="accordion-header" id="headingColor">
+              <div class="accordion-item">
+               <h2 class="accordion-header" id="headingColor">
                   <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#filterColor">
                     Color
                   </button>
                 </h2>
                 <div id="filterColor" class="accordion-collapse collapse" data-bs-parent="#filtersAccordion">
                   <div class="accordion-body" id="color-options">
-                    <div class="form-check">
-                      <input class="form-check-input filter-input" type="checkbox" value="Black" id="color-black" name="colors">
-                      <label class="form-check-label" for="color-black">Black</label>
-                    </div>
-                    <div class="form-check">
-                      <input class="form-check-input filter-input" type="checkbox" value="Grey" id="color-grey" name="colors">
-                      <label class="form-check-label" for="color-grey">Grey</label>
-                    </div>
-                    <div class="form-check">
-                      <input class="form-check-input filter-input" type="checkbox" value="White" id="color-white" name="colors">
-                      <label class="form-check-label" for="color-white">White</label>
-                    </div>
+         
+          
+
+
                   </div>
                 </div>
-              </div> -->
+              </div> 
 
               <!-- Price -->
               <div class="accordion-item">
@@ -137,10 +121,10 @@
                   <div class="accordion-body">
                     <div class="row g-2">
                       <div class="col-6">
-                        <input type="number" class="form-control form-control-sm filter-input" id="min-price" placeholder="Min">
+                        <input type="number" min="0" class="form-control form-control-sm filter-input" id="min-price" placeholder="Min">
                       </div>
                       <div class="col-6">
-                        <input type="number" class="form-control form-control-sm filter-input" id="max-price" placeholder="Max">
+                        <input type="number" min="0"  class="form-control form-control-sm filter-input" id="max-price" placeholder="Max">
                       </div>
                     </div>
                     <div class="form-text mt-1">Sale discounts are applied automatically.</div>
@@ -185,11 +169,8 @@
                   </button>
                 </h2>
                 <div id="filterOffers" class="accordion-collapse collapse" data-bs-parent="#filtersAccordion">
-                  <div class="accordion-body">
-                    <div class="form-check">
-                      <input class="form-check-input filter-input" type="checkbox" id="offer-free-shipping" value="free shipping" name="offers">
-                      <label class="form-check-label" for="offer-free-shipping">Free shipping</label>
-                    </div>
+                  <div class="accordion-body" id="filterOffersBody">
+                    <!-- JS Inject Here -->
                   </div>
                 </div>
               </div>
@@ -199,23 +180,11 @@
         </div>
       </aside>
 
-
       <!-- RIGHT: Products -->
       <section class="col-12 col-lg-9">
         <div class="d-flex align-items-center justify-content-between mb-3">
           <div id="results-count" class="text-muted small"></div>
-          <div class="d-flex d-lg-none align-items-center gap-2">
-            <label for="sort-by" class="small mb-0">Sort</label>
-            <select id="sort-by-mobile" class="form-select form-select-sm">
-              <option value="">Featured</option>
-              <option value="price-asc">Price: Low → High</option>
-              <option value="price-desc">Price: High → Low</option>
-              <option value="discount-desc">Biggest Discount</option>
-              <option value="newest">Newest</option>
-            </select>
-          </div>
         </div>
-
         <div class="row g-3" id="product-list"></div>
       </section>
     </div>
