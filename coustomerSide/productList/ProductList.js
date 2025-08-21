@@ -3,17 +3,16 @@ import { ProductCard } from "../productCard/productCard.js";
 
 // handles rendering list of products
 
-export function ProductList(containerId, state) {
+export function ProductList(containerId,productNumsId, state) {
 
   const container = document.getElementById(containerId);
   container.innerHTML = "";
 
-
+   const productNums = document.getElementById(productNumsId);
 
 
   const products = JSON.parse(localStorage.getItem("products")) || [];
   let filtered = [...products];
-
 
   // Filter by category
   if (state.category) {
@@ -64,6 +63,7 @@ export function ProductList(containerId, state) {
   });
 
 
+  productNums.textContent = `${filtered.length} products`;
 
 
 };

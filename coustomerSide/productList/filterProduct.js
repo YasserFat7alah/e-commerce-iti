@@ -1,11 +1,11 @@
 import { ProductList } from "./ProductList.js";
 
 // const catList = document.querySelector("#product-list");
-const productNums = document.getElementById("results-count");
+// const productNums = document.getElementById("results-count");
 const products = JSON.parse(localStorage.getItem("products")) || [];
 
-// product NUmbers set from localStorage for now !!!
-productNums.textContent = `${products.length} products`;
+
+// productNums.textContent = `${products.length} products`;
 
 
 // Central filter state (add more keys later: brand, size, color...)
@@ -54,7 +54,7 @@ function filterProductByCategory() {
             filterProductByBrand();
             filterProductBySize();
 
-            ProductList("product-list", state);;
+            ProductList("product-list","results-count", state);;
         });
     });
 };
@@ -67,7 +67,7 @@ function filterProductByProductType() {
     if (state.category) {
         availableTypes = availableTypes.filter(p => p.category === state.category);
     };
-
+    
     const productTypes = [...new Set(availableTypes.map(p => p.subcategory))];
 
     productSubCat.innerHTML = productTypes.map(type => `
@@ -83,10 +83,11 @@ function filterProductByProductType() {
             else state.subCategories.delete(checkbox.value);
             filterProductBySize();
             filterProductByBrand();
-            ProductList("product-list", state);
+            ProductList("product-list","results-count",state);
         });
     })
 };
+
 
 
 
@@ -113,7 +114,7 @@ function filterProductByBrand() {
         checkbox.addEventListener("change", () => {
             if (checkbox.checked) state.brand.add(checkbox.value);
             else state.brand.delete(checkbox.value);
-            ProductList("product-list", state);
+            ProductList("product-list","results-count", state);
         });
     })
 };
@@ -155,12 +156,10 @@ function filterProductBySize() {
         checkbox.addEventListener("change", () => {
             if (checkbox.checked) state.size.add(checkbox.value);
             else state.size.delete(checkbox.value);
-            ProductList("product-list", state);
+            ProductList("product-list","results-count", state);
         });
     });
 };
-
-
 
 
 
@@ -181,10 +180,8 @@ filterProductByBrand();
 filterProductBySize();
 
 
-
-
 // Initial product list load
-ProductList("product-list", state);
+ProductList("product-list","results-count", state);
 
 
 
