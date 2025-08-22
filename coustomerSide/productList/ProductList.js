@@ -107,3 +107,7 @@ if (state.offers.size > 0) {
 
 };
 
+
+
+
+

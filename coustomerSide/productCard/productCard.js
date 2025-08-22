@@ -55,7 +55,9 @@ card.innerHTML = `
     <button 
       class="add-to-cart-btn btn btn-dark add-to-cart mt-3 d-flex align-items-center justify-content-center gap-2" 
       data-id="${product.id}">
-      <i class="fa-solid fa-cart-plus"></i> Add to Cart
+      <a href="../singleProduct/product.html?id=${product.id}" class="text-white text-decoration-none">
+        <i class="fa-solid fa-cart-shopping"></i> View Details      
+      </a>
     </button>
   </div>
 </div>

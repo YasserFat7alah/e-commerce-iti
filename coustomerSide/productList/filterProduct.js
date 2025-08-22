@@ -397,10 +397,6 @@ document.getElementById("clear-filters").addEventListener("click", () => {
 
 
 
-
-
-
-
 // base filter 
 filterProductByCategory();
 
@@ -433,7 +429,5 @@ filterProductByOffers();
 
 // Initial product list load
 ProductList("product-list", "results-count", state);
-
-
 
 
