@@ -1,0 +1,45 @@
+.price {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #b12704;
+}
+
+.old-price {
+  text-decoration: line-through;
+  color: #888;
+  margin-left: 10px;
+  font-size: 1rem;
+}
+
+.discount {
+  color: green;
+  font-weight: bold;
+}
+
+.sizes span, .colors span {
+  display: inline-block;
+  padding: 5px 12px;
+  margin: 5px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.sizes span:hover, .colors span:hover {
+  border-color: #000;
+}
+
+.btn-cart {
+  margin-top: 1rem;
+  font-size: 1.1rem;
+}
+
+#backToCatalogBtn{
+  margin-left: 10px;
+  background-color: #e7f3e7;
+  transition: all 0.4s ease;
+}
+
+#backToCatalogBtn:hover{
+  background-color: #ccc8c8;
+}
