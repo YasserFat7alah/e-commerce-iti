@@ -98,10 +98,10 @@ export default class AboutPage extends View {
                             <h5>Azza Sallam </h5>
                             <p>Full Stack Web Developer.</p>
                             <div class="social">
-                                <a href="https://www.linkedin.com/in/yasserfat7alah/" target="_blank"><i class="fa-brands fa-linkedin"></i></i></a>
-                                <a href="#"><i class="fa-brands fa-facebook"></i></a>
-                                <a href="#"><i class="fab fa-instagram"></i></a>
-                                <a href="#"><i class="fa-brands fa-github"></i></a>
+                                <a href="https://www.linkedin.com/in/azza-sallam512/" target="_blank"><i class="fa-brands fa-linkedin"></i></i></a>
+                                <a href="https://www.facebook.com/azza.sallam512"><i class="fa-brands fa-facebook"></i></a>
+                                <a href="https://www.instagram.com/azzaa_sallam?igsh=MTlrYXQ4eHA5eWRnNA=="><i class="fab fa-instagram"></i></a>
+                                <a href="https://github.com/AzzaSallam"><i class="fa-brands fa-github"></i></a>
                             </div>
                         </div>
                     </div>
