@@ -17,7 +17,7 @@ export default function seedData() {
   }
 
   // Seed Products
-  if (!localStore.exists("products", false)) {
+  if (!localStore.exists("products", true)) {
     localStore.write("products", products);
   }
 

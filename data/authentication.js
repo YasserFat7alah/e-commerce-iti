@@ -1,7 +1,6 @@
 import { generateID, toUser } from "../scripts/utils/data.js";
 import { navigate } from "../scripts/utils/navigation.js";
 import { localStore, sessionStore } from "../scripts/utils/storage.js";
-import { fakeCards } from "./creditcart/cards.js";
 
 /* ======================= SIGNUP =========================== */
 export function signup(_name, _email, _password, _repeatedPassword, _phone = '01000000000', _role = 'customer') {

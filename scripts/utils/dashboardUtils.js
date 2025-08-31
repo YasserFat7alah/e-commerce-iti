@@ -10,9 +10,9 @@ export function checkStock(product) {
                 return `In Stock`;
             }
         }
-        return `Out Of Stock`; 
-// `<span class="badge bg-success">In Stock</span>`
-// `<span class="badge bg-danger">Out of Stock</span>`
+        return `Out Of Stock`;
+        // `<span class="badge bg-success">In Stock</span>`
+        // `<span class="badge bg-danger">Out of Stock</span>`
     }
 }
 
@@ -43,7 +43,7 @@ export function generateId(prefix = '', second = '') {
     const words = second.trim().split(/\s+/);
     const first = words[0] ? words[0][0].toUpperCase() : '';
     const secondLetter = words[1] ? words[1][0].toUpperCase() : '';
-    
+
     const timestamp = Date.now().toString();
     const last6 = timestamp.slice(-6);
 
@@ -227,8 +227,7 @@ export function getProductThumbnail(product) {
     } catch (err) {
         console.error("Thumbnail error:", err);// if therer is no img
     }//in case there is no image display the colored circle
-    return `<div ${getRandomColor()} style="width: 40px; height: 40px; font-size: 0.875rem; font-weight: bold;">
-            ${product.brand.charAt(0)}</div>`;
+    return `https://images.unsplash.com/photo-1491553895911-0055eca6402d?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D`;
 }
 
 /**
