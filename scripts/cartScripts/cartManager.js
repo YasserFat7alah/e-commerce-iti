@@ -26,11 +26,9 @@ export function CartManager() {
         offers: ["Free Shipping"],
         stockQty: sizeInStock?.qty || 0,
         total: Number((item.price * item.qty).toFixed(2)),
-        images: stockItem?.images?.map(imgName =>
-          `./data/imgs/products/${product.category.toLowerCase()}/${product.subcategory.toLowerCase()}/${product.id.toLowerCase()}/${imgName}`
-        ) || [],
+        images: stockItem?.images || [],
         img: stockItem?.images
-          ? `./data/imgs/products/${product.category.toLowerCase()}/${product.subcategory.toLowerCase()}/${product.id.toLowerCase()}/${stockItem.images[0]}`
+          ? stockItem.images[0]
           : ""
       };
       

@@ -4,7 +4,7 @@ import { localStore, sessionStore } from "../../scripts/utils/storage.js";
 import Component from "../core/component.js";
 
 export default class RelatedProducts extends Component {
-    
+
 
     template() {
         const cartItems = sessionStore.read("shoppingCart", []);
@@ -27,7 +27,7 @@ export default class RelatedProducts extends Component {
                 return filtered.length > 0 ? filtered : localProducts;
             }).flat();
         }
-        
+
 
         return `    
             <div class="marginTop-related mb-4 ms-lg-0 me-lg-0 ps-lg-0 pe-lg-0" id="related-items">
@@ -41,8 +41,8 @@ export default class RelatedProducts extends Component {
 
                     <div class="cursoul d-flex">
                         ${relatedItems.map(product => {
-                             const discounted = product.sale > 0 ? (product.price * (1 - product.sale)).toFixed(2) : null;
-                            return `
+            const discounted = product.sale > 0 ? (product.price * (1 - product.sale)).toFixed(2) : null;
+            return `
                                <div class="card h-100  shadow-sm position-relative slide" style="width: 100%; max-width: 280px; margin: auto;">
                                 <!-- Sale badge -->
                                 ${product.sale > 0 ? `
@@ -54,7 +54,7 @@ export default class RelatedProducts extends Component {
                                 <!-- Image container with fixed height -->
                                 <div style="height: 260px; overflow: hidden;">
                                     <img 
-                                        src="./data/imgs/products/${product.category.toLowerCase()}/${product.subcategory.toLowerCase()}/${product.id.toLowerCase()}/${product.stock[0].images[0]}" 
+                                        src="${product.stock[0].images[0]}" 
                                         class="card-img-top" 
                                         alt="${product.name}"
                                         style="object-fit: cover; width: 100%; height: 100%;"
@@ -72,14 +72,14 @@ export default class RelatedProducts extends Component {
 
                                         <div class="d-flex justify-content-between align-items-start">
                                             ${discounted
-                                        ? `
+                    ? `
                                                 <div class="d-flex flex-column">
                                                     <span class="new-price fw-bold text-success">${discounted} USD</span>
                                                     <span class="old-price text-decoration-line-through text-muted" style="font-size: 0.75em">${product.price} USD</span>
                                                 </div>
                                             `
-                                        : `<span class="new-price fw-bold ">${product.price} USD</span>`
-                                    }
+                    : `<span class="new-price fw-bold ">${product.price} USD</span>`
+                }
 
                                             <div class="d-flex gap-1 flex-wrap">
                                                 <small class="badge bg-dark rounded-pill">${product.category}</small>
@@ -108,7 +108,7 @@ export default class RelatedProducts extends Component {
                                 </div>
                             </div>
                             `;
-                        }).join("")}
+        }).join("")}
                     </div>
 
                     <button class="slide-btn right-btn" id="rightBtn">
@@ -120,7 +120,7 @@ export default class RelatedProducts extends Component {
         `;
     }
 
-      script() {
+    script() {
         const localProducts = localStore.read("products", []);
 
         // View Details Button Event Listeners
@@ -137,7 +137,7 @@ export default class RelatedProducts extends Component {
             btn.addEventListener("click", (e) => {
                 const productId = e.currentTarget.dataset.id;
                 const product = localProducts.find(p => p.id === productId);
-                
+
                 if (!product) {
                     console.error('Product not found');
                     return;
@@ -145,21 +145,21 @@ export default class RelatedProducts extends Component {
 
                 const stock = product.stock || [];
                 let chosen = null;
-        
+
                 for (const variant of stock) {
                     const sizes = variant.sizes || [];
                     for (const sz of sizes) {
                         const qty = (typeof sz.qty === 'number') ? sz.qty
-                                  : (typeof sz.quantity === 'number') ? sz.quantity
-                                  : (typeof sz.stock === 'number') ? sz.stock
-                                  : (typeof sz.count === 'number') ? sz.count
-                                  : null;
-        
+                            : (typeof sz.quantity === 'number') ? sz.quantity
+                                : (typeof sz.stock === 'number') ? sz.stock
+                                    : (typeof sz.count === 'number') ? sz.count
+                                        : null;
+
                         const available = (typeof qty === 'number') ? qty > 0
-                                        : (typeof sz.available === 'boolean') ? sz.available
-                                        : (typeof sz.inStock === 'boolean') ? sz.inStock
-                                        : true; 
-        
+                            : (typeof sz.available === 'boolean') ? sz.available
+                                : (typeof sz.inStock === 'boolean') ? sz.inStock
+                                    : true;
+
                         if (available) {
                             chosen = {
                                 color: variant?.color ?? null,
@@ -170,7 +170,7 @@ export default class RelatedProducts extends Component {
                     }
                     if (chosen) break;
                 }
-        
+
                 if (!chosen) {
                     if (typeof Toast !== 'undefined' && Toast?.show) {
                         Toast.show('This product is out of stock', { type: 'warning' });
@@ -179,7 +179,7 @@ export default class RelatedProducts extends Component {
                     }
                     return;
                 }
-        
+
                 addToCart({
                     product,
                     selectedColor: chosen.color,
@@ -191,12 +191,12 @@ export default class RelatedProducts extends Component {
             });
         });
 
-       
+
 
         // Slider functionality
         const slider = document.querySelector(".cursoul");
         const slides = document.querySelectorAll(".slide");
-        
+
         if (slides.length > 0) {
             let sliderCurrentIndex = 0;
             const slideWidth = slides[0].offsetWidth;
@@ -227,7 +227,7 @@ export default class RelatedProducts extends Component {
 
             const rightBtn = document.querySelector(".right-btn");
             const leftBtn = document.querySelector(".left-btn");
-            
+
             if (rightBtn) {
                 rightBtn.addEventListener("click", () => {
                     nextSlide();
@@ -260,7 +260,7 @@ export default class RelatedProducts extends Component {
 
     notifyCartUpdate() {
         const cartUpdateEvent = new CustomEvent('cartUpdated', {
-            detail: { 
+            detail: {
                 timestamp: Date.now(),
                 action: 'itemAdded'
             }
