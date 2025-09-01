@@ -51,7 +51,7 @@ export default class RelatedProducts extends Component {
                                     </span>
                                 ` : ""}
 
-                                <!-- Image container with fixed height -->
+                    <!-- Image container with fixed height -->
                                 <div style="height: 260px; overflow: hidden;">
                                     <img 
                                         src="${product.stock[0].images[0]}" 
