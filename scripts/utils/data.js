@@ -5,7 +5,7 @@ import User from "../../data/_schema/UserModel.js";
 /* ========== Formatting FUNCTIONS =============== */
 export function formatPrice(_price) { //in: num => out: string
     return `$${_price.toFixed(2)}`;   // 10 => '$10' 
-    
+
 }
 
 
@@ -18,7 +18,7 @@ export function formatEmail(_email) {
 /* ========== GENERATING FUNCTIONS =============== */
 export function generateID(_str) { //in: string => out : ID
     return (_str.toLowerCase() + Date.now().toString().slice(8));   // 'user' => 'user58769' 
-    
+
 }
 
 /* ===========Create Product from object========== */
@@ -31,12 +31,19 @@ export function toProduct(_obj) {
     product.Category = _obj.category;
     product.Subcategory = _obj.subCategory;
     product.Price = _obj.price;
-    product.Sale = _obj.sale? _obj.sale: 0;
-    product.Stock = _obj.stock;
+    product.Sale = _obj.sale ? _obj.sale : 0;
     product.Images = _obj.images;
     product.Material = _obj.material;
     product.SellerId = _obj.sellerId;
     product.Status = _obj.status;
+    product.Stock = _obj.stock.map(st => ({
+        ...st,
+        images: st.images.map(img =>
+            img.startsWith("http")
+                ? img
+                : `../../data/imgs/products/${_obj.category.toLowerCase()}/${_obj.subCategory.toLowerCase()}/${_obj.id.toLowerCase()}/${img}`
+        )
+    }));
 
     return product;
 }

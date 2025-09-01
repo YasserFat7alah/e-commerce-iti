@@ -71,7 +71,7 @@ export default class Product extends View {
             .map(
               (img, idx) => `
                 <div class="carousel-item ${idx === 0 ? "active" : ""}">
-                  <img src="../../data/imgs/products/${(product.category || "").toLowerCase()}/${(product.subCategory || product.subcategory || "").toLowerCase()}/${(product.id || "").toLowerCase()}/${img}" 
+                  <img src="${img}" 
                        class="d-block w-100 rounded shadow-sm" alt="${product.name}">
                 </div>`
             )

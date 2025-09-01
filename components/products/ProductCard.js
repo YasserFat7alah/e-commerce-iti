@@ -40,7 +40,7 @@ export default class ProductCard extends Component {
           <!-- Image container with fixed height -->
           <div style="height: 260px; overflow: hidden;">
               <img 
-                  src="../../data/imgs/products/${this.product.category.toLowerCase()}/${this.product.subcategory.toLowerCase()}/${this.product.id.toLowerCase()}/${firstImage}" 
+                  src="${firstImage}" 
                   class="card-img-top" 
                   alt="${this.product.name}"
                   style="object-fit: cover; width: 100%; height: 100%;"

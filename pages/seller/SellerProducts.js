@@ -3,6 +3,7 @@ import { localStore } from "../../scripts/utils/storage.js";
 import { Anchor } from "../../components/ui/links.js";
 import { getProductThumbnail, showConfirmDialog } from "../../scripts/utils/dashboardUtils.js";
 import { getCurrentUser } from "../../data/authentication.js";
+import { uploader } from "../../scripts/utils/uploader.js";
 
 export default class SellerProducts extends View {
   template() {
@@ -68,7 +69,7 @@ export default class SellerProducts extends View {
 
   script() {
     const NAME_REGEX = /^[^0-9]+$/;
-    
+
     // Helper functions
     const createToast = (message, type = 'success') => {
       const toastElement = document.createElement("div");
@@ -107,7 +108,7 @@ export default class SellerProducts extends View {
     const getImagePath = (product, imageName) => {
       const category = product.category ? product.category.toLowerCase() : 'unisex';
       const subCategory = product.subCategory || product.subcategory || 'hat';
-      return `data/imgs/products/${category}/${subCategory.toLowerCase()}/${product.id}/${imageName}`;
+      return imageName;
     };
 
     function generateStockHTML(stock, product) {
@@ -125,14 +126,14 @@ export default class SellerProducts extends View {
           </table>
         ` : "<p>-</p>";
 
-        const imagesHTML = s.images?.length > 0 ? 
+        const imagesHTML = s.images?.length > 0 ?
           s.images.map(img => `
             <img src="${getImagePath(product, img)}" 
                  alt="${product.name}" 
                  class="img-thumbnail me-2 mb-2" 
                  style="width: 100px; height: 100px; object-fit: cover;"
                 >
-          `).join("") : 
+          `).join("") :
           "<p class='text-muted fst-italic'>No images available</p>";
 
         return `
@@ -154,7 +155,7 @@ export default class SellerProducts extends View {
       const card = document.createElement("div");
       card.className = "card mb-4 shadow-lg border-0 rounded-3";
       card.setAttribute('data-card-id', cardId);
-      
+
       card.innerHTML = `
         <div class="card-body">
           <div class="row g-3">
@@ -185,7 +186,7 @@ export default class SellerProducts extends View {
       // Initialize handlers
       initializeImageHandlers(card, product, cardId);
       initializeSizeHandlers(card, productIndex, stockIndex);
-      
+
       return card;
     }
 
@@ -239,7 +240,7 @@ export default class SellerProducts extends View {
       const fileInput = card.querySelector("input[type='file']");
       const hiddenInput = card.querySelector("input[type='hidden']");
       const preview = card.querySelector(".image-preview");
-      
+
       // Create unique state for this card to prevent conflicts
       const cardState = {
         removedExistingImages: new Set(),
@@ -248,16 +249,16 @@ export default class SellerProducts extends View {
       };
 
       const updateImagePreview = () => {
-        const existingImages = hiddenInput.value ? 
+        const existingImages = hiddenInput.value ?
           hiddenInput.value.split(", ").filter(img => img.trim() && !cardState.removedExistingImages.has(img)) : [];
-        
+
         if (existingImages.length === 0 && cardState.newFilesList.length === 0) {
           preview.innerHTML = "<p class='text-muted fst-italic'>No images available</p>";
           return;
         }
 
         let htmlContent = "";
-        
+
         // Display existing images with unique identifiers
         existingImages.forEach((img, imgIndex) => {
           const uniqueId = `${cardId}-existing-${imgIndex}-${img.replace(/[^a-zA-Z0-9]/g, '')}`;
@@ -280,7 +281,7 @@ export default class SellerProducts extends View {
             </div>
           `;
         });
-        
+
         // Display new files
         cardState.newFilesList.forEach((file, fileIndex) => {
           const uniqueId = `${cardId}-new-${fileIndex}-${file.name.replace(/[^a-zA-Z0-9]/g, '')}`;
@@ -307,11 +308,11 @@ export default class SellerProducts extends View {
         });
 
         preview.innerHTML = htmlContent;
-        
+
         // Load FileReader for new files after DOM update
         cardState.newFilesList.forEach((file, fileIndex) => {
           const reader = new FileReader();
-          reader.onload = function(e) {
+          reader.onload = function (e) {
             const filePreview = preview.querySelector(`[data-unique-id="${cardId}-new-${fileIndex}-${file.name.replace(/[^a-zA-Z0-9]/g, '')}"]`);
             if (filePreview) {
               filePreview.querySelector('img').src = e.target.result;
@@ -322,13 +323,13 @@ export default class SellerProducts extends View {
       };
 
       // File input change handler
-      fileInput.addEventListener("change", function() {
+      fileInput.addEventListener("change", function () {
         cardState.newFilesList = Array.from(this.files);
         updateImagePreview();
       });
 
       // Image removal handler with robust event handling
-      preview.addEventListener("click", function(e) {
+      preview.addEventListener("click", function (e) {
         const removeBtn = e.target.closest(".remove-image-btn");
         if (!removeBtn) return;
 
@@ -341,28 +342,28 @@ export default class SellerProducts extends View {
         e.stopImmediatePropagation();
 
         const removeType = removeBtn.getAttribute("data-remove-type");
-        
+
         if (removeType === "existing") {
           const imageName = removeBtn.getAttribute("data-image-name");
           cardState.removedExistingImages.add(imageName);
-          
+
           // Update hidden input
           const currentImages = hiddenInput.value ? hiddenInput.value.split(", ").filter(img => img.trim()) : [];
           const updatedImages = currentImages.filter(img => !cardState.removedExistingImages.has(img));
           hiddenInput.value = updatedImages.join(", ");
-          
+
         } else if (removeType === "new") {
           const fileIndex = parseInt(removeBtn.getAttribute("data-file-index"));
           if (fileIndex >= 0 && fileIndex < cardState.newFilesList.length) {
             cardState.newFilesList.splice(fileIndex, 1);
-            
+
             // Update file input
             const dt = new DataTransfer();
             cardState.newFilesList.forEach(file => dt.items.add(file));
             fileInput.files = dt.files;
           }
         }
-        
+
         updateImagePreview();
       }, true); // Use capture phase to ensure we get the event first
 
@@ -372,10 +373,10 @@ export default class SellerProducts extends View {
 
     function initializeSizeHandlers(card, productIndex, stockIndex) {
       const sizesSection = card.querySelector(".sizes-section");
-      
-      sizesSection.addEventListener("click", function(e) {
+
+      sizesSection.addEventListener("click", function (e) {
         e.stopPropagation();
-        
+
         if (e.target.closest(".addSizeAndQty")) {
           const lastRow = sizesSection.querySelector(".size-item:last-of-type");
           const sizeInput = lastRow.querySelector("input[name*='[size]']");
@@ -389,7 +390,7 @@ export default class SellerProducts extends View {
           } else {
             clearInvalid(sizeInput);
           }
-          
+
           if (!qtyInput.value.trim() || isNaN(parseInt(qtyInput.value)) || parseInt(qtyInput.value) < 0) {
             setInvalid(qtyInput, "Please enter a valid quantity (0 or more).");
             valid = false;
@@ -435,7 +436,7 @@ export default class SellerProducts extends View {
 
     function validateStockCard(card) {
       let valid = true;
-      
+
       const color = card.querySelector("input[name*='[color]']");
       const hiddenInput = card.querySelector("input[name*='[existingImages]']");
       const fileInput = card.querySelector("input[name*='[images][]']");
@@ -461,7 +462,7 @@ export default class SellerProducts extends View {
       sizeRows.forEach(row => {
         const sizeName = row.querySelector("input[name*='[size]']");
         const qty = row.querySelector("input[name*='[qty]']");
-        
+
         if (sizeName.value.trim() && qty.value.trim() && !isNaN(parseInt(qty.value)) && parseInt(qty.value) >= 0) {
           hasCompleteSize = true;
           clearInvalid(sizeName);
@@ -517,12 +518,12 @@ export default class SellerProducts extends View {
       });
 
       // Event delegation for action buttons
-      tableBody.addEventListener("click", async function(e) {
+      tableBody.addEventListener("click", async function (e) {
         const productIndex = parseInt(e.target.closest("button")?.getAttribute("data-product-index"));
         if (isNaN(productIndex)) return;
 
         const product = products[productIndex];
-        
+
         if (e.target.closest(".btn-remove")) {
           const confirmed = await showConfirmDialog(`Are you sure you want to delete ${product.name}?`, "Confirm deletion");
           if (confirmed) {
@@ -532,11 +533,11 @@ export default class SellerProducts extends View {
             createToast("Product deleted successfully!", "success");
           }
         }
-        
+
         if (e.target.closest(".btn-view")) {
           showProductView(product);
         }
-        
+
         if (e.target.closest(".btn-edit")) {
           showProductEdit(product, productIndex);
         }
@@ -656,7 +657,7 @@ export default class SellerProducts extends View {
       initializeEditForm(product, productIndex);
     }
 
-    function initializeEditForm(product, productIndex) {
+    async function initializeEditForm(product, productIndex) {
       const form = document.getElementById("editProductForm");
       const stockSection = document.getElementById("editStockSection");
       const addStockBtn = document.getElementById("addStockBtn");
@@ -671,25 +672,29 @@ export default class SellerProducts extends View {
       }
 
       // Clear validation on input
-      form.addEventListener("input", function(e) {
-        if (e.target.classList.contains("is-invalid")) {
-          clearInvalid(e.target);
-        }
-      }, true);
+      form.addEventListener(
+        "input",
+        function (e) {
+          if (e.target.classList.contains("is-invalid")) {
+            clearInvalid(e.target);
+          }
+        },
+        true
+      );
 
       // Add new stock card
-      addStockBtn.addEventListener("click", function() {
+      addStockBtn.addEventListener("click", function () {
         const lastCard = stockSection.querySelector(".card:last-of-type");
         if (lastCard && !validateStockCard(lastCard)) {
           return; // Don't add new card if last one is invalid
         }
-        
+
         const newStockIndex = stockSection.children.length;
         stockSection.appendChild(generateStockCard(productIndex, newStockIndex, {}, product));
       });
 
       // Form submission
-      form.addEventListener("submit", function(event) {
+      form.addEventListener("submit", async function (event) {
         event.preventDefault();
         event.stopPropagation();
 
@@ -709,49 +714,61 @@ export default class SellerProducts extends View {
           description: formData.get("description"),
           sellerId: product.sellerId,
           status: product.status,
-          stock: []
+          stock: [],
         };
 
-        // Process stock data
         const stockCards = stockSection.querySelectorAll(".card");
-        stockCards.forEach((card, stockIndex) => {
-          const color = card.querySelector(`input[name*='[color]']`).value;
-          const fileInput = card.querySelector(`input[name*='[images][]']`);
-          const hiddenInput = card.querySelector(`input[name*='[existingImages]']`);
-          
-          const existingImages = hiddenInput.value ? 
-            hiddenInput.value.split(", ").filter(img => img.trim()) : [];
-          const newImages = fileInput.files ? Array.from(fileInput.files).map(f => f.name) : [];
-          
-          const sizes = [];
-          card.querySelectorAll(".size-item").forEach(row => {
-            const sizeInput = row.querySelector(`input[name*='[size]']`);
-            const qtyInput = row.querySelector(`input[name*='[qty]']`);
-            
-            if (sizeInput?.value.trim() && qtyInput?.value.trim()) {
-              sizes.push({
-                size: sizeInput.value.trim(),
-                name: sizeInput.value.trim(),
-                qty: parseInt(qtyInput.value)
-              });
-            }
-          });
 
-          updatedProduct.stock.push({
-            color,
-            sizes,
-            images: [...existingImages, ...newImages]
-          });
-        });
-        let user = getCurrentUser()
-        // Save to localStorage
-        let products = localStore.read("products", []).filter(prod => prod.sellerId === user.id);
-        products[productIndex] = updatedProduct;
-        localStorage.setItem("products", JSON.stringify(products));
-        
-        loadProducts();
-        bootstrap.Modal.getInstance(document.getElementById("productEditModal")).hide();
-        createToast("Product updated successfully!", "success");
+        try {
+          for (const card of stockCards) {
+            const color = card.querySelector(`input[name*='[color]']`).value;
+            const fileInput = card.querySelector(`input[name*='[images][]']`);
+            const hiddenInput = card.querySelector(`input[name*='[existingImages]']`);
+
+
+            const existingImages = hiddenInput.value
+              ? hiddenInput.value.split(", ").filter((img) => img.trim())
+              : [];
+
+
+            let newImageLinks = [];
+            if (fileInput.files && fileInput.files.length > 0) {
+              newImageLinks = await uploader.uploadImages(Array.from(fileInput.files));
+            }
+
+            // Sizes
+            const sizes = [];
+            card.querySelectorAll(".size-item").forEach((row) => {
+              const sizeInput = row.querySelector(`input[name*='[size]']`);
+              const qtyInput = row.querySelector(`input[name*='[qty]']`);
+              if (sizeInput?.value.trim() && qtyInput?.value.trim()) {
+                sizes.push({
+                  size: sizeInput.value.trim(),
+                  name: sizeInput.value.trim(),
+                  qty: parseInt(qtyInput.value),
+                });
+              }
+            });
+
+            updatedProduct.stock.push({
+              color,
+              sizes,
+              images: [...existingImages, ...newImageLinks],
+            });
+          }
+
+
+          let products = localStore.read("products", [])
+          products[productIndex] = updatedProduct;
+          localStorage.setItem("products", JSON.stringify(products));
+
+          loadProducts();
+          bootstrap.Modal.getInstance(document.getElementById("productEditModal")).hide();
+          createToast("Product updated successfully!", "success");
+        } catch (err) {
+          console.error("Image upload failed", err);
+          createToast("Failed to upload images. Please try again.", "danger");
+        }
       });
     }
 
@@ -844,7 +861,7 @@ export default class SellerProducts extends View {
 
     // Search functionality
     const searchInput = document.getElementById("searchInput");
-    searchInput.addEventListener("input", function() {
+    searchInput.addEventListener("input", function () {
       const searchTerm = this.value.trim().toLowerCase();
       const rows = document.querySelectorAll("#productTableBody tr");
 
