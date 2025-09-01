@@ -41,7 +41,7 @@ export function toProduct(_obj) {
         images: st.images.map(img =>
             img.startsWith("http")
                 ? img
-                : `../../data/imgs/products/${_obj.category.toLowerCase()}/${_obj.subCategory.toLowerCase()}/${_obj.id.toLowerCase()}/${img}`
+                : img.startsWith("../../data/")? img : `../../data/imgs/products/${_obj.category.toLowerCase()}/${_obj.subCategory.toLowerCase()}/${_obj.id.toLowerCase()}/${img}`
         )
     }));
 

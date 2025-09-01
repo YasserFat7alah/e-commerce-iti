@@ -38,7 +38,7 @@ export default class Product extends View {
       return;
     }
 
-    const products = JSON.parse(localStorage.getItem("products")) || [];
+    const products = localStore.read('products',[]);
     const product = products.find((p) => p.id === productId);
 
     if (!product) {

@@ -4,6 +4,7 @@ import { Anchor } from "../../components/ui/links.js";
 import { getProductThumbnail, showConfirmDialog } from "../../scripts/utils/dashboardUtils.js";
 import { getCurrentUser } from "../../data/authentication.js";
 import { uploader } from "../../scripts/utils/uploader.js";
+import { toProduct } from "../../scripts/utils/data.js";
 
 export default class SellerProducts extends View {
   template() {
@@ -483,66 +484,73 @@ export default class SellerProducts extends View {
       let user = getCurrentUser();
       let products = localStore.read("products", []).filter(prod => prod.sellerId === user.id);
       const tableBody = document.getElementById("productTableBody");
+
+      // مسح الجدول
       tableBody.innerHTML = "";
 
+      // عرض المنتجات
       products.forEach((product, index) => {
         const row = document.createElement("tr");
         row.innerHTML = `
-          <td>${index + 1}</td>
-          <td>                
-            <div class="d-flex align-items-center">
-              <img src="${getProductThumbnail(product)}" 
-                   alt="${product.name}" 
-                   class="rounded me-3" 
-                   style="width: 40px; height: 40px; object-fit: fill;" />
-              <div>${product.name}</div>
-            </div>
-          </td>
-          <td>${product.category}</td>
-          <td>${product.subcategory || "-"}</td>
-          <td>$${product.price}</td>
-          <td><span class="badge ${product.status === "approved" ? "bg-success" : "bg-warning"}">${product.status}</span></td>
-          <td>
-            <button class="btn btn-sm btn-info text-white btn-view" data-product-index="${index}">
-              <i class="fas fa-eye"></i>
-            </button>
-            <button class="btn btn-sm btn-warning btn-edit" data-product-index="${index}">
-              <i class="fas fa-edit"></i>
-            </button>
-            <button class="btn btn-sm btn-danger btn-remove" data-product-index="${index}">
-              <i class="fas fa-trash"></i>
-            </button>
-          </td>
-        `;
+      <td>${index + 1}</td>
+      <td>                
+        <div class="d-flex align-items-center">
+          <img src="${getProductThumbnail(product)}" 
+               alt="${product.name}" 
+               class="rounded me-3" 
+               style="width: 40px; height: 40px; object-fit: fill;" />
+          <div>${product.name}</div>
+        </div>
+      </td>
+      <td>${product.category}</td>
+      <td>${product.subcategory || "-"}</td>
+      <td>$${product.price}</td>
+      <td><span class="badge ${product.status === "approved" ? "bg-success" : "bg-warning"}">${product.status}</span></td>
+      <td>
+        <button class="btn btn-sm btn-info text-white btn-view" data-product-index="${index}">
+          <i class="fas fa-eye"></i>
+        </button>
+        <button class="btn btn-sm btn-warning btn-edit" data-product-index="${index}">
+          <i class="fas fa-edit"></i>
+        </button>
+        <button class="btn btn-sm btn-danger btn-remove" data-product-index="${index}">
+          <i class="fas fa-trash"></i>
+        </button>
+      </td>
+    `;
         tableBody.appendChild(row);
       });
-
-      // Event delegation for action buttons
-      tableBody.addEventListener("click", async function (e) {
-        const productIndex = parseInt(e.target.closest("button")?.getAttribute("data-product-index"));
-        if (isNaN(productIndex)) return;
-
-        const product = products[productIndex];
-
-        if (e.target.closest(".btn-remove")) {
-          const confirmed = await showConfirmDialog(`Are you sure you want to delete ${product.name}?`, "Confirm deletion");
-          if (confirmed) {
-            products.splice(productIndex, 1);
-            localStorage.setItem("products", JSON.stringify(products));
-            loadProducts();
-            createToast("Product deleted successfully!", "success");
-          }
-        }
-
-        if (e.target.closest(".btn-view")) {
-          showProductView(product);
-        }
-
-        if (e.target.closest(".btn-edit")) {
-          showProductEdit(product, productIndex);
-        }
-      });
     }
+
+    document.getElementById("productTableBody").addEventListener("click", async function (e) {
+      const button = e.target.closest("button");
+      if (!button) return;
+
+      const productIndex = parseInt(button.getAttribute("data-product-index"));
+      if (isNaN(productIndex)) return;
+
+      let user = getCurrentUser();
+      let products = localStore.read("products", []).filter(prod => prod.sellerId === user.id);
+      const product = products[productIndex];
+
+      if (button.classList.contains("btn-remove")) {
+        const confirmed = await showConfirmDialog(`Are you sure you want to delete ${product.name}?`, "Confirm deletion");
+        if (confirmed) {
+          products.splice(productIndex, 1);
+          localStorage.setItem("products", JSON.stringify(products));
+          loadProducts();
+          createToast("Product deleted successfully!", "success");
+        }
+      }
+
+      if (button.classList.contains("btn-view")) {
+        showProductView(product);
+      }
+
+      if (button.classList.contains("btn-edit")) {
+        showProductEdit(product, productIndex);
+      }
+    });
 
     function showProductView(product) {
       const modalBody = `
@@ -703,11 +711,11 @@ export default class SellerProducts extends View {
         }
 
         const formData = new FormData(form);
-        const updatedProduct = {
+        let updatedProduct = {
           id: product.id,
           name: formData.get("name"),
           category: formData.get("category"),
-          subcategory: formData.get("subcategory"),
+          subCategory: formData.get("subcategory"),
           price: parseFloat(formData.get("price")),
           material: formData.get("material"),
           brand: formData.get("brand"),
@@ -758,13 +766,19 @@ export default class SellerProducts extends View {
           }
 
 
-          let products = localStore.read("products", [])
-          products[productIndex] = updatedProduct;
-          localStorage.setItem("products", JSON.stringify(products));
+          let allProducts = localStore.read("products", []);
+          const prodIndex = allProducts.findIndex(p => p.id === product.id);
+          if (prodIndex !== -1) {
+            updatedProduct = toProduct(updatedProduct);
+            allProducts[prodIndex] = updatedProduct;
+          }
+
+          localStorage.setItem("products", JSON.stringify(allProducts));
 
           loadProducts();
           bootstrap.Modal.getInstance(document.getElementById("productEditModal")).hide();
           createToast("Product updated successfully!", "success");
+
         } catch (err) {
           console.error("Image upload failed", err);
           createToast("Failed to upload images. Please try again.", "danger");
