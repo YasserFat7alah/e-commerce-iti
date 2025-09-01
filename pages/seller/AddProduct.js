@@ -4,6 +4,7 @@ import Toast from "../../components/ui/toast.js";
 import { navigate } from "../../scripts/utils/navigation.js";
 import { toProduct } from "../../scripts/utils/data.js";
 import { getCurrentUser } from './../../data/authentication.js';
+import { uploader } from "../../scripts/utils/uploader.js";
 
 export default class AddProduct extends View {
   template() {
@@ -241,7 +242,7 @@ export default class AddProduct extends View {
     }
 
     // Clear validation errors on input
-    form.addEventListener("input", function (e) {
+    form.addEventListener("input", async function (e) {
       if (e.target.classList.contains("is-invalid")) {
         clearInvalid(e.target);
       }
@@ -379,7 +380,7 @@ export default class AddProduct extends View {
     }
 
     // ===== Form submit =====
-    form.addEventListener("submit", function (event) {
+    form.addEventListener("submit", async function (event) {
       event.preventDefault();
       event.stopPropagation();
       let user = getCurrentUser();
@@ -487,7 +488,6 @@ export default class AddProduct extends View {
       }
 
       if (isValid) {
-        // Collect form data manually
         const productData = {
           id: generateProductID(
             form.querySelector("select[name='category']").value,
@@ -502,63 +502,53 @@ export default class AddProduct extends View {
           material: form.querySelector("input[name='material']").value,
           sellerId: user.id,
           status: "pending",
-          stock: [],
-          images: []
+          stock: [] // هنحط الستوك هنا مع الصور
         };
 
-        // Collect stock and images data
-        stockCards.forEach(card => {
-          const color = card.querySelector("input[name='color']").value;
-          const images = card.querySelector("input[name='images[]']").files;
-          const sizes = [];
+        try {
+          for (const card of stockCards) {
+            const color = card.querySelector("input[name='color']").value;
+            const images = card.querySelector("input[name='images[]']").files;
 
-          card.querySelectorAll(".size-item").forEach(row => {
-            const sizeInput = row.querySelector("input[name='sizeName']");
-            const qtyInput = row.querySelector("input[name='qty']");
-            const size = sizeInput ? sizeInput.value : "";
-            const qty = qtyInput ? qtyInput.value : "";
+            // رفع الصور الخاصة بالستوك ده
+            const urls = await uploader.uploadImages(Array.from(images));
 
-            if (size && qty) {
-              sizes.push({ name, qty: parseInt(qty) });
-            }
-          });
+            const sizes = [];
+            card.querySelectorAll(".size-item").forEach(row => {
+              const sizeInput = row.querySelector("input[name='sizeName']");
+              const qtyInput = row.querySelector("input[name='qty']");
+              const size = sizeInput ? sizeInput.value : "";
+              const qty = qtyInput ? qtyInput.value : "";
+              if (size && qty) {
+                sizes.push({ name: size, qty: parseInt(qty) });
+              }
+            });
 
-          productData.stock.push({
-            color,
-            sizes
-          });
+            // أضيف ستوك كامل بالصور الخاصة بيه
+            productData.stock.push({
+              color,
+              sizes,
+              images: urls
+            });
+          }
 
-          Array.from(images).forEach(img => {
-            productData.images.push(img.name);
-          });
-        });
+          // خزن المنتج
+          const product = toProduct(productData);
+          let products = localStore.read("products") || [];
+          products.push(product);
+          localStore.write("products", products);
 
-        // Convert to Product object
-        const product = toProduct(productData);
+          Toast.notify("✔ New Product has been added!");
+          setTimeout(() => {
+            navigate("/seller/products");
+          }, 5000);
 
-        // Save product
-        let products = localStore.read("products") || [];
-        products.push(product);
-        localStore.write("products", products);
-
-
-        console.log(products);
-
-        // Show success toast
-        Toast.notify("New Product has been added!")
-
-        //Redirect after 2 seconds
-        setTimeout(() => {
-          navigate("/seller/products")
-        }, 5000);
+        } catch (err) {
+          Toast.notify("❌ Image upload failed. Please try again.", "danger");
+          console.error(err);
+        }
       }
+
     });
-
-    // ===== Initial stock card =====
-    stockSection.innerHTML = "";
-    stockSection.appendChild(createStockCard());
-
-
   }
-
 }

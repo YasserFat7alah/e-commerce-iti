@@ -222,7 +222,7 @@ export function getProductThumbnail(product) {
             product.stock?.length > 0 &&
             product.stock[0].images?.length > 0
         ) {
-            return `../../data/imgs/products/${product.category.toLowerCase()}/${product.subcategory.toLowerCase()}/${product.id.toLowerCase()}/${product.stock[0].images[0]}`;
+            return `${product.stock[0].images[0]}`;
         }
     } catch (err) {
         console.error("Thumbnail error:", err);// if therer is no img

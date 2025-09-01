@@ -17,7 +17,7 @@ export function ProductCard(product) {
 <div class="card shadow-sm h-100">
   <div class="card-img-container position-relative">
     <img 
-      src="../../data/imgs/products/${product.category.toLowerCase()}/${product.subcategory.toLowerCase()}/${product.id.toLowerCase()}/${images[0]}" 
+      src="${images[0]}" 
       alt="${product.name}" 
       class="card-img-top">
     <button class="arrow left">&#10094;</button>
@@ -134,7 +134,7 @@ export function ProductCard(product) {
 
   let currentIndex = 0;
   function updateImage() {
-    imgEl.src = `../../data/imgs/products/${product.category.toLowerCase()}/${product.subcategory.toLowerCase()}/${product.id.toLowerCase()}/${images[currentIndex]}`;
+    imgEl.src = `${images[currentIndex]}`;
   }
 
   leftArrow.addEventListener("click", () => {
