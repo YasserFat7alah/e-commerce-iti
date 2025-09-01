@@ -11,7 +11,7 @@ export default class SellerProducts extends View {
     return `
       <div class="container-fluid mt-4">
         <div class="row justify-content-center">
-          <div class="col-12 col-lg-10 p-4 bg-white shadow rounded">
+          <div class="col-12 bg-white">
             <div class="d-flex gap-3 mb-3">
               <div class="d-flex align-items-center bg-warning rounded  px-3">${Anchor(`<i class="fas fa-plus bg"></i> New Product`, "/seller/addproduct")}   </div>
               <input type="text" id="searchInput" class="form-control w-50 w-lg-25" placeholder="Search products...">
@@ -27,7 +27,7 @@ export default class SellerProducts extends View {
                     <th>SubCategory</th>
                     <th>Price</th>
                     <th>Status</th>
-                    <th>Actions</th>
+                    <th style="width: 180px;">Actions</th>
                   </tr>
                 </thead>
                 <tbody id="productTableBody"></tbody>
