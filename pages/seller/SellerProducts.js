@@ -5,6 +5,7 @@ import { getProductThumbnail, showConfirmDialog } from "../../scripts/utils/dash
 import { getCurrentUser } from "../../data/authentication.js";
 import { uploader } from "../../scripts/utils/uploader.js";
 import { toProduct } from "../../scripts/utils/data.js";
+import Toast from "../../components/ui/toast.js";
 
 export default class SellerProducts extends View {
   template() {
@@ -485,10 +486,10 @@ export default class SellerProducts extends View {
       let products = localStore.read("products", []).filter(prod => prod.sellerId === user.id);
       const tableBody = document.getElementById("productTableBody");
 
-      // مسح الجدول
+
       tableBody.innerHTML = "";
 
-      // عرض المنتجات
+
       products.forEach((product, index) => {
         const row = document.createElement("tr");
         row.innerHTML = `
@@ -536,10 +537,17 @@ export default class SellerProducts extends View {
       if (button.classList.contains("btn-remove")) {
         const confirmed = await showConfirmDialog(`Are you sure you want to delete ${product.name}?`, "Confirm deletion");
         if (confirmed) {
-          products.splice(productIndex, 1);
-          localStorage.setItem("products", JSON.stringify(products));
+          let curr = products[productIndex];
+          let prods = localStore.read("products", []);
+
+          // filter out the product with the same id
+          prods = prods.filter(p => p.id !== curr.id);
+
+          // save the updated array back
+          localStore.write("products", prods);
           loadProducts();
-          createToast("Product deleted successfully!", "success");
+
+          Toast.notify(`${curr.name} was deleted successfully!`, 'black')
         }
       }
 
