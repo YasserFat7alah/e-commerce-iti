@@ -4,8 +4,6 @@ import { Anchor } from "../../components/ui/links.js";
 import { getProductThumbnail, showConfirmDialog } from "../../scripts/utils/dashboardUtils.js";
 import { getCurrentUser } from "../../data/authentication.js";
 import { uploader } from "../../scripts/utils/uploader.js";
-import { toProduct } from "../../scripts/utils/data.js";
-import Toast from "../../components/ui/toast.js";
 
 export default class SellerProducts extends View {
   template() {
@@ -523,42 +521,32 @@ export default class SellerProducts extends View {
       });
     }
 
-    document.getElementById("productTableBody").addEventListener("click", async function (e) {
-      const button = e.target.closest("button");
-      if (!button) return;
+      // Event delegation for action buttons
+      tableBody.addEventListener("click", async function (e) {
+        const productIndex = parseInt(e.target.closest("button")?.getAttribute("data-product-index"));
+        if (isNaN(productIndex)) return;
 
-      const productIndex = parseInt(button.getAttribute("data-product-index"));
-      if (isNaN(productIndex)) return;
+        const product = products[productIndex];
 
-      let user = getCurrentUser();
-      let products = localStore.read("products", []).filter(prod => prod.sellerId === user.id);
-      const product = products[productIndex];
-
-      if (button.classList.contains("btn-remove")) {
-        const confirmed = await showConfirmDialog(`Are you sure you want to delete ${product.name}?`, "Confirm deletion");
-        if (confirmed) {
-          let curr = products[productIndex];
-          let prods = localStore.read("products", []);
-
-          // filter out the product with the same id
-          prods = prods.filter(p => p.id !== curr.id);
-
-          // save the updated array back
-          localStore.write("products", prods);
-          loadProducts();
-
-          Toast.notify(`${curr.name} was deleted successfully!`, 'black')
+        if (e.target.closest(".btn-remove")) {
+          const confirmed = await showConfirmDialog(`Are you sure you want to delete ${product.name}?`, "Confirm deletion");
+          if (confirmed) {
+            products.splice(productIndex, 1);
+            localStorage.setItem("products", JSON.stringify(products));
+            loadProducts();
+            createToast("Product deleted successfully!", "success");
+          }
         }
-      }
 
-      if (button.classList.contains("btn-view")) {
-        showProductView(product);
-      }
+        if (e.target.closest(".btn-view")) {
+          showProductView(product);
+        }
 
-      if (button.classList.contains("btn-edit")) {
-        showProductEdit(product, productIndex);
-      }
-    });
+        if (e.target.closest(".btn-edit")) {
+          showProductEdit(product, productIndex);
+        }
+      });
+    }
 
     function showProductView(product) {
       const modalBody = `
@@ -774,19 +762,13 @@ export default class SellerProducts extends View {
           }
 
 
-          let allProducts = localStore.read("products", []);
-          const prodIndex = allProducts.findIndex(p => p.id === product.id);
-          if (prodIndex !== -1) {
-            updatedProduct = toProduct(updatedProduct);
-            allProducts[prodIndex] = updatedProduct;
-          }
-
-          localStorage.setItem("products", JSON.stringify(allProducts));
+          let products = localStore.read("products", [])
+          products[productIndex] = updatedProduct;
+          localStorage.setItem("products", JSON.stringify(products));
 
           loadProducts();
           bootstrap.Modal.getInstance(document.getElementById("productEditModal")).hide();
           createToast("Product updated successfully!", "success");
-
         } catch (err) {
           console.error("Image upload failed", err);
           createToast("Failed to upload images. Please try again.", "danger");
