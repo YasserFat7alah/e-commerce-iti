@@ -1,5 +1,4 @@
-//admin-products page
-import { checkStock, showConfirmDialog, truncateText, getProductThumbnail } from "../../scripts/utils/dashboardUtils.js";
+import { checkStock,getProductStatus,renderStockDetails,buildCarousel, showConfirmDialog, truncateText, getProductThumbnail } from "../../scripts/utils/dashboardUtils.js";
 import { localStore } from "../../scripts/utils/storage.js";
 import Toast from "../ui/toast.js";
 
@@ -28,7 +27,6 @@ export function renderProducts(container) {
         </div>
 
         <!--.....................................Stats Row....................................-->
-                                <!--........Total Product card..........-->
         <div class="row g-3 mb-4">
             <div class="col-6 col-md-3">
                 <div class="card border-0 shadow-lg h-100">
@@ -38,7 +36,6 @@ export function renderProducts(container) {
                     </div>
                 </div>
             </div>
-                                <!--............Stock card..............-->
             <div class="col-6 col-md-3">
                 <div class="card border-0 shadow-lg h-100">
                     <div class="card-body text-center">
@@ -47,7 +44,6 @@ export function renderProducts(container) {
                     </div>
                 </div>
             </div>
-                                <!--............items on sale Card..............-->
             <div class="col-6 col-md-3">
                 <div class="card border-0 shadow-lg h-100">
                     <div class="card-body text-center">
@@ -56,7 +52,6 @@ export function renderProducts(container) {
                     </div>
                 </div>
             </div>
-                                <!--............Categories Card..............-->
             <div class="col-6 col-md-3">
                 <div class="card border-0 shadow-lg h-100">
                     <div class="card-body text-center">
@@ -114,7 +109,6 @@ export function renderProducts(container) {
 
         <!--.......................... Products Table .................................-->
         <div class="card border-1 shadow-sm mb-4">
-            <!--.................Table Title...................-->
             <div class="card-header bg-white py-2 shadow-sm">
                 <h5 class="card-title mb-0">
                     <i class="fas fa-table me-2 text-primary"></i>
@@ -129,31 +123,16 @@ export function renderProducts(container) {
     ProductEvents(container);
 }
 
-function renderCategoryFilter() {
-    const select = document.getElementById("categoryFilter");
-    select.innerHTML = `<option value="">All Categories</option>`; // default option
-
-    const products = localStore.read("products") || [];
-    const categories = [...new Set(products.map(p => p.category))];
-
-    categories.forEach(cat => {
-        const option = document.createElement("option");
-        option.value = cat;
-        option.textContent = cat;
-        select.appendChild(option);
-    });
-}
-
-export function renderProductsTable(products) {
+function renderProductsTable(products) {
     return `
-        <div class="table-responsive ">
+        <div class="table-responsive">
             <table class="table table-hover mb-0">
                 <thead class="table-primary">
                     <tr>
                         <th scope="col" class="ps-4">
                             <input type="checkbox" class="form-check-input" id="selectAll">
                         </th>
-                        <th scope="col" class="sortable-header" data-sort="id" style="cursor: pointer;" >
+                        <th scope="col" class="sortable-header" data-sort="id" style="cursor: pointer;">
                             ID
                             <i class="fas fa-sort ms-1" data-field="id"></i>
                         </th>
@@ -173,6 +152,10 @@ export function renderProductsTable(products) {
                             Stock 
                             <i class="fas fa-sort ms-1" data-field="stock"></i>
                         </th>
+                        <th scope="col" class="sortable-header" data-sort="status" style="cursor: pointer;">
+                            Status 
+                            <i class="fas fa-sort ms-1" data-field="status"></i>
+                        </th>
                         <th scope="col" class="text-center">Actions</th>
                     </tr>
                 </thead>
@@ -185,9 +168,10 @@ export function renderProductsTable(products) {
 }
 
 function renderProductRow(product) {
+    // const status = product.status || 'pending';
     return `
         <tr>
-        <!-- checkbox column (#1st)-->
+            <!-- checkbox column (#1st)-->
             <td class="ps-4">
                 <input type="checkbox" class="form-check-input product-checkbox" value="${product.id}">
             </td>
@@ -198,12 +182,12 @@ function renderProductRow(product) {
             <!-- Product column (#3rd)-->
             <td>
                 <div class="d-flex align-items-center">
-                        <img 
-                            src="${getProductThumbnail(product)}" 
-                            alt="${product.name}" 
-                            class="rounded me-3" 
-                            style="width: 40px; height: 40px; object-fit: fill;" 
-                        />
+                    <img 
+                        src="${getProductThumbnail(product)}" 
+                        alt="${product.name}" 
+                        class="rounded me-3" 
+                        style="width: 40px; height: 40px; object-fit: fill;" 
+                    />
                     <div>
                         <div class="fw-semibold">${truncateText(product.name,20)}</div>
                         <small class="text-muted">${product.brand || 'No Brand'}</small>
@@ -229,30 +213,51 @@ function renderProductRow(product) {
                     `}
                 </div>
             </td>
-            <!-- Stock column (#6th)-->
+            <!-- Stock column (#6th) with colors and sizes and qty-->
             <td>
-                ${checkStock(product)==="In Stock" ? `<span class="badge bg-success">${checkStock(product)}</span>` : `<span class="badge bg-danger">${checkStock(product)}</span>`}
+                <div>
+                    ${checkStock(product) === "In Stock" ? 
+                        `<span class="badge bg-success">${checkStock(product)}</span>` : 
+                        `<span class="badge bg-danger">${checkStock(product)}</span>`}
+                    ${renderStockDetails(product)}
+                </div>
             </td>
-            <!-- Actions column (#7th)-->
+            <!-- Status column (#7th)  -->
+            <td>
+                ${getProductStatus(product)}
+            </td>
+            <!-- Actions column (#8th)-->
             <td class="text-center">
                 <div class="btn-group btn-group-sm" role="group">
-                    <button class="btn  btn-sm  view-product-btn" 
-                        data-product-id="${product.id}"
-                        title="View Details"
-                        data-bs-toggle="tooltip">
+                    <button class="btn btn-sm view-product-btn" 
+                        data-product-id="${product.id}" title="View Details" data-bs-toggle="tooltip">
                         <i class="fas fa-eye text-info"></i>
                     </button>
-                    <button class="btn btn-sm  remove-product" 
-                        data-id="${product.id}" 
-                        data-name="${product.name}"
-                        title="Delete Product"
-                        data-bs-toggle="tooltip">
+                    <button class="btn btn-sm remove-product" 
+                        data-id="${product.id}"  data-name="${product.name}" title="Delete Product" data-bs-toggle="tooltip">
                         <i class="fas fa-trash text-danger"></i>
                     </button>
+                    <div class="dropdown">
+                        <button class="btn btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-cog"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item pro-status-update" href="#" data-product-id="${product.id}" data-status="pending">
+                                    <i class="fas fa-clock me-2 text-warning"></i>Mark as Pending 
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item pro-status-update" href="#" data-product-id="${product.id}" data-status="approved">
+                                    <i class="fas fa-check me-2 text-success"></i>Approve
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </td>
         </tr>
-    `;
+    `; 
 }
 
 function renderEmptyState() {
@@ -265,71 +270,111 @@ function renderEmptyState() {
     `;
 }
 
-//event listeners
-export function ProductEvents(container) {
-    // Search functionality
-    const searchInput = document.getElementById("searchInput");
-    if (searchInput) {
-        searchInput.addEventListener("input", handleProductSearch);      // ev1........needs fun #1
-    }
-
-    // Category filter
-    const categoryFilter = document.getElementById("categoryFilter");
-    if (categoryFilter) {
-        categoryFilter.addEventListener("change", handleCategoryFilter);// ev2........needs fun #2
-    }
-
-    // Delete product buttons
-    document.querySelectorAll(".remove-product").forEach((btn) => {
-        btn.addEventListener("click", handleProductDelete);             // ev3........ needsfun #3
-    });
-
-    // View product buttons
-    document.querySelectorAll(".view-product-btn").forEach((btn) => {
-        btn.addEventListener("click", () => {
-            const productId = btn.getAttribute("data-product-id");
-            viewProductDetails(productId);                               // ev4........needs fun #4
-        });
-    });
-
-    // Bulk action button
-    const bulkDeleteBtn = document.getElementById("bulkDeleteBtn");
-    if (bulkDeleteBtn) {
-        bulkDeleteBtn.addEventListener("click", () => bulkAction("delete"));//ev5 ........needs fun #5
-    }
-
-    // Select all checkbox
-    const selectAllCheckbox = document.getElementById("selectAll");
-    if (selectAllCheckbox) {
-        selectAllCheckbox.addEventListener("change", function () {
-            const checkboxes = container.querySelectorAll(".product-checkbox");
-            checkboxes.forEach((cb) => (cb.checked = this.checked)); // this = selectAllCheckbox
-            toggleBulkActions();                                           // ev6........ needs fun #6
-        });
-    }
-
-    // Individual checkboxes ( makes the bulk action button visible too)
-    container.querySelectorAll(".product-checkbox").forEach((checkbox) => {
-        checkbox.addEventListener("change", toggleBulkActions);    // ev7........Same fun as above #6
-    });
+//event listeners  
+function ProductEvents(container) {
+    // Event delegation for the  container not  elements
+    container.addEventListener('click', handleContainerClick);
+    container.addEventListener('change', handleContainerChange);
+    container.addEventListener('input', handleContainerInput);
 
     // Sorting table
-    container.querySelectorAll(".sortable-header").forEach((header) => {
-        header.addEventListener("click", handleSort);                  // ev8........ needsfun #7
+    container.addEventListener('click', (e) => {
+        const header = e.target.closest('.sortable-header');
+        if (header) {
+            handleSort(e);
+        }
     });
 
-    // tooltips (data-bs-toggle="tooltip") make the titles visible on hover using bootstrap js
-    const btnToolTip = container.querySelectorAll('[data-bs-toggle="tooltip"]');
-    btnToolTip.forEach((tp) => {
-        new bootstrap.Tooltip(tp); //bootstrap js
-    });
-
-    toggleBulkActions(); //....fun #6
+    initializeTooltips(container);
+    toggleBulkActions();
 }
 
+// click handlers function for product events 
+function handleContainerClick(e) {
+    const target = e.target.closest('button') || e.target.closest('a');
+
+    if (!target) return;
+
+    // Handle delete product buttons
+    if (target.classList.contains('remove-product')) {
+        handleProductDelete(e);
+    }
+    // Handle view product buttons
+    else if (target.classList.contains('view-product-btn')) {
+        const productId = target.getAttribute('data-product-id');
+        viewProductDetails(productId);
+    }
+    // Handle bulk delete button (multiple delete)
+    else if (target.id === 'bulkDeleteBtn') {
+        bulkAction('delete');
+    }
+    // Handle status update "dropdown btn"
+    else if (target.classList.contains('pro-status-update')) {
+        handleStatusUpdate(e);
+    }
+}
+
+// change handler
+function handleContainerChange(e) {
+    const target = e.target;
+    // Handle select all checkbox
+    if (target.id === 'selectAll') {
+        const checkboxes = document.querySelectorAll('.product-checkbox');
+        checkboxes.forEach((cb) => (cb.checked = target.checked));
+        toggleBulkActions();
+    }
+    // Handle individual product checkboxes
+    else if (target.classList.contains('product-checkbox')) {
+        toggleBulkActions();
+    }
+    // Handle category filter
+    else if (target.id === 'categoryFilter') {
+        handleCategoryFilter.call(target); // "this" = target = select element (i had to change the "this" context  usnig call to refer to the select element)
+    }
+}
+
+// input handler
+function handleContainerInput(e) {
+    const target = e.target;
+    // Handle search input
+    if (target.id === 'searchInput') {
+        handleProductSearch.call(target); // "this" = target = input element
+    }
+}
+
+//Product atatus update handler
+function handleStatusUpdate(e) {
+    e.preventDefault();
+    const target = e.target.closest('a');
+    const productId = target.getAttribute('data-product-id');
+    const newStatus = target.getAttribute('data-status');
+
+    if (!productId || !newStatus) return;
+
+    const products = localStore.read('products') || [];
+    const productIndex = products.findIndex(p => p.id === productId);
+
+    if (productIndex !== -1) {
+        products[productIndex].status = newStatus;
+        localStore.write('products', products);
+        
+        Toast.notify(`Product status updated to ${newStatus}`, 'success');
+        // Re-render the products to show updated status
+        const container = document.getElementById('adminContent');
+        renderProducts(container);
+    }
+}
+
+// Initialize tooltips 
+function initializeTooltips(container) {
+    const tooltipElements = container.querySelectorAll('[data-bs-toggle="tooltip"]');
+    tooltipElements.forEach((element) => {
+        new bootstrap.Tooltip(element);
+    });
+}
 
 // Event Handlers
-function handleProductSearch() { // for  event #1
+function handleProductSearch() {
     const searchTerm = this.value.toLowerCase();
     const container = document.getElementById("adminContent");
     const rows = container.querySelectorAll("tbody tr");
@@ -346,7 +391,7 @@ function handleProductSearch() { // for  event #1
     });
 }
 
-function handleCategoryFilter() { // for event #2
+function handleCategoryFilter() {
     const selectedCategory = this.value;
     const container = document.getElementById("adminContent");
     const rows = container.querySelectorAll("tbody tr");
@@ -362,7 +407,7 @@ function handleCategoryFilter() { // for event #2
     });
 }
 
-async function handleProductDelete(e) { // for event #3
+async function handleProductDelete(e) {
     e.preventDefault();
     const button = e.target.closest('button');
     if (!button) return;
@@ -380,13 +425,10 @@ async function handleProductDelete(e) { // for event #3
 
     const container = document.getElementById("adminContent");
     renderProducts(container);
-    renderCategoryFilter();
 }
-
-export function viewProductDetails(productId) { // for event #4
+function viewProductDetails(productId) {
     const products = localStore.read("products") || [];
     const product = products.find((p) => p.id === productId);
-
     if (product) {
         const modalHtml = `
             <div class="modal fade" id="productDetailsModal" tabindex="-1">
@@ -401,13 +443,17 @@ export function viewProductDetails(productId) { // for event #4
                         <div class="modal-body">
                             <div class="row g-4">
                                 <div class="col-md-4 text-center">
-                                    <img 
-                                    src="${getProductThumbnail(product)}" 
-                                    alt="${product.name}" 
-                                    class="rounded me-3" 
-                                    style="width: 100px; height: 100px; object-fit: fill;"/>
-                                    <p class="fw-semibold" >${product.name}</p>
-                                    <span class="badge bg-dark ">${product.category}</span>
+                                        ${buildCarousel(product,"AdminProCarousel")}
+                                    <p class="fw-semibold">${product.name}</p>
+                                    <div class="col-12">
+                                        <div class="fw-semibold">
+                                            <span class="badge bg-dark">${product.category}</span>
+                                                ${checkStock(product) === "In Stock" ? 
+                                                `<span class="badge bg-success me-2">${checkStock(product)}</span>` : 
+                                                `<span class="badge bg-danger me-2">${checkStock(product)}</span>`}
+                                                ${renderStockDetails(product)}
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="col-md-8">
                                     <div class="row g-3">
@@ -416,20 +462,23 @@ export function viewProductDetails(productId) { // for event #4
                                             <div class="fw-semibold">${truncateText(product.description, 100) || "No description"}</div>
                                         </div>
                                         <div class="col-6">
-                                            <label class="form-label text-muted small">PRICE</label>
+                                            <label class="form-label text-muted small">PRICE:</label>
                                             <div class="fw-semibold">$${product.price}</div>
                                         </div>
                                         <div class="col-6">
-                                            <label class="form-label text-muted small">BRAND</label>
+                                            <label class="form-label text-muted small">BRAND:</label>
                                             <div class="fw-semibold">${product.brand || "No Brand"}</div>
                                         </div>
                                         <div class="col-6">
-                                            <label class="form-label text-muted small">MATERIAL</label>
+                                            <label class="form-label text-muted small">MATERIAL:</label>
                                             <div class="fw-semibold">${product.material || "Not specified"}</div>
                                         </div>
                                         <div class="col-6">
-                                            <label class="form-label text-muted small">SELLER ID</label>
+                                            <label class="form-label text-muted small">SELLER ID:</label>
                                             <div class="fw-semibold">${product.sellerId}</div>
+                                        </div>
+                                        <div class="mt-3">
+                                            <label class="form-label text-muted small me-2">STATUS:</label>${getProductStatus(product)}
                                         </div>
                                     </div>
                                 </div>
@@ -458,7 +507,7 @@ export function viewProductDetails(productId) { // for event #4
     }
 }
 
-async function bulkAction(action) { //for event #5
+async function bulkAction(action) {
     const selectedCheckboxes = document.querySelectorAll(".product-checkbox:checked");
     const selectedIds = Array.from(selectedCheckboxes).map((cb) => cb.value);
     if (selectedIds.length === 0) return;
@@ -470,16 +519,15 @@ async function bulkAction(action) { //for event #5
         if (!confirmed) return;
 
         products = products.filter((p) => !selectedIds.includes(p.id));
-            Toast.notify(`${selectedIds.length} product(s) have been deleted successfully.`, "warning");
+        Toast.notify(`${selectedIds.length} product(s) have been deleted successfully.`, "warning");
     }
 
     localStore.write("products", products);
     const container = document.getElementById("adminContent");
     renderProducts(container);
-    renderCategoryFilter();
 }
 
-function toggleBulkActions() { //for event #6 and #7
+function toggleBulkActions() {
     const selectedCheckboxes = document.querySelectorAll(".product-checkbox:checked");
     const bulkActionsBar = document.getElementById("bulkActionsBar");
 
@@ -495,103 +543,69 @@ function toggleBulkActions() { //for event #6 and #7
     }
 }
 
-// ...................................Sorting Functions....................................................
-function handleSort(e) {   // ......................for event #8
-    const header = e.currentTarget;
-    const field = header.getAttribute('data-sort'); //id, name, category, price, stock
+// Sorting Functions 
+function handleSort(e) {
+    const header = e.target.closest('.sortable-header');
 
-    // Toggle direction if same field
-    if (currentSort.field === field) { //If same col clicked again =>change sorting direction value "asc , desc"
+    const field = header.getAttribute('data-sort');
+        console.log('Sorting field:', field);
+
+    if (currentSort.field === field) {
         currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
     } else {
-        currentSort.field = field; // instead of default "null"
-        currentSort.direction = 'asc'; //if diff col clicked =>change sorting direction value to "asc" default
+        currentSort.field = field;
+        currentSort.direction = 'asc';
     }
 
-    // Sort products
     sortProducts(field, currentSort.direction);
 }
 
-function sortProducts(field, direction) {
+export function sortProducts(field, direction) {
     const products = localStore.read("products") || [];
-
     const sortedProducts = [...products].sort((a, b) => {
         let aVal, bVal;
 
         switch (field) {
             case 'id':
-                aVal = a.id;
-                bVal = b.id;
+                aVal = a.id || '';
+                bVal = b.id || '';
                 break;
             case 'name':
-                aVal = a.name.toLowerCase();
-                bVal = b.name.toLowerCase();
+                aVal = (a.name || '').toLowerCase();
+                bVal = (b.name || '').toLowerCase();
                 break;
             case 'category':
-                aVal = a.category.toLowerCase();
-                bVal = b.category.toLowerCase();
+                aVal = (a.category || '').toLowerCase();
+                bVal = (b.category || '').toLowerCase();
                 break;
             case 'price':
-                aVal = parseFloat(a.price);
-                bVal = parseFloat(b.price);
+                aVal = parseFloat(a.price) || 0;
+                bVal = parseFloat(b.price) || 0;
                 break;
             case 'stock':
-                aVal = checkStock(a);
-                bVal = checkStock(b);
+                // Convert stock status to numeric for sorting (In Stock = 1, Out of Stock = 0)
+                aVal = checkStock(a) === "In Stock" ? 1 : 0;
+                bVal = checkStock(b) === "In Stock" ? 1 : 0;
+                break;
+            case 'status':
+                aVal = (a.status || '').toLowerCase();
+                bVal = (b.status || '').toLowerCase();
                 break;
             default:
                 return 0;
         }
-
-        // Handle string comparison
+        // string comparison
         if (typeof aVal === 'string' && typeof bVal === 'string') {
-            if (direction === 'asc') {
-                return aVal.localeCompare(bVal);
-            } else {
-                return bVal.localeCompare(aVal);
-            }
+            return direction === 'asc'
+                ? aVal.localeCompare(bVal)
+                : bVal.localeCompare(aVal); // localeCompare to compare strings (alphabetically) instead of "-" them
         }
-
-        // Handle numeric comparison
-        if (direction === 'asc') {
-            return aVal - bVal;
-        } else {
-            return bVal - aVal;
-        }
+        return direction === 'asc' ? aVal - bVal : bVal - aVal;
     });
-
     // Re-render table body
     const tbody = document.getElementById('productsTableBody');
     if (tbody) {
         tbody.innerHTML = sortedProducts.map(product => renderProductRow(product)).join("");
-        attachRowEventListeners();
+        initializeTooltips(document.getElementById('adminContent'));
     }
 }
-//reattaching events after sorting cause somehow it gets lost
-function attachRowEventListeners() {
-    // Re-attach delete buttons
-    document.querySelectorAll(".remove-product").forEach((btn) => {
-        btn.addEventListener("click", handleProductDelete);
-    });
-
-    // Re-attach view buttons
-    document.querySelectorAll(".view-product-btn").forEach((btn) => {
-        btn.addEventListener("click", () => {
-            const productId = btn.getAttribute("data-product-id");
-            viewProductDetails(productId);
-        });
-    });
-
-    // Re-attach checkboxes
-    document.querySelectorAll(".product-checkbox").forEach((checkbox) => {
-        checkbox.addEventListener("change", toggleBulkActions);
-    });
-
-    // Re-attach tooltips
-    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach((tp) => {
-        new bootstrap.Tooltip(tp);
-    });
-}
-
-
-

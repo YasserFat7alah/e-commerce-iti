@@ -6,7 +6,7 @@ export function chartCreation(canvasId, labels, data, colors, type = 'pie') {
         const ctx = document.getElementById(canvasId);
         if (ctx) {
             // Load Chart.js 
-             createChartInstance(ctx, type, labels, data, colors);
+            createChartInstance(ctx, type, labels, data, colors);
         }
     }, 100);
 }

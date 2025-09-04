@@ -1,19 +1,14 @@
-
 import View from "../../components/core/view.js";
-import { renderEmptyState, renderUserForm, renderUsers, renderUsersTable, UserEvents } from "../../components/dashboard/admin-users.js";
-import { localStore } from "../../scripts/utils/storage.js";
-
+import { renderUsers } from "../../components/dashboard/admin-users.js";
 
 export default class UsersPage extends View {
     template() {
-        const element = document.createElement("div")
-        element.setAttribute("id", "user")
-        const fun =renderUsers(element)
-        return  fun.outerHTML;    }
+        return `<div id="usersPageContainer"></div>`;
+    }
 
     script() {
-        let user = document.getElementById("user")
-        UserEvents(user);
+        const user = document.getElementById("usersPageContainer")
+        renderUsers(user);
         
     }
 

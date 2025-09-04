@@ -1,4 +1,3 @@
-//admin users page
 import { capitalizeWords, generateId, getInitials, getRandomColor,getRoleBadge, formatDate, showConfirmDialog, generateRandomPassword } from "../../scripts/utils/dashboardUtils.js";
 import User from "../../data/_schema/UserModel.js";
 import { localStore } from "../../scripts/utils/storage.js";
@@ -900,7 +899,7 @@ function sortUsers(field, direction) {
                 return 0;
         }
 
-        // Handle string comparison
+        // string comparison
         if (typeof aVal === 'string' && typeof bVal === 'string') {
             if (direction === 'asc') {
                 return aVal.localeCompare(bVal);
@@ -924,7 +923,7 @@ function sortUsers(field, direction) {
         attachRowEventListeners()
     }
 }
-//reattaching events after sorting cause somehow it gets lost
+//reattaching events after sorting cause somehow it gets lost after rendering
 function attachRowEventListeners() {
     // Re-attach delete buttons
     document.querySelectorAll(".remove-user").forEach((btn) => {

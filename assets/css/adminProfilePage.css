@@ -1,10 +1,8 @@
 
 /* Admin Profile Container */
 .admin-profile-container {
-    background: radial-gradient(1200px 400px at 50% -10%, rgba(249, 115, 22, .25), transparent),
-        linear-gradient(180deg, rgba(255, 255, 255, .04), rgba(255, 255, 255, 0));
-    border-bottom: 1px solid rgba(255, 255, 255, .08);
-
+    background: linear-gradient(180deg, rgba(227, 180, 92, 0.3) 0%,rgba(250, 193, 88, 0.05) 50%);
+}
 /* Profile Header Section */
 .admin-profile-header {
     position: relative;
@@ -13,16 +11,17 @@
 /* Profile Avatar */
 .admin-profile-avatar {
     background: var(--brand);
-    border: 1px solid rgba(255, 255, 255, 0.022);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
     font-weight: bold;
-    font-size: 3rem !important;
+    font-size: 2rem !important;
     transition: all 0.5s ease-in-out;
     margin: 0 auto;
+    width: 100px;
+    height: 100px; 
 }
 
 .admin-profile-avatar:hover {
@@ -37,7 +36,7 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    font-weight: 700;
+    font-weight: bold;
     letter-spacing: -0.5px;
 }
 
@@ -57,7 +56,7 @@
 /* Information Cards */
 .admin-profile-info-card {
     background: rgba(255, 255, 255, 0.9);
-    border: 1px solid rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(111, 76, 0, 0.2);
     border-radius: 12px;
     transition: all 0.3s ease;
     backdrop-filter: blur(10px);
@@ -72,6 +71,7 @@
     left: 0;
     right: 0;
     height: 3px;
+    background: linear-gradient(90deg, #e1da13, rgb(233, 172, 60), #e1da13);
     opacity: 0;
     transition: opacity 0.3s ease;
 }
@@ -103,7 +103,7 @@
 .admin-profile-edit-btn {
     background: transparent;
     border:none;
-    color: var(--brand);
+    color: #667eea;
     border-radius: 8px;
     padding: 4px 8px;
     transition: all 0.2s ease;
@@ -111,7 +111,7 @@
 }
 
 .admin-profile-edit-btn:hover {
-    background: rgba(255, 166, 0, 0.167);
+    background: rgba(255, 166, 0, 0.441);
     color: orangered;
     transform: scale(1.02);
 }
@@ -120,7 +120,7 @@
 .admin-profile-password-toggle-btn {
     background: transparent;
     border: none;
-    color: var(--brand);
+    color: #3498db;
     border-radius: 8px;
     padding: 4px 8px;
     transition: all 0.2s ease;
@@ -173,10 +173,9 @@
 }
 
 
-.admin- -grid .col-6:nth-child(1) .admin-profile-info-card { animation-delay: 0.1s; }
+.admin-profile-grid .col-6:nth-child(1) .admin-profile-info-card { animation-delay: 0.1s; }
 .admin-profile-grid .col-6:nth-child(2) .admin-profile-info-card { animation-delay: 0.2s; }
 .admin-profile-grid .col-6:nth-child(3) .admin-profile-info-card { animation-delay: 0.2s; }
 .admin-profile-grid .col-6:nth-child(4) .admin-profile-info-card { animation-delay: 0.3s; }
 .admin-profile-grid .col-6:nth-child(5) .admin-profile-info-card { animation-delay: 0.4s; }
 .admin-profile-grid .col-6:nth-child(6) .admin-profile-info-card { animation-delay: 0.5s; } 
-}
