@@ -8,6 +8,14 @@ import FloatBtns from "../components/ui/floating.js";
 
 
 export default class Profile extends View {
+    constructor(_config, _params = {}) {
+        // Call base constructor
+        super({
+            title: 'Profile | AYAAM'
+        }, _params);
+
+    }
+
     template() {
         return `
         <header class="sticky-top bg-white" id='navbar'></header>
