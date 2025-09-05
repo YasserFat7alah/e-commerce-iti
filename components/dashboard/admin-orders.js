@@ -1,3 +1,4 @@
+import { capitalizeWords, truncateText } from "../../scripts/utils/dashboardUtils.js";
 import { localStore } from "../../scripts/utils/storage.js";    
 import Toast from "../ui/toast.js";
 
@@ -117,6 +118,7 @@ export function renderTopProductsCard(topProducts) {
 
 // Orders table
 export function renderOrdersTable(orders) {
+    //no rders
     if (orders.length === 0) {
         return `
         <div class="text-center py-5">
@@ -125,7 +127,7 @@ export function renderOrdersTable(orders) {
             <p class="text-muted">Orders will appear here once customers start purchasing</p>
         </div>`;
     }
-
+    // Render orders inside table
     return `
     <div class="table-responsive">
         <table class="table table-hover mb-0">
@@ -142,12 +144,13 @@ export function renderOrdersTable(orders) {
             </thead>
             <tbody>
                 ${orders.map(order => {
-                    const total = order.orderItems.reduce((sum, item) => sum + (parseFloat(item.price) * item.qty), 0).toFixed(2);
+                    const total = order.orderItems.reduce((sum, item) => sum + (parseFloat(item.price) * item.qty), 0).toFixed(2);// for total col(price*qty)
                     
-                    const status = order.state || 'pending';
+                    const status = order.state || 'pending'; // for status col
                     
                     const statusClass = getStatusBadgeClass(status);
-
+                    // display odrers data in each row (the whole order with all items knside the row)
+                    //tr id is = order id
                     return `
                         <tr id="order-row-${order.orderId}">
                             <td><code>${order.orderId}</code></td>
@@ -160,7 +163,7 @@ export function renderOrdersTable(orders) {
                                     <div class="d-flex align-items-center mb-2">
                                         <img src="${item.img}" alt="${item.productName}" style="width:40px;height:40px;object-fit:cover;border-radius:6px;margin-right:10px;" />
                                         <div>
-                                            <strong style="font-size:0.9rem;">${item.productName}</strong><br>
+                                            <strong style="font-size:0.8rem;">${truncateText(item.productName,25) }</strong><br>
                                             <small class="text-muted">Qty: ${item.qty} | Size: ${item.size}</small>
                                         </div>
                                     </div>
@@ -168,34 +171,34 @@ export function renderOrdersTable(orders) {
                             </td>
                             <td>
                                 <span id="status-badge-${order.orderId}" class="badge ${statusClass}">
-                                    ${getStatusIcon(status)} ${capitalizeStatus(status)}
+                                    ${getStatusIcon(status)} ${capitalizeWords(status)}
                                 </span>
                             </td>
                             <td><strong class="text-success">${total}</strong></td>
                             <td><small>${order.orderDate}</small></td>
                             <td>
                                 <div class="dropdown">
-                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                    <button class="btn btn-sm  dropdown-toggle" type="button" data-bs-toggle="dropdown">
                                         <i class="fas fa-cog"></i>
                                     </button>
                                     <ul class="dropdown-menu">
                                         <li>
-                                            <a class="dropdown-item ${status === 'pending' ? 'active' : ''}" href="#" data-action="status-update" data-order-id="${order.orderId}" data-status="pending">
+                                            <a class="dropdown-item }" href="#" data-action="status-update" data-order-id="${order.orderId}" data-status="pending">
                                                 <i class="fas fa-clock me-2 text-warning"></i>Mark as Pending
                                             </a>
                                         </li>
                                         <li>
-                                            <a class="dropdown-item ${status === 'confirmed' ? 'active' : ''}" href="#" data-action="status-update" data-order-id="${order.orderId}" data-status="confirmed">
+                                            <a class="dropdown-item }" href="#" data-action="status-update" data-order-id="${order.orderId}" data-status="confirmed">
                                                 <i class="fas fa-check me-2 text-info"></i>Mark as Confirmed
                                             </a>
                                         </li>
                                         <li>
-                                            <a class="dropdown-item ${status === 'shipped' ? 'active' : ''}" href="#" data-action="status-update" data-order-id="${order.orderId}" data-status="shipped">
+                                            <a class="dropdown-item }" href="#" data-action="status-update" data-order-id="${order.orderId}" data-status="shipped">
                                                 <i class="fas fa-truck me-2 text-primary"></i>Mark as Shipped
                                             </a>
                                         </li>
                                         <li>
-                                            <a class="dropdown-item ${status === 'delivered' ? 'active' : ''}" href="#" data-action="status-update" data-order-id="${order.orderId}" data-status="delivered">
+                                            <a class="dropdown-item }" href="#" data-action="status-update" data-order-id="${order.orderId}" data-status="delivered">
                                                 <i class="fas fa-check-circle me-2 text-success"></i>Mark as Delivered
                                             </a>
                                         </li>
@@ -215,17 +218,16 @@ export function initializeOrdersDashboard(chartData) {
     initializeOrderCharts(chartData);
 }
 
-// Event listeners
+// Event listeners (remove old listener then add new)
 export function setupEventListeners() {
-    document.removeEventListener('click', handleDashboardClicks);
-    document.addEventListener('click', handleDashboardClicks);
+    document.removeEventListener('click', updateStatus);
+    document.addEventListener('click', updateStatus);
 }
 
 // Handle clicks
-export function handleDashboardClicks(event) {
+export function updateStatus(event) {
     const target = event.target.closest('[data-action]');
     if (!target) return;
-
     event.preventDefault();
     const action = target.dataset.action;
 
@@ -248,7 +250,7 @@ export function calculateOrderStats(orders) {
         const orderTotal = order.orderItems.reduce((sum, item) => sum + (parseFloat(item.price) * item.qty), 0);
         totalRevenue += orderTotal;
 
-        // Handle cases where state might be undefined
+        // Handle cases
         const status = (order.state || 'pending').toLowerCase();
         
         switch(status) {
@@ -313,14 +315,14 @@ export function prepareChartData(orders) {
     return { categoryData, statusData, topProducts };
 }
 
-// Status badge functions
+// Status styling functions (badge & icon) ........................................................
 function getStatusBadgeClass(status) {
     switch(status?.toLowerCase()) {
         case 'pending': return 'bg-warning text-dark';
         case 'confirmed': return 'bg-info text-white';
         case 'shipped': return 'bg-primary text-white';
         case 'delivered': return 'bg-success text-white';
-        default: return 'bg-warning text-dark';
+    default: return 'bg-warning text-dark';
     }
 }
 
@@ -333,11 +335,7 @@ function getStatusIcon(status) {
         default: return '<i class="fas fa-clock"></i>';
     }
 }
-
-function capitalizeStatus(status) {
-    return status.charAt(0).toUpperCase() + status.slice(1);
-}
-
+//..................................................................................................
 // Initialize charts
 export function initializeOrderCharts(chartData) {
     if (window.categoryChartInstance) window.categoryChartInstance.destroy();
@@ -391,71 +389,39 @@ export function initializeOrderCharts(chartData) {
     }
 }
 
-// Enhanced quick status update with real-time UI updates
+//status update function
 export function quickStatusUpdate(orderId, newStatus) {
     const orders = localStore.read("orders") || [];
-    const orderIndex = orders.findIndex(o => o.orderId === orderId);
+    const orderIndex = orders.findIndex(o => o.orderId === orderId); //0,1,2,3.. or -1 if not found
 
-    if (orderIndex !== -1) {
+    if (orderIndex !== -1) { //if found
         // Update the order status
         orders[orderIndex].state = newStatus;
-        
-       
+        // Save the updated orders
         localStore.write("orders", orders);
-        
-
-        // Update the status badge in real-time
-        updateStatusBadgeInUI(orderId, newStatus);
-
-        // Update dropdown active states
-        updateDropdownActiveStates(orderId, newStatus);
-
-        // Update statistics cards with fresh data
+        // Update the status badge
+        updateStatusBadge(orderId, newStatus);
+        // Update statistics cards 
         const updatedOrders = localStore.read("orders") || [];
         updateStatisticsCards(updatedOrders);
-
-        // Update charts with fresh data
+        // Update charts 
         const chartData = prepareChartData(updatedOrders);
         initializeOrderCharts(chartData);
 
-        // Show success toast
-        Toast.notify(`Order #${orderId} status updated to ${capitalizeStatus(newStatus)}!`, 'success');
+        Toast.notify(`Order #${orderId} status updated to ${capitalizeWords(newStatus)}!`, 'success');
     } else {
         console.error('Order not found:', orderId);
         Toast.notify(`Error: Order #${orderId} not found!`, 'error');
     }
 }
 
-// Update status badge in UI without full reload
-function updateStatusBadgeInUI(orderId, newStatus) {
+// Update status badge
+function updateStatusBadge(orderId, newStatus) {
     const statusBadge = document.getElementById(`status-badge-${orderId}`);
     if (statusBadge) {
         // Update badge class and content
         statusBadge.className = `badge ${getStatusBadgeClass(newStatus)}`;
-        statusBadge.innerHTML = `${getStatusIcon(newStatus)} ${capitalizeStatus(newStatus)}`;
-        
-        // Add animations
-        statusBadge.style.transform = 'scale(1.05)';
-        statusBadge.style.transition = 'transform 0.2s ease';
-        setTimeout(() => {
-            statusBadge.style.transform = 'scale(1)';
-        }, 200);
-    }
-}
-
-// Update dropdown active states
-function updateDropdownActiveStates(orderId, newStatus) {
-    const orderRow = document.getElementById(`order-row-${orderId}`);
-    if (orderRow) {
-        const dropdownItems = orderRow.querySelectorAll('.dropdown-item');
-        dropdownItems.forEach(item => {
-            const itemStatus = item.dataset.status;
-            if (itemStatus === newStatus) {
-                item.classList.add('active');
-            } else {
-                item.classList.remove('active');
-            }
-        });
+        statusBadge.innerHTML = `${getStatusIcon(newStatus)} ${capitalizeWords(newStatus)}`;
     }
 }
 
@@ -474,9 +440,9 @@ function updateStatisticsCards(orders) {
     }
 }
 
-// Cleanup
+// Cleanup (destroing charts and removing listeners)
 export function cleanupOrdersDashboard() {
-    document.removeEventListener('click', handleDashboardClicks);
+    document.removeEventListener('click', updateStatus);
     if (window.categoryChartInstance) { 
         window.categoryChartInstance.destroy(); 
         window.categoryChartInstance = null; 

@@ -53,7 +53,9 @@
 
 @media (min-width: 992px) {
 	#main {
-		margin-left: 250px; /* Matches sidebar width */
+		margin-left: 250px !important; /* Matches sidebar width */
 	}
 }
-
+#carouselNextBtn, #carouselPrevBtn {
+filter: invert(1);
+}
