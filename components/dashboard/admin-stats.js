@@ -1,34 +1,30 @@
+import { inventoryValue } from "../../scripts/utils/dashboardUtils.js";
 import { localStore } from "../../scripts/utils/storage.js";
 
-// Enhanced chart creation with cleanup
 export function chartCreation(canvasId, labels, data, colors, type = 'pie') {
-    setTimeout(() => {
-        const ctx = document.getElementById(canvasId);
+    setTimeout(() => { 
+        const ctx = document.getElementById(canvasId); // get <canvas> element users, sellers, products
         if (ctx) {
-            // Load Chart.js 
-            createChartInstance(ctx, type, labels, data, colors);
+            createChartInstance(ctx, labels, data, colors, type);
         }
-    }, 100);
+    }, 100); //delay to ensure DOM is ready (it worked without delay too) just to be sure
 }
-
 // chart creation with cleanup
-export function createChartInstance(ctx, type, labels, data, colors) {
-    // IMPORTANT: Destroy existing chart before creating new one
+export function createChartInstance(ctx, labels, data, colors, type) {
+    // Destroy existing chart before creating new one
     const existingChart = Chart.getChart(ctx);
     if (existingChart) {
         existingChart.destroy();
     }
-
     // Create new chart
     const newChart = new Chart(ctx, {
         type: type,
         data: {
-            labels: labels,
+            labels: labels ,
             datasets: [{
                 data: data,
                 backgroundColor: colors,
-                borderColor: colors.map(color => color + '88'),
-                borderWidth: 2,
+                borderWidth: 0.5,
                 hoverBorderWidth: 3,
                 hoverOffset: 4
             }]
@@ -57,7 +53,7 @@ export function createChartInstance(ctx, type, labels, data, colors) {
                     bodyColor: 'white',
                     callbacks: {
                         label: function(context) {
-                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0)|| 1; // to avoid Nan
                             const percentage = ((context.parsed * 100) / total).toFixed(1);
                             return `${context.label}: ${context.parsed} (${percentage}%)`;
                         }
@@ -69,41 +65,10 @@ export function createChartInstance(ctx, type, labels, data, colors) {
 
     return newChart;
 }
-
-// destroy charts (Dom Issues with cahrtJs library)
-export function destroyChart(canvasId) {
-    const canvas = document.getElementById(canvasId);
-    if (canvas) {
-        const chart = Chart.getChart(canvas);
-        if (chart) {
-            chart.destroy();
-        }
-    }
-}
-
-// Destroy all charts in a container 
-export function destroyAllChartsInContainer(containerId) {
-    const container = document.getElementById(containerId);
-    if (container) {
-        const canvases = container.querySelectorAll('canvas');
-        canvases.forEach(canvas => {
-            const chart = Chart.getChart(canvas);
-            if (chart) {
-                console.log(`Destroying chart on canvas: ${canvas.id}`);
-                chart.destroy();
-            }
-        });
-    }
-}
-
 export function renderUsersStats(container) {
-    // Clean up any existing charts in this container first
-    destroyAllChartsInContainer(container.id);
-    
     const users = localStore.read("users") || [];
-    
     //counting user types
-    const totalUsers = users.length; //MINUS MASTER
+    const totalUsers = users.length; 
     const sellers = users.filter(user => user.role === "seller").length;
     const admins = users.filter(user => user.role === "admin").length;
     const customer = users.filter(user => user.role === "customer").length;
@@ -125,8 +90,8 @@ export function renderUsersStats(container) {
     const adminPercentage = totalUsers > 0 ? ((admins / totalUsers) * 100).toFixed(1) : 0;
     
     container.innerHTML = `
-        <div class="row">
-            <div class="col-md-3 mb-3">
+        <div class="row mb-4">
+            <div class="col col-6 g-2 col-md col-lg">
                 <div class="card bg-primary text-white shadow-sm">
                     <div class="card-body text-center">
                         <i class="fas fa-users mb-2" style="font-size: 2rem;"></i>
@@ -136,7 +101,7 @@ export function renderUsersStats(container) {
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 mb-3">
+            <div class="col col-6 g-2 col-md col-lg">
                 <div class="card bg-success text-white shadow-sm">
                     <div class="card-body text-center">
                         <i class="fas fa-user mb-2" style="font-size: 2rem;"></i>
@@ -146,8 +111,8 @@ export function renderUsersStats(container) {
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 mb-3">
-                <div class="card bg-info text-white shadow-sm">
+            <div class="col col-6 g-2 col-md col-lg">
+                <div class="card bg-warning text-white shadow-sm">
                     <div class="card-body text-center">
                         <i class="fas fa-store mb-2" style="font-size: 2rem;"></i>
                         <h3 class="mb-1">${sellers}</h3>
@@ -156,7 +121,7 @@ export function renderUsersStats(container) {
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 mb-3">
+            <div class="col col-6 g-2 col-md col-lg">
                 <div class="card bg-danger text-white shadow-sm">
                     <div class="card-body text-center">
                         <i class="fas fa-user-shield mb-2" style="font-size: 2rem;"></i>
@@ -230,7 +195,7 @@ export function renderUsersStats(container) {
         </div>
     `;
     
-    // pie chart for users
+    //chart for users
     const userLabels = ['Customers', 'Sellers', 'Admins'];
     const userData = [customer, sellers, admins];
     const userColors = ['#28a745', '#17a2b8', '#dc3545'];
@@ -239,22 +204,18 @@ export function renderUsersStats(container) {
         chartCreation('usersChart', userLabels, userData, userColors, 'pie');
     }
 }
-
 export function renderSellersStats(container) {
-    // Clean up any existing charts first
-    destroyAllChartsInContainer(container.id);
-    
     const users = localStore.read("users") || [];
     const products = localStore.read("products") || [];
     
-    //  counting sellers
+    // counting sellers
     const allSellers = users.filter(user => user.role === "seller");
     const totalSellers = allSellers.length;
     const activeSellers = allSellers.filter(seller => seller.status === "active").length;
     const inactiveSellers = totalSellers - activeSellers;
     const totalProducts = products.length;
     
-    // Enhanced seller metrics
+    // Calculate average products per seller 
     const avgProductsPerSeller = totalSellers > 0 ? (totalProducts / totalSellers).toFixed(1) : 0;
     const activeSellerPercent = totalSellers > 0 ? ((activeSellers / totalSellers) * 100).toFixed(1) : 0;
     
@@ -270,9 +231,9 @@ export function renderSellersStats(container) {
         .filter(seller => seller.count > 0);
     
     container.innerHTML = `
-        <div class="row">
-            <div class="col-md-3 mb-3">
-                <div class="card bg-info text-white shadow-sm">
+        <div class="row mb-4">
+            <div class="col col-6 g-2 col-md col-lg">
+                <div class="card bg-primary text-white shadow-sm h-100">
                     <div class="card-body text-center">
                         <i class="fas fa-store mb-2" style="font-size: 2rem;"></i>
                         <h3 class="mb-1">${totalSellers}</h3>
@@ -280,8 +241,8 @@ export function renderSellersStats(container) {
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 mb-3">
-                <div class="card bg-success text-white shadow-sm">
+            <div class="col col-6 g-2 col-md col-lg">
+                <div class="card bg-success text-white shadow-sm h-100">
                     <div class="card-body text-center">
                         <i class="fas fa-check-circle mb-2" style="font-size: 2rem;"></i>
                         <h3 class="mb-1">${activeSellers}</h3>
@@ -290,8 +251,8 @@ export function renderSellersStats(container) {
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 mb-3">
-                <div class="card bg-warning text-white shadow-sm">
+            <div class="col col-6 g-2 col-md col-lg">
+                <div class="card bg-warning text-white shadow-sm h-100">
                     <div class="card-body text-center">
                         <i class="fas fa-box mb-2" style="font-size: 2rem;"></i>
                         <h3 class="mb-1">${totalProducts}</h3>
@@ -300,8 +261,8 @@ export function renderSellersStats(container) {
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 mb-3">
-                <div class="card bg-purple text-white shadow-sm" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+            <div class="col col-6 g-2 col-md col-lg">
+                <div class="card bg-danger text-white shadow-sm h-100">
                     <div class="card-body text-center">
                         <i class="fas fa-chart-line mb-2" style="font-size: 2rem;"></i>
                         <h3 class="mb-1">${avgProductsPerSeller}</h3>
@@ -420,11 +381,7 @@ export function renderSellersStats(container) {
         chartCreation('sellersChart', sellerLabels, sellerData, sellerColors, 'doughnut');
     }
 }
-
 export function renderProductsStats(container) {
-    // Clean up any existing charts first
-    destroyAllChartsInContainer(container.id);
-    
     const products = localStore.read("products") || [];
     const users = localStore.read("users") || [];
     
@@ -436,11 +393,22 @@ export function renderProductsStats(container) {
     // Calculate prices with basic metrics
     const prices = products.map(product => parseFloat(product.price) || 0);
     const totalPrice = prices.reduce((sum, price) => sum + price, 0);
+    // console.log(totalPrice);
+    const  totalValue  = inventoryValue(products);
     const avgPrice = products.length > 0 ? totalPrice / products.length : 0;
     
     // Price analytics
     const maxPrice = prices.length > 0 ? Math.max(...prices) : 0;
     const minPrice = prices.length > 0 ? Math.min(...prices.filter(p => p > 0)) : 0;
+    
+    // Calculate price range distribution
+    const priceRanges = {
+        '$1-50': prices.filter(price => price >= 1 && price <= 50).length,
+        '$51-100': prices.filter(price => price > 50 && price <= 100).length,
+        '$101-200': prices.filter(price => price > 100 && price <= 200).length,
+        '$201-500': prices.filter(price => price > 200 && price <= 500).length,
+        '$500+': prices.filter(price => price > 500).length
+    };
     
     // Calculate top 3 sellers by product count
     const allSellers = users.filter(user => user.role === "seller");
@@ -460,8 +428,8 @@ export function renderProductsStats(container) {
     const unisexPercentage = products.length > 0 ? ((unisex / products.length) * 100).toFixed(1) : 0;
     
     container.innerHTML = `
-        <div class="row">
-            <div class="col-md-3 mb-3">
+        <div class="row mb-4">
+            <div class="col col-6 g-2 col-md col-lg">
                 <div class="card bg-primary text-white shadow-sm">
                     <div class="card-body text-center">
                         <i class="fas fa-boxes mb-2" style="font-size: 1.5rem;"></i>
@@ -470,7 +438,7 @@ export function renderProductsStats(container) {
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 mb-3">
+            <div class="col col-6 g-2 col-md col-lg">
                 <div class="card bg-warning text-white shadow-sm">
                     <div class="card-body text-center">
                         <i class="fas fa-mars mb-2" style="font-size: 1.5rem;"></i>
@@ -479,7 +447,7 @@ export function renderProductsStats(container) {
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 mb-3">
+            <div class="col col-6 g-2 col-md col-lg">
                 <div class="card bg-danger text-white shadow-sm">
                     <div class="card-body text-center">
                         <i class="fas fa-venus mb-2" style="font-size: 1.5rem;"></i>
@@ -488,7 +456,7 @@ export function renderProductsStats(container) {
                     </div>
                 </div>
             </div>
-            <div class="col-md-3 mb-3">
+            <div class="col col-6 g-2 col-md col-lg ">
                 <div class="card bg-info text-white shadow-sm">
                     <div class="card-body text-center">
                         <i class="fas fa-users mb-2" style="font-size: 1.5rem;"></i>
@@ -499,8 +467,8 @@ export function renderProductsStats(container) {
             </div>
         </div>
         
-        <div class="row">
-            <div class="col-md-4 mb-3 ">
+        <div class="row ">
+            <div class="col-md-6 mb-3 ">
                 <div class="card shadow-sm">
                     <div class="card-header bg-light">
                         <h5 class="mb-0"><i class="fas fa-list me-2"></i>Product Categories</h5>
@@ -542,8 +510,8 @@ export function renderProductsStats(container) {
                 </div>
             </div>
             
-            <div class="col-md-4 mb-3">
-                <div class="card shadow-sm">
+            <div class="col-md-6 mb-3">
+                <div class="card shadow-sm ">
                     <div class="card-header bg-light">
                         <h5 class="mb-0"><i class="fas fa-calculator me-2"></i>Price Analytics</h5>
                     </div>
@@ -573,27 +541,37 @@ export function renderProductsStats(container) {
                         
                         <div class="d-flex justify-content-between">
                             <span><i class="fas fa-coins text-info me-1"></i> Total inventory value:</span>
-                            <strong>${totalPrice.toFixed(2)}</strong>
+                            <strong>$ ${totalValue.toFixed(2)}</strong>
                         </div>
-                        
-                        ${products.length === 0 ? 
-                            '<div class="alert alert-warning mt-3"><i class="fas fa-exclamation-triangle me-2"></i>No products available</div>' 
+                        ${products.length === 0 ? '<div class="alert alert-warning mt-3">No products available</div>' 
                             : ''
                         }
                     </div>
                 </div>
             </div>
             
-            <div class="col-md-4 mb-3">
+            <div class="col-md-6 mb-3">
                 <div class="card shadow-sm">
                     <div class="card-header bg-light">
                         <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Category Distribution</h5>
                     </div>
                     <div class="card-body">
-                        <div style="position: relative; height: 250px;">
+                        <div style="position: relative;">
                             <canvas id="productsChart"></canvas>
                         </div>
-                        
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 mb-3">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Price Range Distribution</h5>
+                    </div>
+                    <div class="card-body">
+                        <div style="position: relative;">
+                            <canvas id="priceRangeChart"></canvas>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -632,12 +610,20 @@ export function renderProductsStats(container) {
         ` : ''}
     `;
     
-    // Create chart for product categories 
+    //chart for product categories 
     const productLabels = ['Men', 'Women', 'Unisex'];
     const productData = [men, women, unisex];
     const productColors = ['#ffc107', '#dc3545', '#17a2b8'];
     
     if (products.length > 0) {
         chartCreation('productsChart', productLabels, productData, productColors, 'doughnut');
+    }
+    
+    //chart for price range distribution
+    const priceRangeLabels = Object.keys(priceRanges);
+    const priceRangeData = Object.values(priceRanges);
+    const priceRangeColors = ['#28a745', '#17a2b8', '#ffc107', '#fd7e14', '#dc3545'];
+    if (products.length > 0) {
+        chartCreation('priceRangeChart', priceRangeLabels, priceRangeData, priceRangeColors, 'doughnut');
     }
 }

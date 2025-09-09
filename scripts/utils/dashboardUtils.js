@@ -315,7 +315,7 @@ export function getRoleBadge(role) {
                 ${capitalizeWords(role || 'Customer')}
             </span>`;
 }
-//Bootstrap carousel for product images into the view product modal
+//Bootstrap      for product images into the view product modal
 export function buildCarousel(product, carouselId) {
     // Get all images from product stock
     const images = product.stock.flatMap(variation => variation.images);
@@ -341,3 +341,50 @@ export function buildCarousel(product, carouselId) {
     `;
 }
 
+// .........................for orders page..............................
+// Status styling functions (badge & icon) .
+export function getStatusBadgeClass(status) {
+    switch(status?.toLowerCase()) {
+        case 'pending': return 'bg-warning text-dark';
+        case 'confirmed': return 'bg-info text-white';
+        case 'shipped': return 'bg-primary text-white';
+        case 'delivered': return 'bg-success text-white';
+    default: return 'bg-warning text-dark';
+    }
+}
+
+export function getStatusIcon(status) {
+    switch(status?.toLowerCase()) {
+        case 'pending': return '<i class="fas fa-clock"></i>';
+        case 'confirmed': return '<i class="fas fa-check"></i>';
+        case 'shipped': return '<i class="fas fa-truck"></i>';
+        case 'delivered': return '<i class="fas fa-check-circle"></i>';
+        default: return '<i class="fas fa-clock"></i>';
+    }
+}
+//..................................................................................................
+
+
+/**
+ * Calculates the total value of the inventory based on the given products array.
+ * @param {Array.<Object>} products - Array of  objects.
+ * @returns {number} Total value of the inventory.
+ */
+
+export function inventoryValue(products) {
+    let totalQty = 0;
+    let totalValue = 0;
+
+    products.forEach(product => {
+        const price = product.price;
+
+        product.stock.forEach(stockItem => {
+            stockItem.sizes.forEach(size => {
+                totalQty += size.qty;
+                totalValue += size.qty * price;
+            });
+        });
+    });
+
+    return  totalValue||0;
+}

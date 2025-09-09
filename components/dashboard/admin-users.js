@@ -3,8 +3,7 @@ import User from "../../data/_schema/UserModel.js";
 import { localStore } from "../../scripts/utils/storage.js";
 import Toast from "../ui/toast.js";
 
-let currentSort = { field: null, direction: 'asc' }; // for sorting
-//main function that renders all users page
+let currentSort = { field: null, direction: 'asc' }; // global var for sorting
 export function renderUsers(container) {
     const users = localStore.read("users") || [];
 
@@ -16,10 +15,10 @@ export function renderUsers(container) {
                     <div class="col">
                         <h2 class="card-title mb-1 h4">
                             <i class="fas fa-users me-2"></i>
-                            User Management
+                            Users Management
                         </h2>
-                        <p class="card-text mb-0 opacity-75">
-                            Manage and oversee all user accounts
+                        <p class="card-text mb-0 opacity-85">
+                            Manage and oversee all user accounts in <span class="fw-bold">AYAAM</span>
                         </p>
                     </div>
                 </div>
@@ -27,8 +26,8 @@ export function renderUsers(container) {
         </div>
 
         <!--.............................. Stats Row.................................-->
-        <div class="row g-3 mb-4">
-            <div class="col-6 col-md-4">
+        <div class="row g-2 mb-4">
+            <div class="col col-6 g-2 col-md col-lg">
                 <div class="card border-0 shadow-lg h-100">
                     <div class="card-body text-center">
                         <div class="h4 text-primary mb-1">${users.length}</div>
@@ -52,8 +51,8 @@ export function renderUsers(container) {
                     <div class="card-body text-center">
                         <div class="h4 text-info mb-1">
                             ${users.filter((u) => u.joinDate &&
-        // check if the user joined in the last 30 days and return the length
-        new Date(u.joinDate) > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)).length}
+                            // check if the user joined in the last 30 days and return the length
+                            new Date(u.joinDate) > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)).length}
                         </div>
                         <small class="text-muted text-uppercase fw-semibold">New This Month</small>
                     </div>
@@ -158,7 +157,7 @@ export function renderUsers(container) {
     return `
         <div class="table-responsive">
             <table class="table table-hover mb-0">
-                <thead class="table-primary">
+                <thead class="table-primary admin-th">
                     <tr>
                         <th scope="col" class="ps-4">
                             <input type="checkbox" class="form-check-input" id="selectAll">
@@ -187,8 +186,6 @@ export function renderUsers(container) {
 }
 
 export function renderUserRow(user) {
-
-
     return `
         <tr>
             <td class="ps-4">
@@ -260,7 +257,7 @@ export function renderEmptyState() {
         <div class="text-center py-5">
             <i class="fas fa-users text-muted" style="font-size: 4rem;"></i>
             <h4 class="text-muted mt-3">No Users Found</h4>
-            <p class="text-muted">Start by adding your first user to the platform</p>
+            <p class="text-muted">Start by adding your first user to <span class="fw-bold text-primary">AYAAM</span></p>
         </div>
     `;
 }
@@ -365,16 +362,12 @@ export function UserEvents(container) {
         document.getElementById("newUserForm").reset();
         document.getElementById("newUserForm").classList.remove("was-validated");
     });
-
     // Form submission
     document.getElementById("newUserForm")?.addEventListener("submit", handleUserFormSubmit);
-
-
     // Delete user buttons (in action column)
     document.querySelectorAll(".remove-user")?.forEach((btn) => {
         btn.addEventListener("click", handleUserDelete);
     });
-
     // Edit user buttons 
     document.querySelectorAll(".edit-user-btn")?.forEach((btn) => {
         btn.addEventListener("click", (e) => {
@@ -382,7 +375,6 @@ export function UserEvents(container) {
             editUser(userId);
         });
     });
-
     // View user buttons
     document.querySelectorAll(".view-user-btn")?.forEach((btn) => {
         btn.addEventListener("click", (e) => {
@@ -390,7 +382,6 @@ export function UserEvents(container) {
             viewUserDetails(userId);
         });
     });
-
     // Search functionality
     document.getElementById("searchInput")?.addEventListener("input", handleUserSearch);
    
@@ -473,7 +464,7 @@ export function handleUserFormSubmit(e) {
 
         // Re-render users
         const container = document.getElementById("adminContent");
-         renderUsers(container);
+        renderUsers(container);
     }
 
     e.target.classList.add("was-validated");
@@ -556,7 +547,7 @@ export function viewUserDetails(userId) {
                                 <div class="col-md-4 text-center mt-5">
                                     <h4 class="fw-bold mb-4">${user.name}</h4>
                                     <span class="badge bg-primary mb-2">
-                                        ${capitalizeWords(user.role || 'User')}
+                                        ${capitalizeWords(user.role || 'Customer')}
                                     </span>
                                     <br>
                                     <span class="badge ${user.status === "active" || !user.status ? "bg-success" : "bg-secondary"}">
@@ -579,7 +570,7 @@ export function viewUserDetails(userId) {
                                         </div>
                                         <div class="col-6">
                                             <label class="form-label text-muted small">ROLE</label>
-                                            <div class="fw-semibold">${capitalizeWords(user.role || 'User')}</div>
+                                            <div class="fw-semibold">${capitalizeWords(user.role || 'Customer')}</div>
                                         </div>
                                         <div class="col-6">
                                             <label class="form-label text-muted small">JOINING DATE</label>
@@ -656,7 +647,7 @@ export function editUser(userId) {
                                         <input type="text" class="form-control" id="editUserName" 
                                                value="${user.name}" required>
                                         <div class="invalid-feedback">
-                                            Please provide a valid name.
+                                            User name is required.
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -683,7 +674,7 @@ export function editUser(userId) {
                                         <select class="form-select" id="editUserRole">
                                             <option value="admin" ${user.role === "admin" ? "selected" : ""}>Admin</option>
                                             <option value="seller" ${user.role === "seller" ? "selected" : ""}>Seller</option>
-                                            <option value="user" ${user.role === "customer" ? "selected" : ""}>Customer</option>
+                                            <option value="customer" ${user.role === "customer" ? "selected" : ""}>Customer</option>
                                         </select>
                                     </div>
                                     <div class="col-md-6">
@@ -734,12 +725,9 @@ export function editUser(userId) {
             if (userIndex !== -1) {// if the index is found
                 // Generate new password
                 const newPassword = generateRandomPassword(6);
-
                 // Update password in localStorage
                 users[userIndex].password = newPassword;
                 localStore.write("users", users);
-
-                // Show success message
                 Toast.notify(`New password has been changed and sent to ${users[userIndex].email}`, "success");
             }
         });
@@ -750,7 +738,6 @@ export function editUser(userId) {
         });
     }
 }
-
 export function updateUser(userId) {
     const users = localStore.read("users") || [];
     //check if user exists then returns its index or -1 if not found
