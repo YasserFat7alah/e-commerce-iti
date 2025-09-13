@@ -2,7 +2,7 @@ import { localStore } from "../../scripts/utils/storage.js";
 import View from "../../components/core/view.js";
 import Toast from "../../components/ui/toast.js";
 import { navigate } from "../../scripts/utils/navigation.js";
-import { toProduct } from "../../scripts/utils/data.js";
+import { generateID, toProduct } from "../../scripts/utils/data.js";
 import { getCurrentUser } from './../../data/authentication.js';
 import { uploader } from "../../scripts/utils/uploader.js";
 
@@ -342,49 +342,15 @@ export default class AddProduct extends View {
       }
     });
 
-    // ===== Generate Product ID =====
-    function generateProductID(category, subCategory) {
-      // Ensure inputs are valid
-      if (!category || typeof category !== 'string' || !subCategory || typeof subCategory !== 'string') {
-        return 'INVALID_ID_' + Date.now().toString().slice(8); // Fallback ID
-      }
-
-      // First letter of category
-      const categoryPrefix = category.charAt(0).toUpperCase();
-      // First two letters of subcategory, padded if needed
-      const subCategoryPrefix = subCategory.length >= 2 ? subCategory.slice(0, 2).toLowerCase() : subCategory.toLowerCase().padEnd(2, 'x');
-
-      // Get existing products
-      const products = localStore.read("products") || [];
-
-      // Filter products with valid Category and Subcategory
-      const relatedProducts = products.filter(product =>
-        product &&
-        product.Category && typeof product.Category === 'string' &&
-        product.Subcategory && typeof product.Subcategory === 'string' &&
-        product.Category.charAt(0).toUpperCase() === categoryPrefix &&
-        product.Subcategory.slice(0, 2).toLowerCase() === subCategoryPrefix
-      );
-
-      // Find the highest serial number
-      const maxSerial = relatedProducts.reduce((max, product) => {
-        const serial = parseInt(product.Id.slice(-3)) || 0;
-        return Math.max(max, serial);
-      }, 0);
-
-      // Generate new serial number (padded to 3 digits)
-      const newSerial = (maxSerial + 1).toString().padStart(3, "0");
-
-      // Return ID (e.g., WBa001)
-      return `${categoryPrefix}${subCategoryPrefix}${newSerial}`;
-    }
 
     // ===== Form submit =====
     form.addEventListener("submit", async function (event) {
       event.preventDefault();
       event.stopPropagation();
+
       let user = getCurrentUser();
       let isValid = true;
+      const submitBtn = form.querySelector("button[type='submit']")
 
       // Validation regex
       const nameRegex = /^[^0-9]+$/;
@@ -479,10 +445,12 @@ export default class AddProduct extends View {
       }
 
       if (isValid) {
-        const productData = {
-          id: generateProductID(
-            form.querySelector("select[name='category']").value,
-            form.querySelector("input[name='subcategory']").value
+        submitBtn.disabled = true;
+
+        let productData = {
+          id: generateID(
+            form.querySelector("select[name='category']").value.slice(0, 1).toLowerCase() +
+            form.querySelector("input[name='subcategory']").value.slice(0, 2).toLowerCase()
           ),
           name: form.querySelector("input[name='name']").value,
           brand: form.querySelector("input[name='brand']").value,
@@ -493,8 +461,9 @@ export default class AddProduct extends View {
           material: form.querySelector("input[name='material']").value,
           sellerId: user.id,
           status: "pending",
-          stock: [] 
+          stock: []
         };
+
 
         try {
           for (const card of stockCards) {
@@ -526,16 +495,17 @@ export default class AddProduct extends View {
           // add products
           const product = toProduct(productData);
           let products = localStore.read("products") || [];
+          form.reset();
           products.push(product);
           localStore.write("products", products);
-          Toast.notify("✔ New Product has been added!", "success");
-          form.reset();
-          setTimeout(() => {
-            navigate("/seller/products");
-          }, 500);
 
+          setTimeout(() => {
+            Toast.notify("✔ New Product has been added!", "success");
+          }, 300);
+          navigate("/seller/products");
         } catch (err) {
           Toast.notify("❌ Image upload failed. Please try again.", "danger");
+          submitBtn.disabled = false;
           console.error(err);
         }
       }
