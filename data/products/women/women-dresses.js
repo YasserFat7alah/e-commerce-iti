@@ -114,7 +114,7 @@ const dresses = [
         id: 'wdr003',
         name: "Classic Short Dress",
         description: "Solid Color Lapel Neck Short Sleeve Shirt Midi Dress",
-        price: 10.60,
+        price: 50.60,
         sale: 0.20,
         offers: [
             'free shipping'
@@ -154,7 +154,7 @@ const dresses = [
         id: 'wdr004',
         name: "Elegant Long Dress",
         description: "Black Textured Fabric Button Decor Back Slit Long Sleeve Elegant Long Dress For Women",
-        price: 20,
+        price: 80,
         sale: 0.20,
         offers: [
             'free shipping'
@@ -186,7 +186,7 @@ const dresses = [
         id: 'wdr005',
         name: "Formal Long Dress",
         description: "Square Neck 3/4 Sleeve Retro Casual Business Professional OL Bodycon Dress",
-        price: 12.36,
+        price: 65.36,
 
         sale: 0.14,
         offers: [
@@ -229,7 +229,7 @@ const dresses = [
         id: 'wdr006',
         name: "Soiree Long Dress",
         description: " Round Neck Long Sleeve Crystal Decor Simple Casual Long Dress Long Evening Dresses",
-        price: 16.9,
+        price: 89.9,
         sale: 0.14,
         offers: [
             'free shipping'
@@ -280,7 +280,7 @@ const dresses = [
         id: 'wdr007',
         name: "Soiree Long Dress",
         description: " Round Neck Long Sleeve Crystal Decor Simple Casual Long Dress Long Evening Dresses",
-        price: 20.3,
+        price: 89.9,
         sale: 0.15,
         offers: [
             'free shipping'
@@ -341,7 +341,7 @@ const dresses = [
         id: 'wdr008',
         name: " Long Summer Dress",
         description: "Long Bell Sleeve Asymmetrical Ruffle Hem Dress",
-        price: 10.6,
+        price: 69.9,
         sale:0,
         offers: [
             'free shipping'
@@ -389,7 +389,7 @@ const dresses = [
         id: 'wdr009',
         name: "Flower Long Summer Dress",
         description: "Women 3D Flower Decor Patchwork Ruffle Hem Dress",
-        price: 15.3,
+        price: 79.9,
         sale: 0.20,
         offers: [
             'free shipping'
@@ -421,7 +421,7 @@ const dresses = [
         id: 'wdr010',
         name: "Elegant Long Dress",
         description: "Modelyn Asymmetrical Neck Pleated Detail Dress",
-        price: 12.63,
+        price: 50.63,
         sale: 0.20,
         offers: [
             'free shipping'

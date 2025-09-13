@@ -14,7 +14,7 @@ const data =
             sellerId: 'SellAzza5',
             category: "Women",
             subCategory: "Shoes",
-            status: "pending",
+            status: "approved",
             stock: [
                 {
                     color: "Black",
@@ -50,7 +50,7 @@ const data =
             sellerId: 'SellAzza5',
             category: "Women",
             subCategory: "Shoes",
-            status: "pending",
+            status: "approved",
             stock: [
                 {
                     color: "Beige",
@@ -76,7 +76,7 @@ const data =
             sellerId: 'SellAzza5',
             category: "Women",
             subCategory: "Shoes",
-            status: "pending",
+            status: "approved",
             stock: [
                 {
                     color: "Black",
@@ -104,7 +104,7 @@ const data =
             sellerId: 'SellAzza5',
             category: "Women",
             subCategory: "Shoes",
-            status: "pending",
+            status: "approved",
             stock: [
                 {
                     color: "Black",
@@ -131,7 +131,7 @@ const data =
             sellerId: 'SellAzza5',
             category: "Women",
             subCategory: "Shoes",
-            status: "pending",
+            status: "approved",
             stock: [
                 {
                     color: "Black",
@@ -167,7 +167,7 @@ const data =
             sellerId: 'SellAzza5',
             category: "Women",
             subCategory: "Shoes",
-            status: "pending",
+            status: "approved",
             stock: [
                 {
                     color: "Beige",
@@ -193,7 +193,7 @@ const data =
             sellerId: 'SellAzza5',
             category: "Women",
             subCategory: "Shoes",
-            status: "pending",
+            status: "approved",
             stock: [
                 {
                     color: "Navy",
@@ -229,7 +229,7 @@ const data =
             sellerId: 'SellAzza5',
             category: "Women",
             subCategory: "Shoes",
-            status: "pending",
+            status: "approved",
             stock: [
                 {
                     color: "White",
@@ -255,7 +255,7 @@ const data =
             sellerId: 'SellAzza5',
             category: "Women",
             subCategory: "Shoes",
-            status: "pending",
+            status: "approved",
             stock: [
                 {
                     color: "Khaki",
@@ -281,7 +281,7 @@ const data =
             sellerId: 'SellAzza5',
             category: "Women",
             subCategory: "Shoes",
-            status: "pending",
+            status: "approved",
             stock: [
                 {
                     color: "White",
@@ -308,7 +308,7 @@ const data =
             sellerId: 'SellAzza5',
             category: "Women",
             subCategory: "Shoes",
-            status: "pending",
+            status: "approved",
             stock: [
                 {
                     color: "Brown",
@@ -344,7 +344,7 @@ const data =
             sellerId: 'SellAzza5',
             category: "Women",
             subCategory: "Shoes",
-            status: "pending",
+            status: "approved",
             stock: [
                 {
                     color: "Beige",

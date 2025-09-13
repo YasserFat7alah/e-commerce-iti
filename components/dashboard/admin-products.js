@@ -16,10 +16,10 @@ export function renderProducts(container) {
                     <div class="col">
                         <h2 class="card-title mb-1 h4">
                             <i class="fas fa-box me-2"></i>
-                            Product Management
+                            Products Management
                         </h2>
-                        <p class="card-text mb-0 opacity-75">
-                            Manage and oversee all products in the system
+                        <p class="card-text mb-0 opacity-85">
+                            Manage and oversee all products in <span class="fw-bold">AYAAM</span>
                         </p>
                     </div>
                 </div>
@@ -28,8 +28,8 @@ export function renderProducts(container) {
 
         <!--.....................................Stats Row....................................-->
         <div class="row g-3 mb-4">
-            <div class="col-6 col-md-3">
-                <div class="card border-0 shadow-lg h-100">
+            <div class="col-6 col-md-3 ">
+                <div class="card border-0 shadow-lg h-100 prodCard">
                     <div class="card-body text-center">
                         <div class="h4 text-primary mb-1">${products.length}</div>
                         <small class="text-muted text-uppercase fw-semibold">Total Products</small>
@@ -37,7 +37,7 @@ export function renderProducts(container) {
                 </div>
             </div>
             <div class="col-6 col-md-3">
-                <div class="card border-0 shadow-lg h-100">
+                <div class="card border-0 shadow-lg h-100 prodCard">
                     <div class="card-body text-center">
                         <div class="h4 text-success mb-1">${products.filter(p => p.stock && p.stock.length > 0).length}</div>
                         <small class="text-muted text-uppercase fw-semibold">In Stock</small>
@@ -45,7 +45,7 @@ export function renderProducts(container) {
                 </div>
             </div>
             <div class="col-6 col-md-3">
-                <div class="card border-0 shadow-lg h-100">
+                <div class="card border-0 shadow-lg h-100 prodCard">
                     <div class="card-body text-center">
                         <div class="h4 text-info mb-1">${products.filter(p => p.sale > 0).length}</div>
                         <small class="text-muted text-uppercase fw-semibold">On Sale</small>
@@ -53,7 +53,7 @@ export function renderProducts(container) {
                 </div>
             </div>
             <div class="col-6 col-md-3">
-                <div class="card border-0 shadow-lg h-100">
+                <div class="card border-0 shadow-lg h-100 prodCard">
                     <div class="card-body text-center">
                         <div class="h4 text-warning mb-1">${[...new Set(products.map(p => p.category))].length}</div>
                         <small class="text-muted text-uppercase fw-semibold">Categories</small>
@@ -127,7 +127,7 @@ function renderProductsTable(products) {
     return `
         <div class="table-responsive">
             <table class="table table-hover mb-0">
-                <thead class="table-primary">
+                <thead class="table-primary admin-th">
                     <tr>
                         <th scope="col" class="ps-4">
                             <input type="checkbox" class="form-check-input" id="selectAll">
@@ -546,9 +546,8 @@ function toggleBulkActions() {
 // Sorting Functions 
 function handleSort(e) {
     const header = e.target.closest('.sortable-header');
-
     const field = header.getAttribute('data-sort');
-        console.log('Sorting field:', field);
+        // console.log('Sorting field:', field);
 
     if (currentSort.field === field) {
         currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';

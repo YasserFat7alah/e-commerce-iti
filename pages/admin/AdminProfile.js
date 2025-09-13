@@ -114,7 +114,7 @@ export class AdminProfile extends View {
                         </div>
                         <!-- Password Edit Section (hidden by default) -->
                         <div id="admin-password-edit" class="d-none">
-                            <input type="password" id="admin-password-input" class="form-control form-control-sm admin-profile-input mb-2" placeholder="Enter new password (min 8 characters)">
+                            <input type="password" id="admin-password-input" class="form-control form-control-sm admin-profile-input mb-2" placeholder="Enter new password (min 6 characters)">
                             <div id="password-error" class="text-danger small mb-2 d-none"></div>
                             <div class="d-flex gap-2">
                                 <button class="btn btn-sm admin-profile-btn-save flex-fill" id="save-password-btn">

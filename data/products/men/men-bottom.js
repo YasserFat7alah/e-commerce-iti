@@ -67,7 +67,7 @@ const menProductPants = [
         description: "Lightweight performance joggers with moisture-wicking stretch fabric and ergonomic fit.",
         category: "Men",
         subCategory: "Pants",
-        price: 40,
+        price: 60,
         material: "Polyester-Spandex",
         sellerId: "SellBelt2",
         status: "approved",
@@ -183,7 +183,7 @@ const menProductPants = [
         description: "Classic pleated trousers made of wool-blend, soft and ideal for formal occasions.",
         category: "Men",
         subCategory: "Pants",
-        price: 20,
+        price: 60,
         material: "Wool-Blend",
         sellerId: "SellBelt2",
         status: "approved",
@@ -212,7 +212,7 @@ const menProductPants = [
         description: "Easy-care, wrinkle-free chinos with flex waistband and water repellent treatment.",
         category: "Men",
         subCategory: "Pants",
-        price: 40,
+        price: 60,
         material: "Cotton-Spandex",
         sellerId: "SellBelt2",
         status: "approved",
@@ -270,7 +270,7 @@ const menProductPants = [
         description: "Modern hybrid pants: resemble cargos but with dress pant tailoring and tech fabric.",
         category: "Men",
         subCategory: "Pants",
-        price: 38.5,
+        price: 50,
         material: "Tech-Blend",
         sellerId: "SellBelt2",
         status: "approved",
@@ -287,7 +287,7 @@ const menProductPants = [
                 color: "Gray",
                 images: ["prod_p92.jpg"],
                 sizes: [
-                    { name: "M", qty: 4 }
+                    { name: "M", qty: 6 }
                 ]
             },
         ],

@@ -66,11 +66,10 @@ const orderList = document.getElementById("orderList");
         );
 
         return matched.length > 0
-          ? { ...order, items: matched }   
+          ? { ...order, orderItems: matched }   
           : null;
       })
       .filter(order => order !== null);    
-    console.log(orders)
     function updateUI() {
       orderList.innerHTML = '';
       const validOrders = orders.filter(order => 
@@ -88,7 +87,7 @@ const orderList = document.getElementById("orderList");
               <span class="order-product">${item.productName || 'N/A'}</span>
               <span class="order-qty">Qty: ${item.qty || 1}</span>
               <span class="order-price">$${item.price * (item.qty || 1)}</span>
-              <span class="order-status">${item.state || 'N/A'}</span>
+              <span class="order-status">${order.state || 'N/A'}</span>
             `;
             orderList.appendChild(orderItem);
           });
@@ -113,58 +112,63 @@ const orderList = document.getElementById("orderList");
       summaryProducts.textContent = totalProducts;
     }
 
-    function updateCharts() {
-      const monthlySalesCtx = document.getElementById('monthlySalesChart').getContext('2d');
-      const validOrders = orders.filter(order => 
-        order.orderItems && order.orderItems.length > 0
-      ).slice(0, 6);
-      new Chart(monthlySalesCtx, {
-        type: 'line',
-        data: { 
-          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jul'], 
-          datasets: [{ 
-            label: 'Sales', 
-            data: validOrders.flatMap(order => order.orderItems.map(item => item.price * (item.qty || 1))), 
-            fill: true, 
-            tension: 0.1,
-            borderColor: '#1E40AF', 
-            backgroundColor: 'rgba(30, 64, 175, 0.2)'
-          }] 
-        }
-      });
+function updateCharts() {
+    const monthlySalesCtx = document.getElementById('monthlySalesChart').getContext('2d');
+    const validOrders = orders.filter(order => 
+      order.orderItems && order.orderItems.length > 0
+    ).slice(0, 6);
+    
+    new Chart(monthlySalesCtx, {
+      type: 'line',
+      data: { 
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jul'], 
+        datasets: [{ 
+          label: 'Sales', 
+          data: validOrders.flatMap(order => order.orderItems.map(item => item.price * (item.qty || 1))), 
+          fill: true, 
+          tension: 0.1,
+          borderColor: '#1E40AF', 
+          backgroundColor: 'rgba(30, 64, 175, 0.2)'
+        }] 
+      }
+    });
 
-      const ordersOverviewCtx = document.getElementById('ordersOverviewChart').getContext('2d');
-      const statusCount = { Pending: 0, Confirmed: 0 };
-      orders.forEach(order => {
-        order.orderItems.forEach(item => {
-          if (item.state) {
-            if (item.state === 'pending') statusCount.Pending++;
-            else if (item.state === 'Confirmed') statusCount.Confirmed++;
-          }
-        });
-      });
-      console.log("Status Count:", statusCount); 
-      new Chart(ordersOverviewCtx, {
-        type: 'bar',
-        data: { 
-          labels: Object.keys(statusCount),
-          datasets: [{ 
-            label: 'Orders',
-            data: Object.values(statusCount),
-            backgroundColor: ['#1E40AF', '#60A5FA'],
-            borderColor: ['#1E40AF', '#60A5FA'],
-            borderWidth: 1
-          }] 
-        },
-        options: {
-          scales: {
-            y: {
-              beginAtZero: true
-            }
+    const ordersOverviewCtx = document.getElementById('ordersOverviewChart').getContext('2d');
+    const statusCount = { Pending: 0, Confirmed: 0, Shipped: 0, Delivered: 0 };
+  
+    orders.forEach(order => {
+      if (order.state) {
+        const state = order.state.toLowerCase();
+        if (state === 'pending') statusCount.Pending++;
+        else if (state === 'confirmed') statusCount.Confirmed++;
+        else if (state === 'shipped') statusCount.Shipped++;
+        else if (state === 'delivered') statusCount.Delivered++;
+      }
+    });
+    
+    console.log("Status Count:", statusCount); 
+    
+    new Chart(ordersOverviewCtx, {
+      type: 'bar',
+      data: { 
+        labels: Object.keys(statusCount),
+        datasets: [{ 
+          label: 'Orders',
+          data: Object.values(statusCount),
+          backgroundColor: ['#1E40AF', '#60A5FA', '#10B981', '#059669'],
+          borderColor: ['#1E40AF', '#60A5FA', '#10B981', '#059669'],
+          borderWidth: 1
+        }] 
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
           }
         }
-      });
-    }
+      }
+    });
+}
             updateUI();
         
   }

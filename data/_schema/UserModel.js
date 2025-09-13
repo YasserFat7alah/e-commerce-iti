@@ -9,12 +9,12 @@ export default class User {
     #status;
     #joinDate;
 
-    constructor(_id, _name, _email, _password, _role = 'user', _phone = '', _status = 'active', _joinDate = null) {
+    constructor(_id, _name, _email, _password, _role = 'customer', _phone = '', _status = 'active', _joinDate = null) {
         this.Id = _id;
         this.Name = _name;
         this.Email = _email;
         this.Password = _password;
-        this.Role = _role; // Admin, Seller, User
+        this.Role = _role; // Admin, Seller, Customer
         this.Phone = _phone;
         this.Status = _status;
         this.JoinDate = _joinDate || new Date().toISOString();

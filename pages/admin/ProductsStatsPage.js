@@ -5,7 +5,7 @@ export default class ProductsStatsPage extends View {
     template() {
         return `
         <div class="col-12">
-            <h2 class="mb-0"><i class="fas fa-chart-bar me-2"></i>All Users Stats</h2>
+            <h2 class="mb-0"><i class="fas fa-chart-bar me-2"></i>All Products Stats</h2>
             <p class="text-muted">Overview of <span class="fw-bold text-primary">AYAAM</span>'s Products </p>
         </div>
         <div id="productStatsContainer"></div>`;

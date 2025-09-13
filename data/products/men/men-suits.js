@@ -30,7 +30,7 @@ const menProductSuits = [
     description: "Modern navy slim-fit suit with flat-front trousers.",
     category: "Men",
     subCategory: "Suits",
-    price: 2600,
+    price: 260,
     material: "Polyester & Viscose",
     sellerId: "SellBelt2",
     status: "approved",
