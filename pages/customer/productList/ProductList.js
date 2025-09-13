@@ -17,6 +17,8 @@ export function ProductList(containerId, productNumsId, state) {
 
   const products = JSON.parse(localStorage.getItem("products")) || [];
   let filtered = [...products];
+  
+  filtered = filtered.filter(p => !p.status || p.status === "approved");
 
   // Apply search filter
   if (state.search) {
