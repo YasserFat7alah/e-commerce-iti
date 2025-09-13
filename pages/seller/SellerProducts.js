@@ -10,6 +10,8 @@ import Toast from "../../components/ui/toast.js";
 export default class SellerProducts extends View {
   template() {
     return `
+    <div class="toast-body" id="toastMsg"></div>
+
       <div class="container-fluid mt-4">
         <div class="row justify-content-center">
           <div class="col-12 bg-white">
@@ -73,22 +75,7 @@ export default class SellerProducts extends View {
     const NAME_REGEX = /^[^0-9]+$/;
 
     // Helper functions
-    const createToast = (message, type = 'success') => {
-      const toastElement = document.createElement("div");
-      toastElement.className = "toast-container position-fixed top-0 end-0 p-3";
-      toastElement.innerHTML = `
-        <div class="toast align-items-center text-bg-${type} border-0" role="alert" aria-live="assertive" aria-atomic="true">
-          <div class="d-flex">
-            <div class="toast-body">${message}</div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-          </div>
-        </div>
-      `;
-      document.body.appendChild(toastElement);
-      const toast = new bootstrap.Toast(toastElement.querySelector(".toast"));
-      toast.show();
-      setTimeout(() => toastElement.remove(), 3000);
-    };
+    this.mount(Toast, "#toastMsg");
 
     const setInvalid = (input, message) => {
       input.classList.add("is-invalid");
@@ -547,7 +534,7 @@ export default class SellerProducts extends View {
           localStore.write("products", prods);
           loadProducts();
 
-          Toast.notify(`${curr.name} was deleted successfully!`, 'black')
+          Toast.notify(`${curr.name} was deleted successfully!`, 'dark')
         }
       }
 
@@ -785,11 +772,11 @@ export default class SellerProducts extends View {
 
           loadProducts();
           bootstrap.Modal.getInstance(document.getElementById("productEditModal")).hide();
-          createToast("Product updated successfully!", "success");
+          Toast.notify("Product updated successfully!", "success");
 
         } catch (err) {
           console.error("Image upload failed", err);
-          createToast("Failed to upload images. Please try again.", "danger");
+          Toast.notify("Failed to upload images. Please try again.", "danger");
         }
       });
     }

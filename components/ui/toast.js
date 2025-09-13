@@ -19,7 +19,7 @@ export default class Toast extends Component {
         ` 
     }
 
-    static notify(_message, _type = "dark", _delay = 8000) {
+    static notify(_message, _type = "dark", _delay = 1500) {
         const toastEl = document.getElementById("liveToast");
         const toastMsg = document.getElementById("toastMessage");
 

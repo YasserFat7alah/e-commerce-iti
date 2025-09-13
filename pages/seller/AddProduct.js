@@ -9,6 +9,7 @@ import { uploader } from "../../scripts/utils/uploader.js";
 export default class AddProduct extends View {
   template() {
     return `
+    
       <div class="card">
 <div class="card-body">
 <form class="needs-validation container py-4" novalidate style="max-width: 1200px;">
@@ -132,17 +133,6 @@ export default class AddProduct extends View {
      <i class="fas fa-times"></i> Reset
     </button>
   </div>
-
-<div class="toast-container position-fixed top-0 end-0 p-3">
-  <div id="liveToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
-    <div class="d-flex">
-      <div class="toast-body">
-        ✔ Product saved successfully and wait for admin to approve it !
-      </div>
-      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-    </div>
-  </div>
-</div>
 
 </div>
 
