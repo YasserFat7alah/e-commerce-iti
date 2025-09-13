@@ -24,7 +24,7 @@ export default class AddProduct extends View {
     <div class="col-12 col-md-6 col-lg-4">
       <label for="price" class="form-label fw-bold">Price</label>
       <div class="input-group shadow-sm">
-        <input type="number" step="0.1" name="price" class="form-control" required>
+        <input type="number" step="0.1" min="0" name="price" class="form-control" required>
         <span class="input-group-text bg-success text-white fw-bold">$</span>
       </div>
     </div>
@@ -100,7 +100,7 @@ export default class AddProduct extends View {
                   <input type="text"  name="sizeName" class="form-control shadow-sm" placeholder="e.g. M">
                 </div>
                 <div class="col-md-5">
-                  <input type="number"  name="qty" class="form-control shadow-sm" placeholder="Qty" min="0">
+                  <input type="number"  min="1" name="qty" class="form-control shadow-sm" placeholder="Qty" min="0">
                 </div>
 
             <div class="col-md-2 d-flex">
@@ -129,7 +129,7 @@ export default class AddProduct extends View {
 
     <button type="reset" class="btn btn-danger shadow-lg mt-2">
       <a href="Product.html"></a>
-     <i class="fas fa-times"></i> Cancel
+     <i class="fas fa-times"></i> Reset
     </button>
   </div>
 
@@ -409,9 +409,6 @@ export default class AddProduct extends View {
       if (brand.value.trim() === "") {
         setInvalid(brand, "Brand is required.");
         isValid = false;
-      } else if (!nameRegex.test(brand.value)) {
-        setInvalid(brand, "Brand must contain only letters (no numbers).");
-        isValid = false;
       } else if (brand.value.trim().length > 100) {
         setInvalid(brand, "Brand must not exceed 100 characters.");
         isValid = false;
@@ -423,9 +420,6 @@ export default class AddProduct extends View {
       const material = form.querySelector("input[name='material']");
       if (material.value.trim() === "") {
         setInvalid(material, "Material is required.");
-        isValid = false;
-      } else if (!nameRegex.test(material.value)) {
-        setInvalid(material, "Material must contain only letters (no numbers).");
         isValid = false;
       } else if (material.value.trim().length > 100) {
         setInvalid(material, "Material must not exceed 100 characters.");
@@ -466,11 +460,8 @@ export default class AddProduct extends View {
       if (description.value.trim() === "") {
         setInvalid(description, "Description is required.");
         isValid = false;
-      } else if (!nameRegex.test(description.value)) {
-        setInvalid(description, "Description must contain only letters (no numbers).");
-        isValid = false;
-      } else if (description.value.trim().length < 200) {
-        setInvalid(description, "Description must be at least 200 characters.");
+      } else if (description.value.trim().length < 30) {
+        setInvalid(description, "Description must be at least 30 characters.");
         isValid = false;
       } else {
         clearInvalid(description);
@@ -502,7 +493,7 @@ export default class AddProduct extends View {
           material: form.querySelector("input[name='material']").value,
           sellerId: user.id,
           status: "pending",
-          stock: [] // هنحط الستوك هنا مع الصور
+          stock: [] 
         };
 
         try {
@@ -510,7 +501,7 @@ export default class AddProduct extends View {
             const color = card.querySelector("input[name='color']").value;
             const images = card.querySelector("input[name='images[]']").files;
 
-            // رفع الصور الخاصة بالستوك ده
+            // Upload images (related to the product)
             const urls = await uploader.uploadImages(Array.from(images));
 
             const sizes = [];
@@ -524,7 +515,7 @@ export default class AddProduct extends View {
               }
             });
 
-            // أضيف ستوك كامل بالصور الخاصة بيه
+            // Add stock with imgs
             productData.stock.push({
               color,
               sizes,
@@ -532,16 +523,16 @@ export default class AddProduct extends View {
             });
           }
 
-          // خزن المنتج
+          // add products
           const product = toProduct(productData);
           let products = localStore.read("products") || [];
           products.push(product);
           localStore.write("products", products);
-
-          Toast.notify("✔ New Product has been added!");
+          Toast.notify("✔ New Product has been added!", "success");
+          form.reset();
           setTimeout(() => {
             navigate("/seller/products");
-          }, 5000);
+          }, 500);
 
         } catch (err) {
           Toast.notify("❌ Image upload failed. Please try again.", "danger");

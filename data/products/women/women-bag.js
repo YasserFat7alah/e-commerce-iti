@@ -14,7 +14,7 @@ const data =
             sellerId: "SellM1",
             category: "Women",
             subCategory: "Bags",
-            status: "pending",
+            status: "approved",
             stock: [
                 {
                     color: "Brown",
@@ -51,7 +51,7 @@ const data =
             sellerId: "SellM1",
             category: "Women",
             subCategory: "Bags",
-            status: "pending",
+            status: "approved",
             stock: [
                 {
                     color: "Khaki",
@@ -81,7 +81,7 @@ const data =
             sellerId: "SellM1",
             category: "Women",
             subCategory: "Bags",
-            status: "pending",
+            status: "approved",
             stock: [
                 {
                     color: "Pink",
@@ -111,7 +111,7 @@ const data =
             sellerId: "SellM1",
             category: "Women",
             subCategory: "Bags",
-            status: "pending",
+            status: "approved",
             stock: [
                 {
                     color: "Beige",
@@ -134,7 +134,7 @@ const data =
             sellerId: "SellM1",
             category: "Women",
             subCategory: "Bags",
-            status: "pending",
+            status: "approved",
             stock: [
                 {
                     color: "Black",
@@ -157,7 +157,7 @@ const data =
             sellerId: "SellM1",
             category: "Women",
             subCategory: "Bags",
-            status: "pending",
+            status: "approved",
             stock: [
                 {
                     color: "White",
@@ -180,7 +180,7 @@ const data =
             sellerId: "SellM1",
             category: "Women",
             subCategory: "Bags",
-            status: "pending",
+            status: "approved",
             stock: [
                 {
                     color: "White",
@@ -210,7 +210,7 @@ const data =
             sellerId: "SellM1",
             category: "Women",
             subCategory: "Bags",
-            status: "pending",
+            status: "approved",
             stock: [
                 {
                     color: "Green",

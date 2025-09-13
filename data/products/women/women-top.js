@@ -14,7 +14,7 @@ const data =
             sellerId: 'smariamexamplecom',
             category: "Women",
             subCategory: "Blouses",
-            status: "pending",
+            status: "approved",
             stock: [
                 {
                     color: "Black",
@@ -40,7 +40,7 @@ const data =
             sellerId: 'smariamexamplecom',
             category: "Women",
             subCategory: "Blouses",
-            status: "pending",
+            status: "approved",
             stock: [
                 {
                     color: "Mint Green",
@@ -75,7 +75,7 @@ const data =
             sellerId: 'smariamexamplecom',
             category: "Women",
             subCategory: "Blouses",
-            status: "pending",
+            status: "approved",
             stock: [
                 {
                     color: "White",
@@ -101,7 +101,7 @@ const data =
             sellerId: 'smariamexamplecom',
             category: "Women",
             subCategory: "Blouses",
-            status: "pending",
+            status: "approved",
             stock: [
                 {
                     color: "Mint Green",
@@ -135,7 +135,7 @@ const data =
             sellerId: 'smariamexamplecom',
             category: "Women",
             subCategory: "Blouses",
-            status: "pending",
+            status: "approved",
             stock: [
                 {
                     color: "Blue",
@@ -162,7 +162,7 @@ const data =
             sellerId: 'smariamexamplecom',
             category: "Women",
             subCategory: "Blouses",
-            status: "pending",
+            status: "approved",
             stock: [
                 {
                     color: "Black",
@@ -198,7 +198,7 @@ const data =
             sellerId: 'smariamexamplecom',
             category: "Women",
             subCategory: "Blouses",
-            status: "pending",
+            status: "approved",
             stock: [
                 {
                     color: "White",
@@ -224,7 +224,7 @@ const data =
             sellerId: 'smariamexamplecom',
             category: "Women",
             subCategory: "Blouses",
-            status: "pending",
+            status: "approved",
             stock: [
                 {
                     color: "Pink",
@@ -260,7 +260,7 @@ const data =
             sellerId: 'smariamexamplecom',
             category: "Women",
             subCategory: "Blouses",
-            status: "pending",
+            status: "approved",
             stock: [
                 {
                     color: "Multicolor",
@@ -285,7 +285,7 @@ const data =
             sellerId: 'smariamexamplecom',
             category: "Women",
             subCategory: "Blouses",
-            status: "pending",
+            status: "approved",
             stock: [
                 {
                     color: "White",
@@ -309,7 +309,7 @@ const data =
             sellerId: 'smariamexamplecom',
             category: "Women",
             subCategory: "Blouses",
-            status: "pending",
+            status: "approved",
             stock: [
                 {
                     color: "Striped",

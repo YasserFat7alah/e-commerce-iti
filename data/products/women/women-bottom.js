@@ -14,7 +14,7 @@ const data =
             sellerId: 'SellM1',
             category: "Women",
             subCategory: "Skirts",
-            status: "pending",
+            status: "approved",
             stock: [
                 {
                     color: "Beige",
@@ -40,7 +40,7 @@ const data =
             sellerId: 'SellM1',
             category: "Women",
             subCategory: "Skirts",
-            status: "pending",
+            status: "approved",
             stock: [
                 {
                     color: "Printed",
@@ -67,7 +67,7 @@ const data =
             sellerId: 'SellM1',
             category: "Women",
             subCategory: "Skirts",
-            status: "pending",
+            status: "approved",
             stock: [
                 {
                     color: "Yellow",
@@ -94,7 +94,7 @@ const data =
             sellerId: 'SellM1',
             category: "Women",
             subCategory: "Skirts",
-            status: "pending",
+            status: "approved",
             stock: [
                 {
                     color: "Khaki",
@@ -121,7 +121,7 @@ const data =
             sellerId: 'SellM1',
             category: "Women",
             subCategory: "Skirts",
-            status: "pending",
+            status: "approved",
             stock: [
                 {
                     color: "Plaid",
@@ -147,7 +147,7 @@ const data =
             sellerId: 'SellM1',
             category: "Women",
             subCategory: "Skirts",
-            status: "pending",
+            status: "approved",
             stock: [
                 {
                     color: "Brown Plaid",
@@ -174,7 +174,7 @@ const data =
             sellerId: 'SellM1',
             category: "Women",
             subCategory: "Skirts",
-            status: "pending",
+            status: "approved",
             stock: [
                 {
                     color: "Brown Leopard",

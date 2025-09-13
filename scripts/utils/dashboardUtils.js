@@ -343,7 +343,7 @@ export function buildCarousel(product, carouselId) {
 
 // .........................for orders page..............................
 // Status styling functions (badge & icon) .
-export function getStatusBadgeClass(status) {
+export function orderStatusBadge(status) {
     switch(status?.toLowerCase()) {
         case 'pending': return 'bg-warning text-dark';
         case 'confirmed': return 'bg-info text-white';

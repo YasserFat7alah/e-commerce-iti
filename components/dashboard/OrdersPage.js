@@ -1,4 +1,4 @@
-import { capitalizeWords, truncateText, getStatusBadgeClass, getStatusIcon } from "../../scripts/utils/dashboardUtils.js";
+import { capitalizeWords, truncateText, orderStatusBadge, getStatusIcon } from "../../scripts/utils/dashboardUtils.js";
 import { localStore } from "../../scripts/utils/storage.js";    
 import Toast from "../ui/toast.js";
 
@@ -149,7 +149,7 @@ function renderOrdersTable(orders) {
                 ${orders.map(order => {
                     const total = order.orderItems.reduce((sum, item) => sum + (parseFloat(item.price) * item.qty), 0).toFixed(2);
                     const status = order.state || 'pending';
-                    const statusClass = getStatusBadgeClass(status);
+                    const statusClass = orderStatusBadge(status);
                     
                     return `
                         <tr id="order-row-${order.orderId}">
@@ -271,7 +271,7 @@ function updateOrderStatus(orderId, newStatus) {
         // Update the status badge
         const statusBadge = document.getElementById(`status-badge-${orderId}`);
         if (statusBadge) {
-            statusBadge.className = `badge ${getStatusBadgeClass(newStatus)}`;
+            statusBadge.className = `badge ${orderStatusBadge(newStatus)}`;
             statusBadge.innerHTML = `${getStatusIcon(newStatus)} ${capitalizeWords(newStatus)}`;
         }
         // Update stats bar
@@ -376,7 +376,7 @@ function viewOrderDetails(OrderId) {
                                         </div>
                                         <div class="col-6">
                                             <label class="form-label text-muted small">Order's Status:</label> <br>
-                                            <div class="fw-semibold badge ${getStatusBadgeClass(order.state)} ">${order.state || 'pending'}</div>
+                                            <div class="fw-semibold badge ${orderStatusBadge(order.state)} ">${order.state || 'pending'}</div>
                                         </div>
                                         <div class="col-6">
                                             <label class="form-label text-muted small">Total Price:</label>

@@ -154,7 +154,7 @@ export function prepareChartData(orders) {
         const orderTotal = order.orderItems.reduce((sum, item) => sum + (parseFloat(item.price) * item.qty), 0);
 
         // Group revenue by date  in revenueByDate object{ 30/8/2025: totalRevenue}
-        const orderDate = new Date(order.orderDate).toLocaleDateString();
+        const orderDate = order.orderDate ;
         revenueByDate[orderDate] = (revenueByDate[orderDate] || 0) + orderTotal;  //2nd
 
         order.orderItems.forEach(item => {
@@ -179,6 +179,7 @@ export function prepareChartData(orders) {
     })).sort((a, b) => b.revenue - a.revenue).slice(0, 5); // Top 5 products ,desc
     // ....................Prepare revenue chart.................
     const sortedRevenueDates = Object.keys(revenueByDate).sort((a, b) => new Date(a) - new Date(b));// Sorted ARRAY of keys of revenueByDate obj (asc dates)
+    // console.log(revenueByDate);
     // console.log(sortedRevenueDates);
     const revenueData = {
         labels: sortedRevenueDates, //the sorted array of orders dates
