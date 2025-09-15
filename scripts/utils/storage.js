@@ -32,7 +32,7 @@ class StorageManager {
         try {
         return JSON.parse(data);
         } catch {
-        return _fallback;
+        return data || _fallback;
         }
     }
 
@@ -54,7 +54,7 @@ class StorageManager {
     * @returns {boolean} True if key exists (and has data if checkData=true).
     */
     exists(_key, _checkData = false) {
-        const value = this.read(_key, {});
+        const value = this.read(_key);
         if (value == null) return false; // Returns false if key was not found in storage
 
         if (!_checkData) return true; // Returns true if you dont want to check value inside

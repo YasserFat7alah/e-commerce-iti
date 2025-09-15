@@ -716,7 +716,7 @@ export default class SellerProducts extends View {
           brand: formData.get("brand"),
           description: formData.get("description"),
           sellerId: product.sellerId,
-          status: product.status,
+          status: 'pending',
           stock: [],
         };
 

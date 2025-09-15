@@ -150,7 +150,7 @@ export default class Router {
 
 
             // Fallback to 404
-            const fallbackLoader = this.routes["/404"];
+            const fallbackLoader = this.routes["/404"].loader;
             let FallbackClass;
 
             if (typeof fallbackLoader === "function") {

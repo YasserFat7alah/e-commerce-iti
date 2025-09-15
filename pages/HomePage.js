@@ -41,6 +41,13 @@ export default class HomePage extends View {
 
 
   script() {
+    const prods = localStore.read('products', [])
+      .filter(prod => prod.status === "approved" && prod.sale > 0)
+      .sort(()=> Math.random()-0.5)
+      .slice(0, 4);
+    
+    
+
     this.mount(Toast, "#toastMsg")
     this.mount(Navbar, "#navbar");
     this.mount(FloatBtns, "#floatBtns");
@@ -49,7 +56,7 @@ export default class HomePage extends View {
     this.mount(CardsSection, '#featured-section', {
       id: 'featured',
       title: "Featured Items",
-      items: localStore.read('products' || []).slice(0, 4),
+      items: prods,
     })
     this.mount(Newsletter, '#newsletter');
 
