@@ -10,7 +10,6 @@ export default class ProductCard extends Component {
 
     getFirstImage() {
         return (
-            this.product.stock?.[1]?.images?.[0] ||
             this.product.stock?.[0]?.images?.[0] ||
             "https://via.placeholder.com/300x200"
         );
@@ -120,5 +119,5 @@ export default class ProductCard extends Component {
         this.script();
     }
 
-    
+
 }
