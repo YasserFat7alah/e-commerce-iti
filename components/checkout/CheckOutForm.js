@@ -170,7 +170,7 @@ export default class CheckOutForm extends Component{
 
         paymentMethods.forEach(payMethod => {
             payMethod.addEventListener('click', (e) => {
-                console.log(e.target.value);
+                // console.log(e.target.value);
                 if (e.target.value === 'visa') {
                     visaCollapse.show();
                     visaOpen = true;
