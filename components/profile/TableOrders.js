@@ -12,7 +12,7 @@ export default class TableOrders extends View {
         const orders = localStore.read("orders")||[];
         
         const userOrders = orders.filter(order => order.userId === currentUserData?.id);
-        console.log(userOrders , "Current user orders");
+        // console.log(userOrders , "Current user orders");
 
         const stateIcons = {
             pending: "⏳",

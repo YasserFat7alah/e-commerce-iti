@@ -9,7 +9,7 @@ export default class CheckoutReceit extends Component{
         const cartManager = new CartManager();
         const items = cartManager.getCartItem();
 
-        console.log(items)
+        // console.log(items)
         return `
             <div>
                 <h5>Your Bag</h5>
