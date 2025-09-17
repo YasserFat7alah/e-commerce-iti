@@ -14,7 +14,7 @@ export default class incomeingOrder extends View {
             <select id="statusSelect" class="form-select ms-2">
               <option value="">All Statuses</option>
               <option value="Pending">Pending</option>
-              <option value="Confirmed">Confirmed</option>
+              <option value="Delivered">Delivered</option>
               <option value="Shipped">Shipped</option>
               <option value="Delivered">Delivered</option>
             </select>
@@ -41,8 +41,8 @@ export default class incomeingOrder extends View {
           </div>
           <div class="col-6 col-md-3">
             <div class="summary-item">
-              <div class="status-badge bg-info" id="summaryConfirmedBadge">Confirmed</div>
-              <small id="summaryConfirmed"></small>
+              <div class="status-badge bg-success text-white" id="summaryDeliveredBadge">Delivered</div>
+              <small id="summaryDelivered"></small>
             </div>
           </div>
         </div>
@@ -60,7 +60,7 @@ export default class incomeingOrder extends View {
     const summaryOrders = document.getElementById("summaryOrders");
     const summaryTotal = document.getElementById("summaryTotal");
     const summaryPending = document.getElementById("summaryPending");
-    const summaryConfirmed = document.getElementById("summaryConfirmed");
+    const summaryDelivered = document.getElementById("summaryDelivered");
 
      // Initialize products and orders from localStorage
     const user = getCurrentUser();
@@ -103,7 +103,7 @@ export default class incomeingOrder extends View {
           ) || { productId: item.productId, size: item.size, availableQty: 0 };
 
           // Check if sufficient quantity is available (without modifying products)
-          item.state = product.availableQty >= item.qty ? "Confirmed" : "Pending";
+          item.state = product.availableQty >= item.qty ? "Delivered" : "Pending";
         });
 
         // Add or update order
@@ -154,20 +154,20 @@ export default class incomeingOrder extends View {
         .reduce((sum, order) => sum + (order.orderItems || []).reduce((itemSum, item) => itemSum + (item.price * (item.qty || 1)), 0), 0)
         .toFixed(2);
       const pendingCount = filteredOrders.filter(order => order.state && order.state.toLowerCase() === "pending").length;
-      const confirmedCount = filteredOrders.filter(order => order.state && order.state.toLowerCase() === "confirmed").length;
+      const deliveredCount = filteredOrders.filter(order => order.state && order.state.toLowerCase() === "delivered").length;
 
       if (summaryOrders) summaryOrders.textContent = totalOrders || "0";
       if (summaryTotal) summaryTotal.textContent = `$${totalPrice || "0.00"}`;
       if (summaryPending) summaryPending.textContent = pendingCount || "0";
-      if (summaryConfirmed) summaryConfirmed.textContent = confirmedCount || "0";
+      if (summaryDelivered) summaryDelivered.textContent = deliveredCount || "0";
       else {
-        console.warn("Summary elements not found", { totalOrders, totalPrice, pendingCount, confirmedCount });
+        console.warn("Summary elements not found", { totalOrders, totalPrice, pendingCount, deliveredCount });
       }
 
       const pendingBadge = document.getElementById("summaryPendingBadge");
-      const confirmedBadge = document.getElementById("summaryConfirmedBadge");
+      const deliveredBadge = document.getElementById("summaryDeliveredBadge");
       if (pendingBadge) pendingBadge.textContent = `Pending `;
-      if (confirmedBadge) confirmedBadge.textContent = `Confirmed`;
+      if (deliveredBadge) deliveredBadge.textContent = `Delivered`;
     }
 
     // Search and filter functionality
