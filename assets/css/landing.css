@@ -63,6 +63,12 @@
 }
 
 
+#footer h5 {
+    display: inline-block;
+    border-bottom: 1px solid #f97416 ;
+}
+
+
 /* HERO SECTION */
 #headCarousel .carousel-item {
     height: 75vh;

@@ -28,12 +28,19 @@ export default class SellerDashboard extends View {
                 icon: "fas fa-store",
                 items: [
                     { id: "dashboard", title: "Dashboard", icon: "fas fa-home", url: "/dashboard" },
-                    { id: "products", title: "Products", icon: "fas fa-box", url: "/products" },
                     { id: "addproduct", title: "Add Product", icon: "fas fa-plus", url: "/addproduct" },
-                    { id: "incoming", title: "Incoming Orders", icon: "fas fa-truck", url: "/incomeingOrders" },
+                    { id: "products", title: "Products", icon: "fas fa-box", url: "/products" },
+                ]
+            },
+            {
+                id: "statistics",
+                title: "Store Statistics",
+                icon: "fas fa-chart-line",
+                items: [
+                    { id: "incoming", title: "Orders", icon: "fas fa-truck", url: "/incomeingOrders" },
                     { id: "sales", title: "Sales History", icon: "fas fa-history", url: "/salesHistory" }
                 ]
-            }
+            },
         ];
 
         return `

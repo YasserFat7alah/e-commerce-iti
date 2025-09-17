@@ -1,5 +1,5 @@
 import { capitalizeWords, truncateText, orderStatusBadge, getStatusIcon } from "../../scripts/utils/dashboardUtils.js";
-import { localStore } from "../../scripts/utils/storage.js";    
+import { localStore } from "../../scripts/utils/storage.js";
 import Toast from "../ui/toast.js";
 
 export function renderOrders(container) {
@@ -132,7 +132,7 @@ function renderOrdersTable(orders) {
     }
 
     return `
-    <div class="table-responsive">
+    <div class="table-responsive" style= "min-height: 55vh;">
         <table class="table table-hover mb-0">
             <thead class="table-light admin-th">
                 <tr>
@@ -147,11 +147,11 @@ function renderOrdersTable(orders) {
             </thead>
             <tbody>
                 ${orders.map(order => {
-                    const total = order.orderItems.reduce((sum, item) => sum + (parseFloat(item.price) * item.qty), 0).toFixed(2);
-                    const status = order.state || 'pending';
-                    const statusClass = orderStatusBadge(status);
-                    
-                    return `
+        const total = order.orderItems.reduce((sum, item) => sum + (parseFloat(item.price) * item.qty), 0).toFixed(2);
+        const status = order.state || 'pending';
+        const statusClass = orderStatusBadge(status);
+
+        return `
                         <tr id="order-row-${order.orderId}">
                             <td><code>${order.orderId}</code></td>
                             <td>
@@ -219,7 +219,7 @@ function renderOrdersTable(orders) {
                                 </div>
                             </td>
                         </tr>`;
-                }).join('')}
+    }).join('')}
             </tbody>
         </table>
     </div>`;
@@ -249,7 +249,7 @@ function ordersActions(e) {
     e.preventDefault();
     const action = target.dataset.action;
     const orderId = target.dataset.orderId;
-    switch(action) {
+    switch (action) {
         case 'status-update':
             updateOrderStatus(orderId, target.dataset.status); //target.dataset.status == newStatus
             break;
@@ -267,7 +267,7 @@ function updateOrderStatus(orderId, newStatus) {
     if (orderIndex !== -1) {
         orders[orderIndex].state = newStatus;
         localStore.write("orders", orders);
-        
+
         // Update the status badge
         const statusBadge = document.getElementById(`status-badge-${orderId}`);
         if (statusBadge) {
@@ -284,7 +284,7 @@ function updateOrderStatus(orderId, newStatus) {
 function updateQuickStats() {
     const orders = localStore.read('orders') || [];
     const stats = document.querySelectorAll('.top-quick-stats h3'); //only rewrite in h3s inside the card
-    
+
     if (stats.length >= 4) {
         stats[0].textContent = orders.length;
         stats[1].textContent = orders.filter(o => (o.state || 'pending') === 'pending').length;
@@ -302,7 +302,7 @@ function filterOrders() {
     const orders = localStore.read('orders') || [];
     const filteredOrders = orders.filter(order => { //filter based on both search and status filtering
         // Search filter
-        const matchesSearch = !searchTerm || 
+        const matchesSearch = !searchTerm ||
             order.orderId.toLowerCase().includes(searchTerm) ||
             order.userName.toLowerCase().includes(searchTerm) ||
             order.userEmail.toLowerCase().includes(searchTerm);
@@ -323,7 +323,7 @@ function filterOrders() {
 function viewOrderDetails(OrderId) {
     const ordersData = localStore.read('orders') || [];
     const order = ordersData.find((o) => o.orderId === OrderId);
-    
+
     if (order) {
         const total = order.orderItems.reduce((sum, item) => sum + (parseFloat(item.price) * item.qty), 0).toFixed(2);
         const modalHtml = `

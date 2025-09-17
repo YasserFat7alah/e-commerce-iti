@@ -2,7 +2,6 @@ import { getCurrentUser } from "../../data/authentication.js"
 
 export default function Footer() {
   const currentUser = getCurrentUser()
-  console.log(currentUser?.role !== 'admin');
   return `
 
   <div class="container text-md-left" data-fade>

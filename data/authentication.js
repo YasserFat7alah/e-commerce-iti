@@ -140,6 +140,7 @@ export function logout() {
     sessionStore.write('currentProduct', currentP, '');
     sessionStore.write('fallback-msg', fallback, '');
     localStore.remove("currentUser");
+    navigate('/login');
 
 }
 
