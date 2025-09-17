@@ -30,11 +30,20 @@ export default class AddProduct extends View {
       </div>
     </div>
 
+    <!-- Sale -->
+    <div class="col-12 col-md-6 col-lg-4">
+      <label for="sale" class="form-label fw-bold">Sale</label>
+      <div class="input-group shadow-sm">
+        <input type="number" step="1" min="0" max="100" name="sale" value="0" class="form-control">
+        <span class="input-group-text bg-success text-white fw-bold">%</span>
+      </div>
+    </div>
+
     <!-- Category -->
     <div class="col-12 col-md-6 col-lg-4">
       <label for="category" class="form-label fw-bold">Category</label>
       <select name="category" class="form-select shadow-sm" required>
-        <option value="">Choose...</option>
+        <option value="">Choose Category...</option>
         <option value="Women">Women</option>
         <option value="Men">Men</option>
         <option value="unisex">Unisex</option>
@@ -393,6 +402,15 @@ export default class AddProduct extends View {
         clearInvalid(price);
       }
 
+      // Validate Sale
+      const sale = form.querySelector("input[name='sale']");
+      if (parseFloat(sale.value) > 100 || parseFloat(sale.value) < 0) {
+        setInvalid(sale, "Please enter a valid sale in percent.");
+        isValid = false;
+      } else {
+        clearInvalid(sale);
+      }
+
       // Validate Category
       const category = form.querySelector("select[name='category']");
       if (category.value.trim() === "") {
@@ -416,7 +434,7 @@ export default class AddProduct extends View {
       if (description.value.trim() === "") {
         setInvalid(description, "Description is required.");
         isValid = false;
-      } else if (description.value.trim().length < 30) {
+      } else if (description.value.trim().length < 15) {
         setInvalid(description, "Description must be at least 30 characters.");
         isValid = false;
       } else {
@@ -448,6 +466,7 @@ export default class AddProduct extends View {
           category: form.querySelector("select[name='category']").value,
           subCategory: form.querySelector("input[name='subcategory']").value,
           price: parseFloat(form.querySelector("input[name='price']").value),
+          sale: parseFloat(form.querySelector("input[name='sale']").value)/100 || 0,
           material: form.querySelector("input[name='material']").value,
           sellerId: user.id,
           status: "pending",

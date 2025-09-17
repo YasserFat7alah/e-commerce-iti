@@ -492,7 +492,15 @@ export default class SellerProducts extends View {
       </td>
       <td>${product.category}</td>
       <td>${product.subcategory || "-"}</td>
-      <td>$${product.price}</td>
+      <td><div>
+                    ${product.sale > 0 ? `
+                        <span class="text-decoration-line-through text-muted small">$${product.price}</span>
+                        <div class="fw-bold text-danger">$${(product.price * (1 - product.sale)).toFixed(2)}</div>
+                        <small class="badge bg-danger">%${(product.sale * 100).toFixed(0)}</small>
+                    ` : `
+                        <span>$${product.price}</span>
+                    `}
+                </div></td>
       <td><span class="badge ${product.status === "approved" ? "bg-success" : "bg-warning"}">${product.status}</span></td>
       <td>
         <button class="btn btn-sm btn-info text-white btn-view" data-product-index="${index}">
@@ -550,34 +558,48 @@ export default class SellerProducts extends View {
     function showProductView(product) {
       const modalBody = `
         <form class="row g-3">
+
           <div class="col-md-6">
             <label class="form-label">Name</label>
             <input type="text" class="form-control" value="${product.name}" readonly>
           </div>
-          <div class="col-md-6">
-            <label class="form-label">Category</label>
-            <input type="text" class="form-control" value="${product.category}" readonly>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label">SubCategory</label>
-            <input type="text" class="form-control" value="${product.subcategory || "-"}" readonly>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label">Price</label>
-            <input type="text" class="form-control" value="$${product.price}" readonly>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label">Material</label>
-            <input type="text" class="form-control" value="${product.material || "-"}" readonly>
-          </div>
+
           <div class="col-md-6">
             <label class="form-label">Brand</label>
             <input type="text" class="form-control" value="${product.brand || "-"}" readonly>
           </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Category</label>
+            <input type="text" class="form-control" value="${product.category}" readonly>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">SubCategory</label>
+            <input type="text" class="form-control" value="${product.subcategory || "-"}" readonly>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Price</label>
+            <input type="text" class="form-control" value="$${product.price}" readonly>
+          </div>
+
+          ${product.sale ?
+             `<div class="col-md-6">
+                  <label class="form-label">Sale</label>
+                  <input type="text" class="form-control" value="%${product.sale*100}" readonly>
+              </div>`: ``}
+
+          <div class="col-md-6">
+            <label class="form-label">Material</label>
+            <input type="text" class="form-control" value="${product.material || "-"}" readonly>
+          </div>
+          
           <div class="col-12">
             <label class="form-label">Description</label>
             <textarea class="form-control" rows="3" readonly>${product.description || "-"}</textarea>
           </div>
+
           <div class="col-12 mt-3">
             <h5>Stock</h5>
             ${generateStockHTML(product.stock, product)}
@@ -592,11 +614,21 @@ export default class SellerProducts extends View {
     function showProductEdit(product, productIndex) {
       const modalBody = `
         <form class="needs-validation row g-3" id="editProductForm" novalidate>
+
           <div class="col-md-6">
             <label for="name" class="form-label fw-bold">Product Name</label>
             <input type="text" name="name" class="form-control shadow-sm" value="${product.name}" required>
             <div class="invalid-feedback">Please enter a valid product name (letters only, max 100 characters).</div>
           </div>
+
+     
+          <div class="col-md-6">
+            <label for="brand" class="form-label fw-bold">Brand</label>
+            <input type="text" name="brand" class="form-control shadow-sm" placeholder="e.g. Shein" value="${product.brand || ""}" required>
+            <div class="invalid-feedback">Please enter a valid brand (letters only, max 100 characters).</div>
+          </div>
+
+
           <div class="col-md-6">
             <label for="price" class="form-label fw-bold">Price</label>
             <div class="input-group shadow-sm">
@@ -605,6 +637,18 @@ export default class SellerProducts extends View {
             </div>
             <div class="invalid-feedback">Please enter a valid price.</div>
           </div>
+
+
+          <div class="col-md-6">
+            <label for="sale" class="form-label fw-bold">Sale</label>
+            <div class="input-group shadow-sm">
+              <input type="number" step="1" min="0" max="100" name="sale" class="form-control" value="${product.sale*100}" required>
+              <span class="input-group-text bg-success text-white fw-bold">%</span>
+            </div>
+            <div class="invalid-feedback">Sale must be between 0 and 100.</div>
+          </div>
+
+
           <div class="col-md-6">
             <label for="category" class="form-label fw-bold">Category</label>
             <select name="category" class="form-select shadow-sm" required>
@@ -615,26 +659,29 @@ export default class SellerProducts extends View {
             </select>
             <div class="invalid-feedback">Please select a category.</div>
           </div>
+
+
           <div class="col-md-6">
             <label for="subcategory" class="form-label fw-bold">Subcategory</label>
             <input type="text" name="subcategory" class="form-control shadow-sm" placeholder="e.g. Bags" value="${product.subcategory || ""}" required>
             <div class="invalid-feedback">Please enter a subcategory.</div>
           </div>
+
+      
           <div class="col-md-6">
             <label for="material" class="form-label fw-bold">Material</label>
             <input type="text" name="material" class="form-control shadow-sm" placeholder="e.g. PU Leather" value="${product.material || ""}" required>
             <div class="invalid-feedback">Please enter a valid material (letters only, max 100 characters).</div>
           </div>
-          <div class="col-md-6">
-            <label for="brand" class="form-label fw-bold">Brand</label>
-            <input type="text" name="brand" class="form-control shadow-sm" placeholder="e.g. Shein" value="${product.brand || ""}" required>
-            <div class="invalid-feedback">Please enter a valid brand (letters only, max 100 characters).</div>
-          </div>
+
+
           <div class="col-12">
             <label for="description" class="form-label fw-bold">Description</label>
             <textarea name="description" class="form-control shadow-sm" rows="3" required>${product.description || ""}</textarea>
             <div class="invalid-feedback">Description is required (at least 30 characters).</div>
           </div>
+
+
           <div class="col-12">
             <h4 class="mt-4 fw-bold">Stock</h4>
             <div class="mb-3">
@@ -712,6 +759,7 @@ export default class SellerProducts extends View {
           category: formData.get("category"),
           subCategory: formData.get("subcategory"),
           price: parseFloat(formData.get("price")),
+          sale: parseFloat(formData.get("sale"))/100,
           material: formData.get("material"),
           brand: formData.get("brand"),
           description: formData.get("description"),
