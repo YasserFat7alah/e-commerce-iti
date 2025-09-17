@@ -83,7 +83,7 @@ filter: invert(1);
     background: linear-gradient(135deg, #35e06e 0%, #29b79d 100%);
 }
 .statsCardCancelled {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    background: linear-gradient(135deg, #f78a8a 0%, #dc2323 100%);
 }
 .statsCard-totalRrevenue {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
