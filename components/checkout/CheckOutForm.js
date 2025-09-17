@@ -141,7 +141,7 @@ export default class CheckOutForm extends Component{
     }
 
     script() {
-        const fnameEl = document.getElementById('fname');
+          const fnameEl = document.getElementById('fname');
         const lnameEl = document.getElementById('lname');
         const emailEl = document.getElementById('email');
         const phoneEl = document.getElementById('phone');
@@ -156,6 +156,57 @@ export default class CheckOutForm extends Component{
         // Read user info from session storage
         const userData = getCurrentUser();
         // console.log(userData);
+
+
+        function getDigits(s) {
+            return String(s || "").replace(/\D/g, "");
+        }
+
+        // Update validity for card
+        function updateCardValidationClasses() {
+            const digits = getDigits(cardNum.value);
+            if (digits.length !== 16 && digits.length > 0) {
+                cardNum.setCustomValidity("Card must be 16 digits");
+            } else {
+                cardNum.setCustomValidity("");
+            }
+            cardNum.classList.remove("is-valid", "is-invalid");
+            if (digits.length === 16) cardNum.classList.add("is-valid");
+            else if (digits.length > 0) cardNum.classList.add("is-invalid");
+        }
+
+        // Update exp date validity
+        function updateExpValidationClasses() {
+            const v = (expDate.value || "").trim();
+            if (v.length === 0) {
+                expDate.setCustomValidity("");
+                expDate.classList.remove("is-valid", "is-invalid");
+                return;
+            }
+            if (!validateExpDate(v)) {
+                expDate.setCustomValidity("Invalid expiration");
+                expDate.classList.remove("is-valid");
+                expDate.classList.add("is-invalid");
+            } else {
+                expDate.setCustomValidity("");
+                expDate.classList.remove("is-invalid");
+                expDate.classList.add("is-valid");
+            }
+        }
+
+        // Update CVV validity
+        function updateCvvValidationClasses() {
+            const digits = getDigits(cvv.value);
+            if (digits.length !== 3 && digits.length > 0) {
+                cvv.setCustomValidity("Invalid CVV");
+                cvv.classList.remove("is-valid");
+                cvv.classList.add("is-invalid");
+            } else {
+                cvv.setCustomValidity("");
+                cvv.classList.remove("is-invalid");
+                if (digits.length === 3) cvv.classList.add("is-valid");
+            }
+        }
 
         // _____________________Collapse Visa ________________________________
         const visaCollapse = new bootstrap.Collapse(document.getElementById('visa-info'), { toggle: false });
@@ -186,6 +237,9 @@ export default class CheckOutForm extends Component{
                     cardNum.classList.remove("is-valid", "is-invalid");
                     expDate.classList.remove("is-valid", "is-invalid");
                     cvv.classList.remove("is-valid", "is-invalid");
+                    cardNum.setCustomValidity("");
+                    expDate.setCustomValidity("");
+                    cvv.setCustomValidity("");
                 }
             });
         });
@@ -215,22 +269,15 @@ export default class CheckOutForm extends Component{
 
         // Card number formatting and validation
         cardNum.addEventListener("input", function (e) {
-            let value = e.target.value.replace(/\D/g, "");
-            value = value.substring(0, 16);
-            let formatNumVal = value.match(/.{1,4}/g)?.join("-") || "";
-            e.target.value = formatNumVal;
+            let value = getDigits(e.target.value).substring(0, 16);
+            e.target.value = value.match(/.{1,4}/g)?.join("-") || value;
+            updateCardValidationClasses();
         });
 
         cardNum.addEventListener("blur", function (e) {
-            let value = e.target.value.replace(/\D/g, "");
-            if (value.length === 16) {
-                cardNum.classList.remove("is-invalid");
-                cardNum.classList.add("is-valid");
-            } else if (value.length > 0) {
-                cardNum.classList.remove("is-valid");
-                cardNum.classList.add("is-invalid");
-            }
+            updateCardValidationClasses();
         });
+
 
         // Function to validate exp date
         function validateExpDate(exp) {
@@ -265,20 +312,12 @@ export default class CheckOutForm extends Component{
             
             value = value.substring(0, 5); // Limit to MM/YY
             e.target.value = value;
+
+            updateExpValidationClasses();
         });
 
         expDate.addEventListener("blur", function (e) {
-            let value = e.target.value;
-            
-            if (value.length > 0) {
-                if (validateExpDate(value)) {
-                    expDate.classList.remove("is-invalid");
-                    expDate.classList.add("is-valid");
-                } else {
-                    expDate.classList.remove("is-valid");
-                    expDate.classList.add("is-invalid");
-                }
-            }
+            updateExpValidationClasses();
         });
 
         // CVV validation
@@ -286,20 +325,11 @@ export default class CheckOutForm extends Component{
             let value = e.target.value.replace(/\D/g, "");
             value = value.substring(0, 3);
             e.target.value = value;
+            updateCvvValidationClasses();
         });
 
         cvv.addEventListener("blur", function (e) {
-            let value = e.target.value;
-            
-            if (value.length > 0) {
-                if (value.length === 3) {
-                    cvv.classList.remove("is-invalid");
-                    cvv.classList.add("is-valid");
-                } else {
-                    cvv.classList.remove("is-valid");
-                    cvv.classList.add("is-invalid");
-                }
-            }
+            updateCvvValidationClasses();
         });
 
         // Form submission
@@ -320,25 +350,37 @@ export default class CheckOutForm extends Component{
                 cardNum.removeAttribute("required");
                 expDate.removeAttribute("required");
                 cvv.removeAttribute("required");
+
+                cardNum.setCustomValidity("");
+                expDate.setCustomValidity("");
+                cvv.setCustomValidity("");
             }
+
+            // update custom validations BEFORE checkValidity
+            if (selectedPayment && selectedPayment.value === 'visa') {
+                updateCardValidationClasses();
+                updateExpValidationClasses();
+                updateCvvValidationClasses();
+            }
+
 
             let isValid = form.checkValidity();
             let customValidationPassed = true;
 
             // Custom validation for visa fields
             if (selectedPayment && selectedPayment.value === 'visa') {
-                const cardValue = cardNum.value.replace(/\D/g, "");
-                const cvvValue = cvv.value.replace(/\D/g, "");
+                const cardValue = getDigits(cardNum.value);
+                const cvvValue = getDigits(cvv.value);
                 const expValid = validateExpDate(expDate.value);
 
                 // Card number validation
-                if (cardValue.length !== 16) {
+                if (cardValue.length === 16) {
+                    cardNum.classList.remove("is-invalid");
+                    cardNum.classList.add("is-valid");
+                } else {
                     cardNum.classList.add("is-invalid");
                     cardNum.classList.remove("is-valid");
                     customValidationPassed = false;
-                } else {
-                    cardNum.classList.remove("is-invalid");
-                    cardNum.classList.add("is-valid");
                 }
 
                 // Expiration date validation
@@ -352,16 +394,19 @@ export default class CheckOutForm extends Component{
                 } else {
                     expDate.classList.remove("is-invalid");
                     expDate.classList.add("is-valid");
+                    expDate.setCustomValidity("");
                 }
 
                 // CVV validation
                 if (cvvValue.length !== 3) {
                     cvv.classList.add("is-invalid");
                     cvv.classList.remove("is-valid");
+                    cvv.setCustomValidity("Invalid CVV");
                     customValidationPassed = false;
                 } else {
                     cvv.classList.remove("is-invalid");
                     cvv.classList.add("is-valid");
+                    cvv.setCustomValidity("");
                 }
             }
 
@@ -530,6 +575,7 @@ export default class CheckOutForm extends Component{
             form.classList.remove('was-validated');
             form.querySelectorAll('.is-valid, .is-invalid').forEach(el => {
                 el.classList.remove('is-valid', 'is-invalid');
+                el.setCustomValidity("");
             });
 
             // Hide visa collapse if it was open
