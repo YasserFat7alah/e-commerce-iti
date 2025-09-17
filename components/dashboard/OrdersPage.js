@@ -141,6 +141,7 @@ function renderOrdersTable(orders) {
                     <th>Products</th>
                     <th>Status</th>
                     <th>Total</th>
+                    <th>Payment Method</th>
                     <th>Date</th>
                     <th>Actions</th>
                 </tr>
@@ -158,6 +159,7 @@ function renderOrdersTable(orders) {
                                 <strong>${order.userName}</strong><br>
                                 <small class="text-muted">${order.userEmail}</small>
                             </td>
+                            <!-- Products -->
                             <td>
                                 ${order.orderItems.map(item => `
                                     <div class="d-flex align-items-center mb-2">
@@ -169,12 +171,14 @@ function renderOrdersTable(orders) {
                                     </div>
                                 `).join('')}
                             </td>
+                            <!-- Status -->
                             <td>
                                 <span id="status-badge-${order.orderId}" class="badge ${statusClass}">
                                     ${getStatusIcon(status)} ${capitalizeWords(status)}
                                 </span>
                             </td>
                             <td><strong class="text-success">$${total}</strong></td>
+                            <td>${order.paymentMethod}</td> 
                             <td><small>${order.orderDate}</small></td>
                             <td>
                                 <div class="btn-group btn-group-sm" role="group">
