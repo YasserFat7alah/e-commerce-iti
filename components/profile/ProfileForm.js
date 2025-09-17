@@ -53,9 +53,9 @@ export default class ProfileForm extends View {
                         <div class="col-12">
                             <label class="form-label">Gender</label>
                             <div>
-                                <input type="radio" name="gender" id="male" value="male" required disabled checked> 
+                                <input type="radio" name="gender" id="male" value="male" required disabled ${ ((userData?.gender || '').toString().trim().toLowerCase() === 'male') ? 'checked' : '' } > 
                                 <label for='male'>Male</label>
-                                <input type="radio" name="gender" class="ms-3" id="female" value="female" required disabled > 
+                                <input type="radio" name="gender" class="ms-3" id="female" value="female" required disabled ${ ((userData?.gender || '').toString().trim().toLowerCase() === 'female') ? 'checked' : '' } > 
                                 <label for='female'>Female</label>
                                 <div class="invalid-feedback ">
                                     Please select your gender.
@@ -104,6 +104,7 @@ export default class ProfileForm extends View {
 
         saveBtn.style.display='none';
 
+
         editBtn.addEventListener('click' , ()=>{
             //show save changes button and hidden edit button
             editBtn.style.display = 'none';
@@ -138,6 +139,9 @@ export default class ProfileForm extends View {
                 state = parts[1]?.trim() || "";
             }
 
+            const selectedGenderEl = document.querySelector('input[name="gender"]:checked');
+            const genderValueToSave = selectedGenderEl ? selectedGenderEl.value : (userData?.gender || "");
+
 
             const updatedUser = {
                 name: document.getElementById('name').value.trim(),
@@ -148,12 +152,12 @@ export default class ProfileForm extends View {
                 city ,
                 state ,
                 address : city + state,
-                gender: document.querySelector('input[name="gender"]:checked').value
+                gender: genderValueToSave
             };
 
             const newData = {...userData , ...updatedUser} ;
             
-            sessionStore.write("currentUser" , newData)
+            sessionStore.write("currentUser" , newData);
 
            const users = localStore.read("users", []); 
 
@@ -162,11 +166,11 @@ export default class ProfileForm extends View {
                     return { ...user, ...newData };
                 }
                 return user; 
-            });
+            }); 
 
             localStore.write("users", updatedUsers);
 
-             const initialsEl = document.querySelector(".profile-avatar");
+            const initialsEl = document.querySelector(".profile-avatar");
             if (initialsEl) {
                 initialsEl.textContent = getInitials(newData.name);
             }
@@ -175,8 +179,6 @@ export default class ProfileForm extends View {
             if (nameHeading) {
                 nameHeading.textContent = newData.name;
             }
-
-
 
             inputeArr.forEach((input , i)=>{
                 input.disabled = true;
