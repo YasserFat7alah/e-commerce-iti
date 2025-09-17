@@ -11,7 +11,9 @@ export function signup(_name, _email, _password, _repeatedPassword, _phone = '01
     const password = _password;
     const repeatedPassword = _repeatedPassword;
     const role = _role;
+    const status = (role == 'customer') ? 'active' : 'pending';
     const phone = _phone;
+    const joinDate = new Date().toISOString();
 
     const existingEmail = users.find(_user => _user.email === email);
 
@@ -48,7 +50,7 @@ export function signup(_name, _email, _password, _repeatedPassword, _phone = '01
 
     let newUser = {
         id: generateID(role),
-        name, email, password, role, phone
+        name, email, password, role, status, phone, joinDate
     }
 
     newUser = toUser(newUser);
@@ -56,7 +58,7 @@ export function signup(_name, _email, _password, _repeatedPassword, _phone = '01
 
     localStore.write('users', users);
 
-    return login(newUser.Email, newUser.Password, false);
+    return navigate('/login');
 
 }
 
@@ -138,7 +140,7 @@ export function logout() {
     sessionStore.write('currentProduct', currentP, '');
     sessionStore.write('fallback-msg', fallback, '');
     localStore.remove("currentUser");
-    
+
 }
 
 /* ===========function to validate email======= */

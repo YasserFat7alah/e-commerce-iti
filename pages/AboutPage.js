@@ -29,13 +29,13 @@ export default class AboutPage extends View {
             </section>
 
 
-            <div class="container" data-fade>
-                <div class="row text-center mb-5 w-100">
+            <div class="container" >
+                <div class="row text-center mb-5 w-100" data-fade>
                     <h2 class="col col-12" style="font-size: 2.5rem;">Meet Our Team</h2>
                     <p class="text-muted" s>- The people who brought AYAAM to life -</p>
                 </div>
 
-                <div class="d-flex flex-wrap justify-content-center align-items-center gap-4 mb-4">
+                <div class="our-cards">
 
 
     <!-- YASSER -->
@@ -89,7 +89,9 @@ export default class AboutPage extends View {
                         </div>
                     </div>
                 </div>
+                </div>
 
+                <div class="our-cards">
     <!-- AZZA -->
                 <div class="" data-fade>
                     <div class=" team-card">

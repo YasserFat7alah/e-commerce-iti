@@ -9,7 +9,7 @@ export default class User {
     #status;
     #joinDate;
 
-    constructor(_id, _name, _email, _password, _role = 'customer', _phone = '', _status = 'active', _joinDate = null) {
+    constructor(_id, _name, _email, _password, _role = 'customer', _phone = '', _status = 'inactive', _joinDate = new Date().toISOString()) {
         this.Id = _id;
         this.Name = _name;
         this.Email = _email;
@@ -17,7 +17,7 @@ export default class User {
         this.Role = _role; // Admin, Seller, Customer
         this.Phone = _phone;
         this.Status = _status;
-        this.JoinDate = _joinDate || new Date().toISOString();
+        this.JoinDate = _joinDate;
     }
 
     /* ID SETTER & GETTER */
@@ -25,7 +25,6 @@ export default class User {
     get Id() { return this.#id }
 
     /* NAME SETTER & GETTER */
-
     set Name(_name) {
         this.#name = _name;
     }
