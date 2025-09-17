@@ -506,6 +506,7 @@ export default class CheckOutForm extends Component{
                             userId : userData.id,
                             userName: userData.name,
                             userEmail: userData.email,
+                            paymentMethod:userData.payMethod ,
                             orderDate: `${day}/${month}/${year}` ,
                             state: "pending" ,
                             orderItems: items.map(item => ({
