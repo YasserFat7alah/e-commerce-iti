@@ -385,7 +385,7 @@ function handleProductSearch() {
         const category = row.querySelector("td:nth-child(4)").textContent.toLowerCase();
         const stock = row.querySelector("td:nth-child(6)").textContent.toLowerCase();
 
-        if ( productId.includes(searchTerm) || productName.includes(searchTerm) || category.includes(searchTerm || stock.includes(searchTerm)) ) {
+        if ( productId.includes(searchTerm) || productName.includes(searchTerm) || category.includes(searchTerm) || (stock.includes(searchTerm))) {
             row.style.display = "";
         } else {
             row.style.display = "none";

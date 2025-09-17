@@ -27,7 +27,7 @@ export function renderOrdersAnalytics(container) {
             <!-- Second Row - 4 Cards (Order Status Cards) -->
             <div class="row mb-4">
                 ${renderStatCard(stats.pendingOrders, 'Pending Orders', 'fa-clock', 'statsCardPending', 'col-6 col-sm-6 g-2 col-md-3 col-lg-3 ')}
-                ${renderStatCard(stats.cancelledOrders, 'Cancelled Orders', 'fa-solid fa-user-check', 'statsCardCancelled', 'col-6 col-sm-6 g-2 col-md-3 col-lg-3')}
+                ${renderStatCard(stats.cancelledOrders, 'Cancelled Orders', 'fa-xmark', 'statsCardCancelled', 'col-6 col-sm-6 g-2 col-md-3 col-lg-3')}
                 ${renderStatCard(stats.shippedOrders, 'Shipped Orders', 'fa-truck', 'statsCardShipped', 'col-6 col-sm-6 g-2 col-md-3 col-lg-3  ')}
                 ${renderStatCard(stats.deliveredOrders, 'Delivered Orders', 'fa-check-circle', 'statsCardDelivered', 'col-6 col-sm-6 g-2 col-md-3 col-lg-3')}
             </div>
@@ -87,10 +87,13 @@ export function calculateOrderStats(orders) {
 
     orders.forEach(order => {
         // Calculate total revenue for every order
-        const orderTotal = order.orderItems.reduce((sum, item) => sum + (parseFloat(item.price) * item.qty), 0);
-        totalRevenue += orderTotal; // rev for all orders (card1)  
-        // Handle cases
         const status = (order.state || 'pending').toLowerCase();
+        const orderTotal = order.orderItems.reduce((sum, item) => sum + (parseFloat(item.price) * item.qty), 0);
+        if (status !== 'cancelled') {
+            totalRevenue += orderTotal;// rev for all orders (card1) except cancelled orders
+        }
+        // Handle cases
+        
         switch (status) {
             case 'cancelled':
                 cancelledOrders++;
@@ -145,11 +148,14 @@ export function prepareChartData(orders) {
     const categoryData = {};//3rd
     const productRevenue = {}; //4th
 
+    const activeOrders = orders.filter(order => (order.state || 'pending').toLowerCase() !== 'cancelled');
+
     orders.forEach(order => {
         // counter for status of orders in statusData object{ pending,shipped,delivered: count}
         const status = (order.state || 'pending').toLowerCase();
         statusData[status] = (statusData[status] || 0) + 1;  //1st
-
+    });
+    activeOrders.forEach(order => {
         // Calculate total for this order
         const orderTotal = order.orderItems.reduce((sum, item) => sum + (parseFloat(item.price) * item.qty), 0);
 
@@ -167,13 +173,15 @@ export function prepareChartData(orders) {
             if (productRevenue[productId]) {//4th
                 productRevenue[productId].revenue += revenue;;
                 productRevenue[productId].orders++;;
+                productRevenue[productId].totalQty += parseInt(item.qty);
                 //  console.log( productRevenue);
             //else if the odrer doesn't have the product (first time)=> add the product
             } else {
                 productRevenue[productId] = { 
                     name: item.productName, 
                     revenue, 
-                    orders: 1 
+                    orders: 1 ,
+                    totalQty: parseInt(item.qty)
                     
                 };
             }
@@ -184,7 +192,8 @@ export function prepareChartData(orders) {
         id: productId,
         name: truncateText(data.name, 30),
         revenue: data.revenue.toFixed(2),
-        orders: data.orders //how many orders included this product
+        orders: data.orders ,//how many orders included this product
+        totalQty: data.totalQty
     }))
     const topProducts=topProductsData.sort((a, b) => b.revenue - a.revenue).slice(0, 5); // Top 5 products ,desc
     // console.log(topProducts);
@@ -215,7 +224,8 @@ export function renderTopProductsCard(topProducts) {
                         </div>
                         <div class="ms-3 flex-grow-1">
                             <h6 class="mb-1" style="font-size:0.9rem;">${product.name}</h6>
-                            <small class="text-muted">Sold ${product.orders} ${product.orders > 1 ? 'times' : 'time'}</small>
+                            <small class="text-muted">Sold in ${product.orders} ${product.orders > 1 ? 'orders' : 'order'}</small><br>
+                            <small class="text-muted">Qty: ${product.totalQty} units</small>
                         </div>
                         <div class="text-end">
                             <strong class="text-success">$${product.revenue}</strong>
@@ -257,7 +267,7 @@ export function initOrderCharts(chartData) {
             }
         });
     }
-
+    //status chart pie chart
     const statusCtx = document.getElementById('statusChart');
     if (statusCtx) {
         window.statusChartInstance = new Chart(statusCtx, {
@@ -271,7 +281,7 @@ export function initOrderCharts(chartData) {
                         chartData.statusData.shipped,
                         chartData.statusData.delivered
                     ],
-                    backgroundColor: ['#FFC107', '#17A2B8', '#007BFF', '#28A745'],
+                    backgroundColor: ['#FFC107', '#b81717ff', '#007BFF', '#28A745'],
                     borderWidth: 0.5,
                     hoverBorderWidth: 3,
                     hoverOffset: 1

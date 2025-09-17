@@ -49,7 +49,7 @@ export function renderOrders(container) {
             <div class="col col-6 g-2 col-md col-lg">
                 <div class="card border-0 shadow-sm h-100 statsCardCancelled">
                     <div class="card-body text-white text-center">
-                        <i class="fa-solid fa-user-check fa-2x mb-2"></i>
+                        <i class="fa fa-xmark fa-2x mb-2"></i>
                         <h3 class="mb-1">${ordersData.filter(o => o.state === 'cancelled').length}</h3>
                         <p class="mb-0">Cancelled</p>
                     </div>
