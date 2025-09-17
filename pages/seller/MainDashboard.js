@@ -115,13 +115,13 @@ const orderList = document.getElementById("orderList");
 function updateCharts() {
     const monthlySalesCtx = document.getElementById('monthlySalesChart').getContext('2d');
     const validOrders = orders.filter(order => 
-      order.orderItems && order.orderItems.length > 0
+      order.orderItems && order.orderItems.length > 0 
     ).slice(0, 6);
     
     new Chart(monthlySalesCtx, {
       type: 'line',
       data: { 
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jul'], 
+      labels: validOrders.flatMap(order => order.orderDate), 
         datasets: [{ 
           label: 'Sales', 
           data: validOrders.flatMap(order => order.orderItems.map(item => item.price * (item.qty || 1))), 
