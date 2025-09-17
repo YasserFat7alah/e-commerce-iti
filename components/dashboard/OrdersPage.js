@@ -45,13 +45,13 @@ export function renderOrders(container) {
                     </div>
                 </div>
             </div>
-            <!-- Confirmed Orders Card -->
+            <!-- Cancelled Orders Card -->
             <div class="col col-6 g-2 col-md col-lg">
-                <div class="card border-0 shadow-sm h-100 statsCardConfirmed">
+                <div class="card border-0 shadow-sm h-100 statsCardCancelled">
                     <div class="card-body text-white text-center">
                         <i class="fa-solid fa-user-check fa-2x mb-2"></i>
-                        <h3 class="mb-1">${ordersData.filter(o => o.state === 'confirmed').length}</h3>
-                        <p class="mb-0">Confirmed</p>
+                        <h3 class="mb-1">${ordersData.filter(o => o.state === 'cancelled').length}</h3>
+                        <p class="mb-0">Cancelled</p>
                     </div>
                 </div>
             </div>
@@ -91,7 +91,7 @@ export function renderOrders(container) {
                     <select class="form-select" id="statusFilter">
                         <option value="">All Statuses</option>
                         <option value="pending">Pending</option>
-                        <option value="confirmed">Confirmed</option>
+                        <option value="cancelled">Cancelled</option>
                         <option value="shipped">Shipped</option>
                         <option value="delivered">Delivered</option>
                     </select>
@@ -194,8 +194,8 @@ function renderOrdersTable(orders) {
                                                 </a>
                                             </li>
                                             <li>
-                                                <a class="dropdown-item" href="#" data-action="status-update" data-order-id="${order.orderId}" data-status="confirmed">
-                                                    <i class="fas fa-check me-2 text-info"></i>Mark as Confirmed
+                                                <a class="dropdown-item" href="#" data-action="status-update" data-order-id="${order.orderId}" data-status="cancelled">
+                                                    <i class="fas fa-xmark me-2 text-danger"></i>Mark as Cancelled
                                                 </a>
                                             </li>
                                             <li>
@@ -208,12 +208,7 @@ function renderOrdersTable(orders) {
                                                     <i class="fas fa-check-circle me-2 text-success"></i>Mark as Delivered
                                                 </a>
                                             </li>
-                                            <li><hr class="dropdown-divider"></li>
-                                            <li>
-                                                <a class="dropdown-item text-primary" href="#" data-action="view-details" data-order-id="${order.orderId}">
-                                                    <i class="fas fa-eye me-2"></i>View Details
-                                                </a>
-                                            </li>
+                                           
                                         </ul>
                                     </div>
                                 </div>
@@ -260,14 +255,35 @@ function ordersActions(e) {
 }
 //...................................................................
 // Update order status
+//logic for updating order status and canceling order
+//if order is cancelled, restore inventory and update status and prevent changing status again
+// restoreing inventory (products qty) : stock has colors => sizes => [{name:.., qty:..}] these sizes will be restored when cancelled
+//orders have ordersItems(products) 
+
 function updateOrderStatus(orderId, newStatus) {
     const orders = localStore.read("orders") || [];
     const orderIndex = orders.findIndex(o => o.orderId === orderId); //0,1,2,3.. or -1 if not found
 
     if (orderIndex !== -1) {
+        const order = orders[orderIndex];
+        const currentStatus = order.state || 'pending';
+        
+        // Prevent changing status if order is already cancelled
+        if (currentStatus === 'cancelled') {
+            Toast.notify(`This order is already cancelled, can't update status`, 'warning');
+            return;
+        }
+        
+        // rstore inventory when order is cancelled
+        if (newStatus === 'cancelled') {
+            if (restoreInventory(order.orderItems)) { // if the return value from restoreInventory() is true 
+                Toast.notify(`Inventory restored for cancelled order #${orderId}`, 'info');
+            }
+        }
+        
+        // Update the order status
         orders[orderIndex].state = newStatus;
         localStore.write("orders", orders);
-
         // Update the status badge
         const statusBadge = document.getElementById(`status-badge-${orderId}`);
         if (statusBadge) {
@@ -280,6 +296,40 @@ function updateOrderStatus(orderId, newStatus) {
     }
 }
 
+// restore the cancelled items in the orders to the products stock  
+function restoreInventory(orderProducts) {
+    const products = localStore.read('products') || []; // to compare the order's products with the products
+    let updated = false;
+    
+    orderProducts.forEach(item => {
+        const productIndex = products.findIndex(p => p.id === item.productId);
+        
+        if (productIndex !== -1) {
+            const product = products[productIndex];
+            
+            // find  by color
+            const stockItem = product.stock?.find(s => s.color === item.color);//compare the stock color with the order color
+            
+            if (stockItem && stockItem.sizes) {
+                // Find the correct size within the stock item
+                const sizeItem = stockItem.sizes.find(s => s.name === item.size);//compare the stock size with the order size
+                
+                if (sizeItem) {
+                    // Restore the quantity
+                    sizeItem.qty += parseInt(item.qty);
+                    updated = true;
+                    console.log(`Restored ${item.qty} units of ${product.name} (${item.color}, ${item.size})`);
+                }
+            }
+        }
+    });
+    
+    if (updated) {
+        localStore.write('products', products);
+    }
+    
+    return updated;
+}
 // Update stats bar
 function updateQuickStats() {
     const orders = localStore.read('orders') || [];
@@ -288,7 +338,7 @@ function updateQuickStats() {
     if (stats.length >= 4) {
         stats[0].textContent = orders.length;
         stats[1].textContent = orders.filter(o => (o.state || 'pending') === 'pending').length;
-        stats[2].textContent = orders.filter(o => o.state === 'confirmed').length;
+        stats[2].textContent = orders.filter(o => o.state === 'cancelled').length;
         stats[3].textContent = orders.filter(o => o.state === 'shipped').length;
         stats[4].textContent = orders.filter(o => o.state === 'delivered').length;
     }

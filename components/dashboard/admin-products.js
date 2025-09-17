@@ -380,10 +380,12 @@ function handleProductSearch() {
     const rows = container.querySelectorAll("tbody tr");
 
     rows.forEach((row) => {
+        const productId = row.querySelector("td:nth-child(2)").textContent.toLowerCase();
         const productName = row.querySelector("td:nth-child(3)").textContent.toLowerCase();
         const category = row.querySelector("td:nth-child(4)").textContent.toLowerCase();
+        const stock = row.querySelector("td:nth-child(6)").textContent.toLowerCase();
 
-        if (productName.includes(searchTerm) || category.includes(searchTerm)) {
+        if ( productId.includes(searchTerm) || productName.includes(searchTerm) || category.includes(searchTerm || stock.includes(searchTerm)) ) {
             row.style.display = "";
         } else {
             row.style.display = "none";

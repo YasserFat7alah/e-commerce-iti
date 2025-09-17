@@ -346,7 +346,7 @@ export function buildCarousel(product, carouselId) {
 export function orderStatusBadge(status) {
     switch(status?.toLowerCase()) {
         case 'pending': return 'bg-warning text-dark';
-        case 'confirmed': return 'bg-info text-white';
+        case 'cancelled': return 'bg-danger text-white';
         case 'shipped': return 'bg-primary text-white';
         case 'delivered': return 'bg-success text-white';
     default: return 'bg-warning text-dark';
@@ -356,7 +356,7 @@ export function orderStatusBadge(status) {
 export function getStatusIcon(status) {
     switch(status?.toLowerCase()) {
         case 'pending': return '<i class="fas fa-clock"></i>';
-        case 'confirmed': return '<i class="fas fa-check"></i>';
+        case 'cancelled': return '<i class="fas fa-xmark"></i>';
         case 'shipped': return '<i class="fas fa-truck"></i>';
         case 'delivered': return '<i class="fas fa-check-circle"></i>';
         default: return '<i class="fas fa-clock"></i>';

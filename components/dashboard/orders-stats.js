@@ -27,7 +27,7 @@ export function renderOrdersAnalytics(container) {
             <!-- Second Row - 4 Cards (Order Status Cards) -->
             <div class="row mb-4">
                 ${renderStatCard(stats.pendingOrders, 'Pending Orders', 'fa-clock', 'statsCardPending', 'col-6 col-sm-6 g-2 col-md-3 col-lg-3 ')}
-                ${renderStatCard(stats.confirmedOrders, 'Confirmed Orders', 'fa-solid fa-user-check', 'statsCardConfirmed', 'col-6 col-sm-6 g-2 col-md-3 col-lg-3')}
+                ${renderStatCard(stats.cancelledOrders, 'Cancelled Orders', 'fa-solid fa-user-check', 'statsCardCancelled', 'col-6 col-sm-6 g-2 col-md-3 col-lg-3')}
                 ${renderStatCard(stats.shippedOrders, 'Shipped Orders', 'fa-truck', 'statsCardShipped', 'col-6 col-sm-6 g-2 col-md-3 col-lg-3  ')}
                 ${renderStatCard(stats.deliveredOrders, 'Delivered Orders', 'fa-check-circle', 'statsCardDelivered', 'col-6 col-sm-6 g-2 col-md-3 col-lg-3')}
             </div>
@@ -81,7 +81,7 @@ export function renderOrdersAnalytics(container) {
 export function calculateOrderStats(orders) {
     let totalRevenue = 0;
     let pendingOrders = 0;
-    let confirmedOrders = 0;
+    let cancelledOrders = 0;
     let shippedOrders = 0;
     let deliveredOrders = 0;
 
@@ -92,8 +92,8 @@ export function calculateOrderStats(orders) {
         // Handle cases
         const status = (order.state || 'pending').toLowerCase();
         switch (status) {
-            case 'confirmed':
-                confirmedOrders++;
+            case 'cancelled':
+                cancelledOrders++;
                 break;
             case 'shipped':
                 shippedOrders++;
@@ -111,7 +111,7 @@ export function calculateOrderStats(orders) {
         totalRevenue: totalRevenue.toFixed(2),
         totalOrders: orders.length,
         pendingOrders,
-        confirmedOrders,
+        cancelledOrders,
         shippedOrders,
         deliveredOrders
     };
@@ -140,7 +140,7 @@ export function renderChartCard(title, canvasId, icon) {
     </div>`;
 }
 export function prepareChartData(orders) {
-    const statusData = { pending: 0, confirmed: 0, shipped: 0, delivered: 0 }; //1st
+    const statusData = { pending: 0, cancelled: 0, shipped: 0, delivered: 0 }; //1st
     const revenueByDate = {}; // for revenue chart  2nd
     const categoryData = {};//3rd
     const productRevenue = {}; //4th
@@ -162,21 +162,32 @@ export function prepareChartData(orders) {
             categoryData[item.category] = (categoryData[item.category] || 0) + 1;//3rd
             // Track product revenue in productRevenue object { productName: { revenue:.., orders:.. } }
             const revenue = parseFloat(item.price) * item.qty; //rev for every item
-            if (productRevenue[item.productName]) {//4th
-                productRevenue[item.productName].revenue += revenue;
-                productRevenue[item.productName].orders++;
-                //  console.log(productRevenue);
+            const productId = item.productId || item.id;
+            // if the odrer already has the product (not the first time)=>  inc revenue and orders
+            if (productRevenue[productId]) {//4th
+                productRevenue[productId].revenue += revenue;;
+                productRevenue[productId].orders++;;
+                //  console.log( productRevenue);
+            //else if the odrer doesn't have the product (first time)=> add the product
             } else {
-                productRevenue[item.productName] = { revenue, orders: 1 };
+                productRevenue[productId] = { 
+                    name: item.productName, 
+                    revenue, 
+                    orders: 1 
+                    
+                };
             }
         });
     });
     //top products by revenue
-    const topProducts = Object.entries(productRevenue).map(([name, data]) => ({
-        name: truncateText(name, 30),
+    const topProductsData = Object.entries(productRevenue).map(([productId, data]) => ({
+        id: productId,
+        name: truncateText(data.name, 30),
         revenue: data.revenue.toFixed(2),
         orders: data.orders //how many orders included this product
-    })).sort((a, b) => b.revenue - a.revenue).slice(0, 5); // Top 5 products ,desc
+    }))
+    const topProducts=topProductsData.sort((a, b) => b.revenue - a.revenue).slice(0, 5); // Top 5 products ,desc
+    // console.log(topProducts);
     // ....................Prepare revenue chart.................
     const sortedRevenueDates = Object.keys(revenueByDate).sort((a, b) => new Date(a) - new Date(b));// Sorted ARRAY of keys of revenueByDate obj (asc dates)
     // console.log(revenueByDate);
@@ -204,7 +215,7 @@ export function renderTopProductsCard(topProducts) {
                         </div>
                         <div class="ms-3 flex-grow-1">
                             <h6 class="mb-1" style="font-size:0.9rem;">${product.name}</h6>
-                            <small class="text-muted">${product.orders} orders</small>
+                            <small class="text-muted">Sold ${product.orders} ${product.orders > 1 ? 'times' : 'time'}</small>
                         </div>
                         <div class="text-end">
                             <strong class="text-success">$${product.revenue}</strong>
@@ -252,11 +263,11 @@ export function initOrderCharts(chartData) {
         window.statusChartInstance = new Chart(statusCtx, {
             type: 'pie',
             data: {
-                labels: ['Pending', 'Confirmed', 'Shipped', 'Delivered'],
+                labels: ['Pending', 'Cancelled', 'Shipped', 'Delivered'],
                 datasets: [{
                     data: [
                         chartData.statusData.pending,
-                        chartData.statusData.confirmed,
+                        chartData.statusData.cancelled,
                         chartData.statusData.shipped,
                         chartData.statusData.delivered
                     ],

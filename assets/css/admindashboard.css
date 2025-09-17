@@ -82,7 +82,7 @@ filter: invert(1);
 .statsCardDelivered {
     background: linear-gradient(135deg, #35e06e 0%, #29b79d 100%);
 }
-.statsCardConfirmed {
+.statsCardCancelled {
     background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
 }
 .statsCard-totalRrevenue {
