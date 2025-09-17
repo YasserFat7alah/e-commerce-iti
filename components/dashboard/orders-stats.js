@@ -223,7 +223,7 @@ export function renderTopProductsCard(topProducts) {
                             ${index + 1}
                         </div>
                         <div class="ms-3 flex-grow-1">
-                            <h6 class="mb-1" style="font-size:0.9rem;">${product.name}</h6>
+                            <h6 class="mb-1" style="font-size:1.1rem;">${product.name}</h6>
                             <small class="text-muted">Sold in ${product.orders} ${product.orders > 1 ? 'orders' : 'order'}</small><br>
                             <small class="text-muted">Qty: ${product.totalQty} units</small>
                         </div>
