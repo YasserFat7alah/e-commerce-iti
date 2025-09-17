@@ -1,6 +1,7 @@
 import View from "../../components/core/view.js";
 import { orderStatusBadge } from "../../scripts/utils/dashboardUtils.js";
 import { localStore } from "../../scripts/utils/storage.js";
+import { getCurrentUser } from "../../data/authentication.js";
 
 export default class incomeingOrder extends View {
   template() {
@@ -61,13 +62,25 @@ export default class incomeingOrder extends View {
     const summaryPending = document.getElementById("summaryPending");
     const summaryConfirmed = document.getElementById("summaryConfirmed");
 
-    // Initialize orders and products from localStorage
-    let orders = localStore.read("orders") || [];
+     // Initialize products and orders from localStorage
+    const user = getCurrentUser();
+    let products = localStore.read("products", []).filter(prod => prod.sellerId === user.id);
+    let prodIds = products.map(p => p.id);
+
+    let orders = localStore.read("orders", [])
+      .map(order => {
+        const matchedItems = order.orderItems.filter(item => prodIds.includes(item.productId));
+        return {
+          ...order,
+          orderItems: matchedItems.length > 0 ? matchedItems : []
+        };
+      })
+      .filter(order => order.orderItems.length > 0); // Keep only orders with matching items
+
     if (!Array.isArray(orders)) {
       console.warn("Orders data is not an array, initializing as empty array.");
       orders = [];
     }
-    let products = localStore.read("products") || [];
     if (!Array.isArray(products)) {
       console.warn("Products data is not an array, initializing as empty array.");
       products = [];
