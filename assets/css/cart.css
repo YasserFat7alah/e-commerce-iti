@@ -16,6 +16,17 @@
     transition: all 1s;
 }
 
+.btn-orange{
+  background-color: var(--brand) !important;
+  color: white;
+  transition: all 1s;
+}
+
+.btn-orange:hover{
+  background-color: black !important;
+  border: 2px solid var(--brand) !important;
+}
+
 .marginBottomCart{
     padding-bottom: 2rem;
     border-bottom: 1px solid #ccc;
@@ -62,20 +73,18 @@
 }
 
 .cart-items-container {
-  max-height: 120vh; 
-  overflow-y: auto; 
-   scrollbar-width: none;  
+  flex: 1;
+  max-height: calc(100vh - 120px); 
+  overflow-y: auto;
   -ms-overflow-style: none;
+  scrollbar-width: none;
 }
-
-.cart-items-container::-webkit-scrollbar {
-  display: none;          
-}
+.cart-items-container::-webkit-scrollbar { display:none; }
 
 .summary-container {
- position: sticky;
-  top: 20px;  
-  align-self: flex-start; 
+  position: sticky;
+  top: 20px; 
+  align-self: flex-start;
 }
 
 .img-card-related{
@@ -86,7 +95,7 @@
 }
 
 .marginTop-related{
-    margin-top: 12rem;
+    margin-top: 4rem;
 }
 
 .slider-container {

@@ -78,8 +78,8 @@ const data = [
     },
     {
         id: "SellAzza5",
-        name: "Azza ITI",
-        email: "SamarSamir@example.com",
+        name: "Azza Sallam",
+        email: "azzasallam@example.com",
         password: "123456",
         role: "seller",
         phone: '010012992335',

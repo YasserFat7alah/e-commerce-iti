@@ -1,4 +1,5 @@
 import { CartManager } from "../../scripts/cartScripts/cartManager.js";
+import { navigate } from "../../scripts/utils/navigation.js";
 import Component from "../core/component.js";
 
 
@@ -40,6 +41,9 @@ export default class CheckoutReceit extends Component{
                     <div class="progress" role="progressbar" aria-label="Warning example" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">
                             <div class="progress-bar brand-bg text-center text-white" style="width: 100%">100% Confirm Your Order</div>
                     </div>
+                    <button class='w-100 py-3 fw-bold border-0 rounded-pill brand-bg-check bg-black text-white mt-3 checkoutBTN back-shoping'>
+                            Back to Catalog
+                    </button>
                 </div>
                
             </div>
@@ -49,7 +53,9 @@ export default class CheckoutReceit extends Component{
 
     script() {
 
-      
+        document.querySelector('.back-shoping').addEventListener('click' , ()=>{
+                navigate('/catalog');
+        })
 
     }
 }

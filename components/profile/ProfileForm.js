@@ -53,9 +53,9 @@ export default class ProfileForm extends View {
                         <div class="col-12">
                             <label class="form-label">Gender</label>
                             <div>
-                                <input type="radio" name="gender" id="male" value="male" required disabled checked> 
+                                <input type="radio" name="gender" id="male" value="male" required disabled ${ ((userData?.gender || '').toString().trim().toLowerCase() === 'male') ? 'checked' : '' } > 
                                 <label for='male'>Male</label>
-                                <input type="radio" name="gender" class="ms-3" id="female" value="female" required disabled > 
+                                <input type="radio" name="gender" class="ms-3" id="female" value="female" required disabled ${ ((userData?.gender || '').toString().trim().toLowerCase() === 'female') ? 'checked' : '' } > 
                                 <label for='female'>Female</label>
                                 <div class="invalid-feedback ">
                                     Please select your gender.
@@ -74,7 +74,7 @@ export default class ProfileForm extends View {
                         ${ `
                             <div class="col-md-12">
                                 <label class="form-label">Address</label>
-                                <input type="text" class="form-control" id="adrs" placeholder="Address" value="${userData?.city ? userData.city : ''} " " ${userData?.state ? userData.state : ''}"  disabled required">
+                                <input type="text" class="form-control" id="adrs" placeholder="Address" value="${userData.city ? userData.city +" , " + userData.state : ' '} "  disabled required">
                                 <div class="invalid-feedback">
                                     Please enter your address.
                                 </div>
@@ -103,6 +103,7 @@ export default class ProfileForm extends View {
         const form = document.querySelector('.needs-validation');
 
         saveBtn.style.display='none';
+
 
         editBtn.addEventListener('click' , ()=>{
             //show save changes button and hidden edit button
@@ -133,10 +134,13 @@ export default class ProfileForm extends View {
             let state = "";
 
             if (adrsEl && adrsEl.value.trim() !== "") {
-            const parts = adrsEl.value.trim().split(" ");
+            const parts = adrsEl.value.trim().split(",");
                 city = parts[0]?.trim() || "";
                 state = parts[1]?.trim() || "";
             }
+
+            const selectedGenderEl = document.querySelector('input[name="gender"]:checked');
+            const genderValueToSave = selectedGenderEl ? selectedGenderEl.value : (userData?.gender || "");
 
 
             const updatedUser = {
@@ -147,14 +151,13 @@ export default class ProfileForm extends View {
                 email: document.getElementById('email').value.trim(),
                 city ,
                 state ,
-                gender: document.querySelector('input[name="gender"]:checked').value
+                address : city + state,
+                gender: genderValueToSave
             };
 
             const newData = {...userData , ...updatedUser} ;
             
-            console.log("new" , newData);
-
-            sessionStore.write("currentUser" , newData)
+            sessionStore.write("currentUser" , newData);
 
            const users = localStore.read("users", []); 
 
@@ -163,11 +166,11 @@ export default class ProfileForm extends View {
                     return { ...user, ...newData };
                 }
                 return user; 
-            });
+            }); 
 
             localStore.write("users", updatedUsers);
 
-             const initialsEl = document.querySelector(".profile-avatar");
+            const initialsEl = document.querySelector(".profile-avatar");
             if (initialsEl) {
                 initialsEl.textContent = getInitials(newData.name);
             }
@@ -176,8 +179,6 @@ export default class ProfileForm extends View {
             if (nameHeading) {
                 nameHeading.textContent = newData.name;
             }
-
-
 
             inputeArr.forEach((input , i)=>{
                 input.disabled = true;

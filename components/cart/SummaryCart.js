@@ -39,9 +39,14 @@ export default class SummaryCart extends Component {
                         <div class="progress" role="progressbar" aria-label="Warning example" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">
                             <div class="progress-bar brand-bg text-center text-white" style="width: 75%">75% Confirm Your Order</div>
                         </div>
-                        <button class='w-100 py-3 fw-bold border-0 rounded-pill brand-bg-check bg-black text-white mt-3 checkoutBTN checkout-btn'>
-                            CheckOut
-                        </button>
+                        <div class='d-flex gap-1'>
+                            <button class=' w-50 py-3 fw-bold border-0 rounded-pill brand-bg-check bg-black text-white mt-3 btn-orange checkout-btn'>
+                                CheckOut
+                            </button>
+                            <button class=' w-50 py-3 fw-bold border-0 rounded-pill brand-bg-check bg-black text-white mt-3 checkoutBTN back-shoping'>
+                                Back to Catalog
+                            </button>
+                        </div>
                     </div>
                     
                     </div>
@@ -51,8 +56,11 @@ export default class SummaryCart extends Component {
                         <div class="progress" role="progressbar" aria-label="Warning example" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">
                             <div class="progress-bar brand-bg text-center text-white" style="width: 75%">75% Confirm Your Order</div>
                         </div>
-                        <button class='w-100 py-3 fw-bold border-0 rounded-pill brand-bg-check bg-black text-white mt-3 checkoutBTN checkout-btn'>
+                        <button class='w-100 py-3 fw-bold border-0 rounded-pill brand-bg-check bg-black text-white mt-3 btn-orange  checkout-btn'>
                             CheckOut
+                        </button>
+                        <button class='w-100 py-3 fw-bold border-0 rounded-pill brand-bg-check bg-black text-white mt-3 checkoutBTN back-shoping'>
+                            Back to Catalog
                         </button>
                     </div>
             </div>
@@ -80,6 +88,11 @@ export default class SummaryCart extends Component {
                 sessionStore.write("currentTotal" , cartManager.calculateTotal().total);
             })
         });
+
+        document.querySelector('.back-shoping').addEventListener('click' , ()=>{
+            navigate('/catalog');
+        })
+
         document.addEventListener('cartUpdated', () => {
             const cartManager = new CartManager(); 
             const totals = cartManager.calculateTotal();

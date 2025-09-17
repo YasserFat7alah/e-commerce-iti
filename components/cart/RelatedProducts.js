@@ -97,12 +97,12 @@ export default class RelatedProducts extends Component {
                                             <i class="fa-solid fa-eye"></i> View
                                         </button>
 
-                                        <!-- Smaller button: bg white, text black -->
+                                        <!-- Smaller button: bg white, text black 
                                         <button 
                                             class="btn btn-light border d-flex align-items-center justify-content-center text-dark addToCartBtn" 
                                             data-id="${product.id}" style="width: 50px; height: 40px;">
                                             <i class="fa-solid fa-cart-plus text-dark"></i>
-                                        </button>
+                                        </button> -->
 
                                     </div>
                                 </div>
@@ -133,63 +133,63 @@ export default class RelatedProducts extends Component {
         });
 
         // Add to Cart Button Event Listeners
-        document.querySelectorAll('.addToCartBtn').forEach(btn => {
-            btn.addEventListener("click", (e) => {
-                const productId = e.currentTarget.dataset.id;
-                const product = localProducts.find(p => p.id === productId);
+        // document.querySelectorAll('.addToCartBtn').forEach(btn => {
+        //     btn.addEventListener("click", (e) => {
+        //         const productId = e.currentTarget.dataset.id;
+        //         const product = localProducts.find(p => p.id === productId);
 
-                if (!product) {
-                    console.error('Product not found');
-                    return;
-                }
+        //         if (!product) {
+        //             console.error('Product not found');
+        //             return;
+        //         }
 
-                const stock = product.stock || [];
-                let chosen = null;
+        //         const stock = product.stock || [];
+        //         let chosen = null;
 
-                for (const variant of stock) {
-                    const sizes = variant.sizes || [];
-                    for (const sz of sizes) {
-                        const qty = (typeof sz.qty === 'number') ? sz.qty
-                            : (typeof sz.quantity === 'number') ? sz.quantity
-                                : (typeof sz.stock === 'number') ? sz.stock
-                                    : (typeof sz.count === 'number') ? sz.count
-                                        : null;
+        //         for (const variant of stock) {
+        //             const sizes = variant.sizes || [];
+        //             for (const sz of sizes) {
+        //                 const qty = (typeof sz.qty === 'number') ? sz.qty
+        //                     : (typeof sz.quantity === 'number') ? sz.quantity
+        //                         : (typeof sz.stock === 'number') ? sz.stock
+        //                             : (typeof sz.count === 'number') ? sz.count
+        //                                 : null;
 
-                        const available = (typeof qty === 'number') ? qty > 0
-                            : (typeof sz.available === 'boolean') ? sz.available
-                                : (typeof sz.inStock === 'boolean') ? sz.inStock
-                                    : true;
+        //                 const available = (typeof qty === 'number') ? qty > 0
+        //                     : (typeof sz.available === 'boolean') ? sz.available
+        //                         : (typeof sz.inStock === 'boolean') ? sz.inStock
+        //                             : true;
 
-                        if (available) {
-                            chosen = {
-                                color: variant?.color ?? null,
-                                size: (sz?.name && sz.name.trim() !== '') ? sz.name : null
-                            };
-                            break;
-                        }
-                    }
-                    if (chosen) break;
-                }
+        //                 if (available) {
+        //                     chosen = {
+        //                         color: variant?.color ?? null,
+        //                         size: (sz?.name && sz.name.trim() !== '') ? sz.name : null
+        //                     };
+        //                     break;
+        //                 }
+        //             }
+        //             if (chosen) break;
+        //         }
 
-                if (!chosen) {
-                    if (typeof Toast !== 'undefined' && Toast?.show) {
-                        Toast.show('This product is out of stock', { type: 'warning' });
-                    } else {
-                        alert('This product is out of stock');
-                    }
-                    return;
-                }
+        //         if (!chosen) {
+        //             if (typeof Toast !== 'undefined' && Toast?.show) {
+        //                 Toast.show('This product is out of stock', { type: 'warning' });
+        //             } else {
+        //                 alert('This product is out of stock');
+        //             }
+        //             return;
+        //         }
 
-                addToCart({
-                    product,
-                    selectedColor: chosen.color,
-                    selectedSize: chosen.size,
-                    qty: 1,
-                });
+        //         addToCart({
+        //             product,
+        //             selectedColor: chosen.color,
+        //             selectedSize: chosen.size,
+        //             qty: 1,
+        //         });
 
-                this.notifyCartUpdate();
-            });
-        });
+        //         this.notifyCartUpdate();
+        //     });
+        // });
 
 
 

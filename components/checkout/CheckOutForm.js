@@ -200,10 +200,10 @@ export default class CheckOutForm extends Component{
             if (userData.phone) phoneEl.value = userData.phone;
 
             // Load address from localStorage if exists
-            if (userData.city || userData.state || userData.addressDetail) {
+            if (userData.city || userData.state || userData.address) {
                 cityEl.value = userData.city || "";
                 stateEl.value = userData.state || "";
-                addressDetailEl.value = userData.addressDetail || "";
+                addressDetailEl.value =userData.city + " , "+userData.state || "";
             }
 
             // Disable pre-filled fields
@@ -434,8 +434,7 @@ export default class CheckOutForm extends Component{
                 phone: userData ? userData.phone : phoneEl.value,
                 city: cityEl.value,
                 state: stateEl.value,
-                addressDetail: addressDetailEl.value,
-                // address: `${cityEl.value}, ${stateEl.value}`,
+                address: userData ? `${userData.city} ${userData.state}` : `${cityEl.value} ${stateEl.value}`,
                 zipCode: zipCodeEl.value,
                 payMethod: selectedPayment ? selectedPayment.value : "",
                 cardNumber: selectedPayment && selectedPayment.value === 'visa' ? cardNum.value : "",
@@ -463,10 +462,10 @@ export default class CheckOutForm extends Component{
             }
 
             // Load address to inputs
-            if (userData.address) {
-                cityEl.value = userData.address.city || "";
-                stateEl.value = userData.address.state || "";
-                addressDetailEl.value = userData.address.detailAddress || "";
+            if (userData.city || userData.state) {
+                cityEl.value = userData.city || "";
+                stateEl.value = userData.state || "";
+                addressDetailEl.value = userData.city +" , " +userData.state || "";
             } else {
                 cityEl.value = "";
                 stateEl.value = "";
@@ -507,6 +506,7 @@ export default class CheckOutForm extends Component{
                             userId : userData.id,
                             userName: userData.name,
                             userEmail: userData.email,
+                            paymentMethod:userData.payMethod ,
                             orderDate: `${day}/${month}/${year}` ,
                             state: "pending" ,
                             orderItems: items.map(item => ({
