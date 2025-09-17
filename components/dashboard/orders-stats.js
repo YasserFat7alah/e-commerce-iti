@@ -27,7 +27,7 @@ export function renderOrdersAnalytics(container) {
             <!-- Second Row - 4 Cards (Order Status Cards) -->
             <div class="row mb-4">
                 ${renderStatCard(stats.pendingOrders, 'Pending Orders', 'fa-clock', 'statsCardPending', 'col-6 col-sm-6 g-2 col-md-3 col-lg-3 ')}
-                ${renderStatCard(stats.confirmedOrders, 'Confirmed Orders', 'fa-solid fa-user-check', 'statsCardConfirmed', 'col-6 col-sm-6 g-2 col-md-3 col-lg-3')}
+                ${renderStatCard(stats.cancelledOrders, 'Cancelled Orders', 'fa-solid fa-user-check', 'statsCardCancelled', 'col-6 col-sm-6 g-2 col-md-3 col-lg-3')}
                 ${renderStatCard(stats.shippedOrders, 'Shipped Orders', 'fa-truck', 'statsCardShipped', 'col-6 col-sm-6 g-2 col-md-3 col-lg-3  ')}
                 ${renderStatCard(stats.deliveredOrders, 'Delivered Orders', 'fa-check-circle', 'statsCardDelivered', 'col-6 col-sm-6 g-2 col-md-3 col-lg-3')}
             </div>
@@ -81,7 +81,7 @@ export function renderOrdersAnalytics(container) {
 export function calculateOrderStats(orders) {
     let totalRevenue = 0;
     let pendingOrders = 0;
-    let confirmedOrders = 0;
+    let cancelledOrders = 0;
     let shippedOrders = 0;
     let deliveredOrders = 0;
 
@@ -92,8 +92,8 @@ export function calculateOrderStats(orders) {
         // Handle cases
         const status = (order.state || 'pending').toLowerCase();
         switch (status) {
-            case 'confirmed':
-                confirmedOrders++;
+            case 'cancelled':
+                cancelledOrders++;
                 break;
             case 'shipped':
                 shippedOrders++;
@@ -111,7 +111,7 @@ export function calculateOrderStats(orders) {
         totalRevenue: totalRevenue.toFixed(2),
         totalOrders: orders.length,
         pendingOrders,
-        confirmedOrders,
+        cancelledOrders,
         shippedOrders,
         deliveredOrders
     };
@@ -140,7 +140,7 @@ export function renderChartCard(title, canvasId, icon) {
     </div>`;
 }
 export function prepareChartData(orders) {
-    const statusData = { pending: 0, confirmed: 0, shipped: 0, delivered: 0 }; //1st
+    const statusData = { pending: 0, cancelled: 0, shipped: 0, delivered: 0 }; //1st
     const revenueByDate = {}; // for revenue chart  2nd
     const categoryData = {};//3rd
     const productRevenue = {}; //4th
@@ -263,11 +263,11 @@ export function initOrderCharts(chartData) {
         window.statusChartInstance = new Chart(statusCtx, {
             type: 'pie',
             data: {
-                labels: ['Pending', 'Confirmed', 'Shipped', 'Delivered'],
+                labels: ['Pending', 'Cancelled', 'Shipped', 'Delivered'],
                 datasets: [{
                     data: [
                         chartData.statusData.pending,
-                        chartData.statusData.confirmed,
+                        chartData.statusData.cancelled,
                         chartData.statusData.shipped,
                         chartData.statusData.delivered
                     ],
