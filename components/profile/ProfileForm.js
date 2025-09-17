@@ -71,7 +71,7 @@ export default class ProfileForm extends View {
                             </div>
                         </div>
 
-                        ${ `
+                        ${ userData?.city && userData?.state ?`
                             <div class="col-md-12">
                                 <label class="form-label">Address</label>
                                 <input type="text" class="form-control" id="adrs" placeholder="Address" value="${userData.city ? userData.city +" , " + userData.state : ' '} "  disabled required">
@@ -79,7 +79,7 @@ export default class ProfileForm extends View {
                                     Please enter your address.
                                 </div>
                             </div>       
-                        `}
+                        ` : ""}
 
                         <div class="col-md-12">
                             <label class="form-label">Email</label>
@@ -99,7 +99,7 @@ export default class ProfileForm extends View {
 
         const editBtn = document.getElementById('edit-btn');
         const saveBtn = document.getElementById('save-btn');
-        const inputeArr = document.querySelectorAll(".card input");
+        const inputeArr = document.querySelectorAll("form input");
         const form = document.querySelector('.needs-validation');
 
         saveBtn.style.display='none';
@@ -133,8 +133,9 @@ export default class ProfileForm extends View {
             let city = "";
             let state = "";
 
+
             if (adrsEl && adrsEl.value.trim() !== "") {
-            const parts = adrsEl.value.trim().split(",");
+                const parts = adrsEl.value.trim().split(",");
                 city = parts[0]?.trim() || "";
                 state = parts[1]?.trim() || "";
             }
@@ -183,11 +184,14 @@ export default class ProfileForm extends View {
             inputeArr.forEach((input , i)=>{
                 input.disabled = true;
             })
+            
             form.classList.remove('was-validated'); 
             editBtn.style.display = 'block';
             saveBtn.style.display = 'none';
-            location.reload();
             Toast.notify("Your Info is Updated" , "success");
+            setTimeout(()=>{
+                location.reload();
+            } , 1000)
         });
     }
     
