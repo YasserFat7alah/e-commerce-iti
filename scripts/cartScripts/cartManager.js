@@ -71,7 +71,7 @@ export function CartManager() {
     discountEls.forEach(el => el.innerText =`Discount :$ ${totals.discountTotal.toFixed(2)}` );
     totalItemsEls.forEach(el => el.innerText = `${this.itemCount()} Items`);
   
-    console.log(this.calculateTotal().subtotal)
+    // console.log(this.calculateTotal().subtotal)
   };
   
 
@@ -90,7 +90,7 @@ export function CartManager() {
         if (item.qty < (sizeObj.qty )) {
           item.qty += 1;
           Toast.notify(`✅ Quantity updated! Total: ${item.qty}`, "info");
-          console.log( item);
+          // console.log( item);
           const totals = this.calculateTotal();
           this.updateTotalUI(totals);
           this.saveCart();
@@ -134,7 +134,7 @@ export function CartManager() {
 
         const totals = this.calculateTotal();
         this.updateTotalUI(totals);
-        console.log(this.cart)
+        // console.log(this.cart)
     };
 
   

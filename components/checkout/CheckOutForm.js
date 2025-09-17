@@ -155,7 +155,7 @@ export default class CheckOutForm extends Component{
         
         // Read user info from session storage
         const userData = getCurrentUser();
-        console.log(userData);
+        // console.log(userData);
 
         // _____________________Collapse Visa ________________________________
         const visaCollapse = new bootstrap.Collapse(document.getElementById('visa-info'), { toggle: false });
@@ -170,7 +170,7 @@ export default class CheckOutForm extends Component{
 
         paymentMethods.forEach(payMethod => {
             payMethod.addEventListener('click', (e) => {
-                console.log(e.target.value);
+                // console.log(e.target.value);
                 if (e.target.value === 'visa') {
                     visaCollapse.show();
                     visaOpen = true;
@@ -419,7 +419,7 @@ export default class CheckOutForm extends Component{
                     sessionStore.write("currentTotal", "");
                     
                 } catch (error) {
-                    console.error("Error processing payment:", error);
+                    // console.error("Error processing payment:", error);
                     if (typeof Toast !== 'undefined') {
                         Toast.notify("Payment processing error occurred!", "error");
                     }
@@ -442,7 +442,7 @@ export default class CheckOutForm extends Component{
                 cvv: selectedPayment && selectedPayment.value === 'visa' ? cvv.value : "",
             };
 
-            console.log("Form Data:", formData);
+            // console.log("Form Data:", formData);
             
             // Update user data in session
             if (userData) {
@@ -455,7 +455,7 @@ export default class CheckOutForm extends Component{
                     if (allUsers[i].id === userData.id) {
                         allUsers[i] = { ...allUsers[i], ...formData };
                         localStore.write("users", allUsers); 
-                        console.log("Updated User:", allUsers[i]); 
+                        // console.log("Updated User:", allUsers[i]); 
                         
                     }
                 }
@@ -540,7 +540,7 @@ export default class CheckOutForm extends Component{
                 visaOpen = false;
             }
 
-            console.log("Order created:", order);
+            // console.log("Order created:", order);
             if (typeof Toast !== 'undefined') {
                 Toast.notify("Your order has been placed successfully!", "success");
             }
