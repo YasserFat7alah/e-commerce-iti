@@ -162,21 +162,32 @@ export function prepareChartData(orders) {
             categoryData[item.category] = (categoryData[item.category] || 0) + 1;//3rd
             // Track product revenue in productRevenue object { productName: { revenue:.., orders:.. } }
             const revenue = parseFloat(item.price) * item.qty; //rev for every item
-            if (productRevenue[item.productName]) {//4th
-                productRevenue[item.productName].revenue += revenue;
-                productRevenue[item.productName].orders++;
-                //  console.log(productRevenue);
+            const productId = item.productId || item.id;
+            // if the odrer already has the product (not the first time)=>  inc revenue and orders
+            if (productRevenue[productId]) {//4th
+                productRevenue[productId].revenue += revenue;;
+                productRevenue[productId].orders++;;
+                //  console.log( productRevenue);
+            //else if the odrer doesn't have the product (first time)=> add the product
             } else {
-                productRevenue[item.productName] = { revenue, orders: 1 };
+                productRevenue[productId] = { 
+                    name: item.productName, 
+                    revenue, 
+                    orders: 1 
+                    
+                };
             }
         });
     });
     //top products by revenue
-    const topProducts = Object.entries(productRevenue).map(([name, data]) => ({
-        name: truncateText(name, 30),
+    const topProductsData = Object.entries(productRevenue).map(([productId, data]) => ({
+        id: productId,
+        name: truncateText(data.name, 30),
         revenue: data.revenue.toFixed(2),
         orders: data.orders //how many orders included this product
-    })).sort((a, b) => b.revenue - a.revenue).slice(0, 5); // Top 5 products ,desc
+    }))
+    const topProducts=topProductsData.sort((a, b) => b.revenue - a.revenue).slice(0, 5); // Top 5 products ,desc
+    // console.log(topProducts);
     // ....................Prepare revenue chart.................
     const sortedRevenueDates = Object.keys(revenueByDate).sort((a, b) => new Date(a) - new Date(b));// Sorted ARRAY of keys of revenueByDate obj (asc dates)
     // console.log(revenueByDate);
@@ -204,7 +215,7 @@ export function renderTopProductsCard(topProducts) {
                         </div>
                         <div class="ms-3 flex-grow-1">
                             <h6 class="mb-1" style="font-size:0.9rem;">${product.name}</h6>
-                            <small class="text-muted">${product.orders} orders</small>
+                            <small class="text-muted">Sold ${product.orders} ${product.orders > 1 ? 'times' : 'time'}</small>
                         </div>
                         <div class="text-end">
                             <strong class="text-success">$${product.revenue}</strong>
