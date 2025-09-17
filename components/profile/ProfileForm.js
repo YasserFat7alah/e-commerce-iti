@@ -74,7 +74,7 @@ export default class ProfileForm extends View {
                         ${ `
                             <div class="col-md-12">
                                 <label class="form-label">Address</label>
-                                <input type="text" class="form-control" id="adrs" placeholder="Address" value="${userData?.city ? userData.city : ''} " " ${userData?.state ? userData.state : ''}"  disabled required">
+                                <input type="text" class="form-control" id="adrs" placeholder="Address" value="${userData.city ? userData.city +" , " + userData.state : ' '} "  disabled required">
                                 <div class="invalid-feedback">
                                     Please enter your address.
                                 </div>
@@ -133,7 +133,7 @@ export default class ProfileForm extends View {
             let state = "";
 
             if (adrsEl && adrsEl.value.trim() !== "") {
-            const parts = adrsEl.value.trim().split(" ");
+            const parts = adrsEl.value.trim().split(",");
                 city = parts[0]?.trim() || "";
                 state = parts[1]?.trim() || "";
             }
@@ -147,13 +147,12 @@ export default class ProfileForm extends View {
                 email: document.getElementById('email').value.trim(),
                 city ,
                 state ,
+                address : city + state,
                 gender: document.querySelector('input[name="gender"]:checked').value
             };
 
             const newData = {...userData , ...updatedUser} ;
             
-            console.log("new" , newData);
-
             sessionStore.write("currentUser" , newData)
 
            const users = localStore.read("users", []); 
