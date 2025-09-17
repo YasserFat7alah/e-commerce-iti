@@ -70,33 +70,77 @@ const orderList = document.getElementById("orderList");
           : null;
       })
       .filter(order => order !== null);    
-    function updateUI() {
-      orderList.innerHTML = '';
-      const validOrders = orders.filter(order => 
-        order.orderItems && order.orderItems.length > 0
-      );
-      if (validOrders.length === 0) {
-        orderList.innerHTML = '<div class="text-center text-muted p-2">No orders available yet.</div>';
-      } else {
-        validOrders.forEach(order => {
-          order.orderItems.forEach(item => {
-            const orderItem = document.createElement('div');
-            orderItem.className = 'order-item d-flex justify-content-between align-items-center p-2 border-bottom';
-            orderItem.innerHTML = `
-              <span class="order-date">${order.orderDate || new Date().toISOString().split('T')[0]}</span>
-              <span class="order-product">${item.productName || 'N/A'}</span>
-              <span class="order-qty">Qty: ${item.qty || 1}</span>
-              <span class="order-price">$${item.price * (item.qty || 1)}</span>
-              <span class="order-status">${order.state || 'N/A'}</span>
-            `;
-            orderList.appendChild(orderItem);
-          });
-        });
-      }
+   function updateUI() {
+  orderList.innerHTML = '';
+  const validOrders = orders.filter(order => 
+    order.orderItems && order.orderItems.length > 0
+  );
 
-      updateSummary();
-      updateCharts();
-    }
+  if (validOrders.length === 0) {
+    orderList.innerHTML = '<div class="text-center text-muted p-2">No orders available yet.</div>';
+  } else {
+    // Create table
+    const table = document.createElement('table');
+    table.className = 'table table-striped table-bordered';
+    
+    // Create table header
+    const thead = document.createElement('thead');
+    thead.innerHTML = `
+      <tr>
+        <th>Order ID</th>
+        <th>Order Date</th>
+        <th>Products</th>
+        <th>Total Price</th>
+        <th>Status</th>
+      </tr>
+    `;
+    table.appendChild(thead);
+
+    // Create table body
+    const tbody = document.createElement('tbody');
+
+    // Group orders by orderId
+    const groupedOrders = validOrders.reduce((acc, order) => {
+      if (!acc[order.orderId]) {
+        acc[order.orderId] = {
+          orderDate: order.orderDate || new Date().toISOString().split('T')[0],
+          state: order.state || 'N/A',
+          items: []
+        };
+      }
+      acc[order.orderId].items.push(...order.orderItems);
+      return acc;
+    }, {});
+
+    // Create table rows
+    Object.entries(groupedOrders).forEach(([orderId, orderData]) => {
+      const row = document.createElement('tr');
+      
+      // Combine product names with quantities
+      const products = orderData.items
+        .map(item => `${item.productName || 'N/A'} (Qty: ${item.qty || 1})`)
+        .join('<br>');
+      
+      // Calculate total price
+      const totalPrice = orderData.items.reduce((sum, item) => sum + (item.price * (item.qty || 1)), 0);
+
+      row.innerHTML = `
+        <td>${orderId}</td>
+        <td>${orderData.orderDate}</td>
+        <td>${products}</td>
+        <td>$${totalPrice.toFixed(2)}</td>
+        <td>${orderData.state}</td>
+      `;
+      tbody.appendChild(row);
+    });
+
+    table.appendChild(tbody);
+    orderList.appendChild(table);
+  }
+
+  updateSummary();
+  updateCharts();
+}
 
     function updateSummary() {
       const validOrders = orders.filter(order => 
@@ -115,13 +159,13 @@ const orderList = document.getElementById("orderList");
 function updateCharts() {
     const monthlySalesCtx = document.getElementById('monthlySalesChart').getContext('2d');
     const validOrders = orders.filter(order => 
-      order.orderItems && order.orderItems.length > 0
+      order.orderItems && order.orderItems.length > 0 
     ).slice(0, 6);
     
     new Chart(monthlySalesCtx, {
       type: 'line',
       data: { 
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jul'], 
+      labels: validOrders.flatMap(order => order.orderDate), 
         datasets: [{ 
           label: 'Sales', 
           data: validOrders.flatMap(order => order.orderItems.map(item => item.price * (item.qty || 1))), 

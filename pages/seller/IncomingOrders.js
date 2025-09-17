@@ -121,31 +121,51 @@ export default class incomeingOrder extends View {
     }
 
     // Function to update the UI
-    function updateUI(filteredOrders = orders) {
-      orderList.innerHTML = "";
-      if (filteredOrders.length === 0) {
-        orderList.innerHTML = '<div class="text-center text-muted p-3">No orders available yet.</div>';
-      } else {
-        filteredOrders.forEach((order, index) => {
-          (order.orderItems || []).forEach(item => {
-            const orderItem = document.createElement("div");
-            orderItem.className = "order-item";
-            orderItem.innerHTML = `
-            <div class="avatar">${index + 1}</div>
-            <div class="text-muted me-5">${order.orderId}</div>
-            <div class="order-details">
-              <div class="order-name">${item.productName || "N/A"}</div>
-              <div class="order-products">Color: ${item.color || "N/A"}, Qty: ${item.qty || 0}, Price: $${(item.price * (item.qty || 1)).toFixed(2)}, Date: ${order.orderDate || "N/A"}</div>
-            </div>
-            <div class="order-status ${orderStatusBadge(order.state)}" >${order.state}</div>
-          `;
-            orderList.appendChild(orderItem);
-          });
-        });
+   function updateUI(filteredOrders = orders) {
+  orderList.innerHTML = '';
+  if (filteredOrders.length === 0) {
+    orderList.innerHTML = '<div class="text-center text-muted p-3">No orders available yet.</div>';
+  } else {
+    // Group orders by orderId
+    const groupedOrders = filteredOrders.reduce((acc, order) => {
+      if (!acc[order.orderId]) {
+        acc[order.orderId] = {
+          orderDate: order.orderDate || 'N/A',
+          state: order.state || 'N/A',
+          items: []
+        };
       }
-      updateSummary(filteredOrders);
-    }
+      acc[order.orderId].items.push(...(order.orderItems || []));
+      return acc;
+    }, {});
 
+    // Create order items
+    Object.entries(groupedOrders).forEach(([orderId, orderData], index) => {
+      const orderItem = document.createElement('div');
+      orderItem.className = 'order-item';
+      
+      // Combine product details with date in the same line
+      const productDetails = orderData.items
+        .map(item => `
+          <div class="order-name">${item.productName || 'N/A'}</div>
+          <div class="order-products">Color: ${item.color || 'N/A'}, Qty: ${item.qty || 0}, Price: $${(item.price * (item.qty || 1)).toFixed(2)}, Date: ${orderData.orderDate}</div>
+        `)
+        .join('');
+
+      orderItem.innerHTML = `
+        <div class="avatar">${index + 1}</div>
+        <div class="text-muted me-5">${orderId}</div>
+        <div class="order-details">
+          ${productDetails}
+        </div>
+        <div class="order-status ${orderStatusBadge(orderData.state)}">${orderData.state}</div>
+      `;
+      orderList.appendChild(orderItem);
+    });
+  }
+
+  updateSummary(filteredOrders);
+}
 
     // Function to update summary
     function updateSummary(filteredOrders) {
