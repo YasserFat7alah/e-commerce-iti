@@ -381,6 +381,10 @@ export default class CheckOutForm extends Component{
                     cardNum.classList.add("is-invalid");
                     cardNum.classList.remove("is-valid");
                     customValidationPassed = false;
+                    setTimeout(()=>{
+                        Toast.notify("⚠️ Enter valid Cridit Card", "warning");
+                    } , 100)
+                    
                 }
 
                 // Expiration date validation
@@ -389,7 +393,9 @@ export default class CheckOutForm extends Component{
                     expDate.classList.remove("is-valid");
                     customValidationPassed = false;
                     if (typeof Toast !== 'undefined') {
-                        Toast.notify("⚠️ Enter valid expiration date in MM/YY format", "warning");
+                        setTimeout(()=>{
+                            Toast.notify("⚠️ Enter valid expiration date in MM/YY format", "warning");
+                        } , 800)
                     }
                 } else {
                     expDate.classList.remove("is-invalid");
@@ -403,6 +409,10 @@ export default class CheckOutForm extends Component{
                     cvv.classList.remove("is-valid");
                     cvv.setCustomValidity("Invalid CVV");
                     customValidationPassed = false;
+                    setTimeout(()=>{
+                        Toast.notify("⚠️ Enter valid CVV number", "warning");
+                    } , 1200)
+
                 } else {
                     cvv.classList.remove("is-invalid");
                     cvv.classList.add("is-valid");
