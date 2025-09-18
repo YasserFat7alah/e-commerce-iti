@@ -108,8 +108,6 @@ export function showLoader() {
 export function hideLoader(_time = 500) {
   const loader = document.getElementById("app-loader");
   if (loader) {
-
-    
     window.setTimeout(() => {
       loader.style.opacity = "0";
     }, _time);

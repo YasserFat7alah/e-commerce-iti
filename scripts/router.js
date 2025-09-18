@@ -99,7 +99,9 @@ export default class Router {
                 }
             }
 
-
+            // Cleanup previous view
+            if (this.currentView) this.currentView.onLeave();
+            
             // Handle lazy loaded routes
             if (typeof routeConfig.loader === "function") {
                 try {
@@ -129,8 +131,7 @@ export default class Router {
                 return;
             }
 
-            // Cleanup previous view
-            if (this.currentView) this.currentView.onLeave();
+            
 
             // Create new view
             this.currentView = new ViewClass(
