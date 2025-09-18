@@ -150,6 +150,9 @@ export default class SignupForm extends Component {
 
         // Form submission
         form.addEventListener('submit', function (event) {
+
+            event.preventDefault();
+
             // Validate all fields
             const isNameValid = checkName();
             const isEmailValid = checkEmail();
@@ -168,10 +171,9 @@ export default class SignupForm extends Component {
 
             // If any validation fails, prevent form submission
             if (!isNameValid || !isEmailValid || !isPasswordValid || !isPasswordMatchValid || !isTermsValid) {
-                event.preventDefault();
-                event.stopPropagation();
                 return;
             }
+            
             const name = nameF.value.trim();
             const email = emailF.value.toLowerCase().trim();
             const password = passwordF.value;

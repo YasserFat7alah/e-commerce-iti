@@ -75,7 +75,9 @@ export default class LoginForm extends Component {
 
         // Form Submission
         form.addEventListener('submit', function (e) {
+
             e.preventDefault();
+
             const isEmailValid = checkEmail();
             if (!isEmailValid) {
                 return;
@@ -94,7 +96,7 @@ export default class LoginForm extends Component {
                 passwordF.classList.add("is-invalid");
                 return;
             }
-        
+
             //Case: banned users
             if (user && user.status === "banned") {
                 Toast.notify("🚫 Your account has been banned. Contact support.", "danger");
