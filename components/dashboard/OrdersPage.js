@@ -271,20 +271,20 @@ function updateOrderStatus(orderId, newStatus) {
     if (orderIndex !== -1) {
         const order = orders[orderIndex];
         const currentStatus = order.state || 'pending';
-        
+
         // Prevent changing status if order is already cancelled
         if (currentStatus === 'cancelled') {
             Toast.notify(`This order is already cancelled, can't update status`, 'warning');
             return;
         }
-        
+
         // rstore inventory when order is cancelled
         if (newStatus === 'cancelled') {
             if (restoreInventory(order.orderItems)) { // if the return value from restoreInventory() is true 
                 Toast.notify(`Inventory restored for cancelled order #${orderId}`, 'info');
             }
         }
-        
+
         // Update the order status
         orders[orderIndex].state = newStatus;
         localStore.write("orders", orders);
@@ -304,20 +304,20 @@ function updateOrderStatus(orderId, newStatus) {
 function restoreInventory(orderProducts) {
     const products = localStore.read('products') || []; // to compare the order's products with the products
     let updated = false;
-    
+
     orderProducts.forEach(item => {
         const productIndex = products.findIndex(p => p.id === item.productId);
-        
+
         if (productIndex !== -1) {
             const product = products[productIndex];
-            
+
             // find  by color
             const stockItem = product.stock?.find(s => s.color === item.color);//compare the stock color with the order color
-            
+
             if (stockItem && stockItem.sizes) {
                 // Find the correct size within the stock item
                 const sizeItem = stockItem.sizes.find(s => s.name === item.size);//compare the stock size with the order size
-                
+
                 if (sizeItem) {
                     // Restore the quantity
                     sizeItem.qty += parseInt(item.qty);
@@ -327,11 +327,11 @@ function restoreInventory(orderProducts) {
             }
         }
     });
-    
+
     if (updated) {
         localStore.write('products', products);
     }
-    
+
     return updated;
 }
 // Update stats bar
@@ -438,7 +438,7 @@ function viewOrderDetails(OrderId) {
                                         </div>
                                         <div class="col-6">
                                             <label class="form-label text-muted small">Payment Method :</label>
-                                            <div class="fw-semibold">$${order.paymentMethod}</div>
+                                            <div class="fw-semibold">${order.paymentMethod}</div>
                                         </div>
                                     </div>
                                 </div>
