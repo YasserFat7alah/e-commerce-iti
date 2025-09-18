@@ -141,7 +141,7 @@ function renderOrdersTable(orders) {
                     <th>Products</th>
                     <th>Status</th>
                     <th>Total</th>
-                    <th>Payment Method</th>
+                    <th>Payment \n Method</th>
                     <th>Date</th>
                     <th>Actions</th>
                 </tr>
@@ -178,7 +178,7 @@ function renderOrdersTable(orders) {
                                 </span>
                             </td>
                             <td><strong class="text-success">$${total}</strong></td>
-                            <td>${order.paymentMethod}</td> 
+                            <td class="text-muted fw-semibold ps-3" >${order.paymentMethod}</td> 
                             <td><small>${order.orderDate}</small></td>
                             <td>
                                 <div class="btn-group btn-group-sm" role="group">
@@ -435,6 +435,10 @@ function viewOrderDetails(OrderId) {
                                         <div class="col-6">
                                             <label class="form-label text-muted small">Total Price:</label>
                                             <div class="fw-semibold">$${total}</div>
+                                        </div>
+                                        <div class="col-6">
+                                            <label class="form-label text-muted small">Payment Method :</label>
+                                            <div class="fw-semibold">$${order.paymentMethod}</div>
                                         </div>
                                     </div>
                                 </div>
