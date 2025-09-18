@@ -21,6 +21,12 @@ export default class AddProduct extends View {
       <input type="text" name="name" class="form-control shadow-sm" required>
     </div>
 
+     <!-- Brand -->
+    <div class="col-12 col-md-6 col-lg-4">
+      <label for="brand" class="form-label fw-bold">Brand</label>
+      <input type="text" name="brand" class="form-control shadow-sm" placeholder="e.g. Shein">
+    </div>
+
     <!-- Price -->
     <div class="col-12 col-md-6 col-lg-4">
       <label for="price" class="form-label fw-bold">Price</label>
@@ -62,12 +68,6 @@ export default class AddProduct extends View {
     <div class="col-12 col-md-6 col-lg-4">
       <label for="material" class="form-label fw-bold">Material</label>
       <input type="text" name="material" class="form-control shadow-sm" placeholder="e.g. PU Leather">
-    </div>
-
-    <!-- Brand -->
-    <div class="col-12 col-md-6 col-lg-4">
-      <label for="brand" class="form-label fw-bold">Brand</label>
-      <input type="text" name="brand" class="form-control shadow-sm" placeholder="e.g. Shein">
     </div>
 
     <!-- Description -->
@@ -466,7 +466,7 @@ export default class AddProduct extends View {
           category: form.querySelector("select[name='category']").value,
           subCategory: form.querySelector("input[name='subcategory']").value,
           price: parseFloat(form.querySelector("input[name='price']").value),
-          sale: parseFloat(form.querySelector("input[name='sale']").value)/100 || 0,
+          sale: parseFloat(form.querySelector("input[name='sale']").value) / 100 || 0,
           material: form.querySelector("input[name='material']").value,
           sellerId: user.id,
           status: "pending",

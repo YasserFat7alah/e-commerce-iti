@@ -31,37 +31,33 @@ export default class Router {
                 return;
             }
 
-
+            // get the hash
             let fullPath = location.hash.slice(1) || "/home";
-            if (!fullPath || fullPath === "/") {
-                fullPath = "/home";
-            }
-
-
+            if (fullPath === "/") fullPath = "/home";
 
             const [pathPart, queryString] = fullPath.split("?");
             const params = parseQuery(queryString || "");
 
-
+            // sign the redirect page
             if (pathPart !== '/login' && pathPart !== '/signup' && pathPart !== '/404' && pathPart !== '/confirm-seller') {
                 sessionStore.write('redirectedPage', fullPath);
             }
 
-            let ViewClass = null;
-            let baseRoute = null;
-            let routeConfig = null;
+
+            let ViewClass = null;   // page to render 
+            let baseRoute = null;   // main path part
+            let routeConfig = null; // page details (page to load + roles) 
 
             // Find the best matching route (longest prefix match)
             for (const route in this.routes) {
                 if (pathPart === route || pathPart.startsWith(route)) {
+
                     if (!baseRoute || route.length > baseRoute.length) {
                         routeConfig = this.routes[route];
                         baseRoute = route;
                     }
                 }
             }
-
-
 
             if (!routeConfig) {
                 routeConfig = this.routes["/404"];
@@ -99,6 +95,14 @@ export default class Router {
                 }
             }
 
+            // If already inside the same view → just forward to subroute
+            if (this.currentView && this.currentView.route === baseRoute) {
+
+                this.currentView.onSubRoute(pathPart, params);
+
+                return;
+            }
+
             // Cleanup previous view
             if (this.currentView) this.currentView.onLeave();
             
@@ -122,16 +126,6 @@ export default class Router {
                 ViewClass = (await routeConfig.loader()).default;
                 baseRoute = "/404";
             }
-
-            // If already inside the same view → just forward to subroute
-            if (this.currentView && this.currentView.route === baseRoute) {
-
-                this.currentView.onSubRoute(pathPart, params);
-
-                return;
-            }
-
-            
 
             // Create new view
             this.currentView = new ViewClass(

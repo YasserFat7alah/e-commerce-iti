@@ -32,6 +32,8 @@ export default class SupportPage extends View {
     this.mount(Navbar, "#navbar");
     this.mount(FloatBtns, "#floatBtns");
 
+    console.log(this.parent.querySelector("#subview-slot"));
+
     // register subviews
     this.subview(TermsPage, {
       parent: "subview-slot",
@@ -63,8 +65,6 @@ export default class SupportPage extends View {
     }
 
     this.updateActiveTab();
-
-    // update active tab on hash change
     window.addEventListener("hashchange", () => this.updateActiveTab());
   }
 

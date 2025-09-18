@@ -223,7 +223,7 @@ export default class PrivacyPage extends View {
     }
 
     script() {
-
+      console.log(this.parent.querySelector("#subview-slot"));
     }
     
 }

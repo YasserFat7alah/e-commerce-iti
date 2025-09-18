@@ -1,18 +1,15 @@
 import View from "../../components/core/view.js";
+import { getCurrentUser } from "../../data/authentication.js";
 import { localStore, sessionStore } from "../../scripts/utils/storage.js";
 
 export default class SalesHistory extends View {
   template() {
-    const currentSeller = sessionStore.read("currentUser")
+    const currentSeller = getCurrentUser()
     const allProducts = localStore.read("products");
 
     const sellerProducts = allProducts.filter(
-      (product) => product.sellerId === currentSeller.id
+      (product) => product.sellerId == currentSeller.id
     );
-
-
-    console.log(sellerProducts);
-    console.log(currentSeller);
 
 
     return `
@@ -53,7 +50,7 @@ export default class SalesHistory extends View {
 let isInitialized = false;
 
 if (isInitialized) {
-  console.log("SalesHistory already initialized, skipping.");
+  //console.log("SalesHistory already initialized, skipping.");
   return;
 }
 isInitialized = true;
@@ -67,29 +64,29 @@ if (!tableBody || !salesChartCanvas) {
 }
 
 // Read current seller data
-const currentSeller = sessionStore.read("currentUser");
+    const currentSeller = getCurrentUser();
 if (!currentSeller || !currentSeller.id) {
   console.error("Current seller data is missing or invalid.");
   tableBody.innerHTML = '<tr><td colspan="4">Seller information not available.</td></tr>';
   return;
 }
 
-console.log("Current Seller:", currentSeller);
+//console.log("Current Seller:", currentSeller);
 
 // Read all products and filter by seller
 const allProducts = localStore.read("products");
 let rawOrders = localStore.read("orders");
 
 // Debug: Log raw data
-console.log("All Products:", allProducts);
-console.log("Raw Orders:", rawOrders);
+//console.log("All Products:", allProducts);
+//console.log("Raw Orders:", rawOrders);
 
 // Filter products for current seller
 const rawProducts = allProducts ? allProducts.filter(
   (product) => product.sellerId === currentSeller.id
 ) : [];
 
-console.log("Seller Products (filtered):", rawProducts);
+//console.log("Seller Products (filtered):", rawProducts);
 
 // Ensure products is an array
 if (!rawProducts || !Array.isArray(rawProducts)) {
@@ -125,7 +122,7 @@ const products = rawProducts.map((product) => {
 });
 
 // Debug: Log processed seller products
-console.log("Processed Seller Products:", products);
+//console.log("Processed Seller Products:", products);
 
 // Function to parse DD/MM/YYYY date format
 const parseCustomDate = (dateStr) => {
@@ -152,7 +149,7 @@ const salesData = products.map((product) => {
   const productOrders = rawOrders
     .flatMap((order) => {
       // Log all keys and values in the order object
-      console.log(`Order keys and values:`, order);
+      // console.log(`Order keys and values:`, order);
       const orderDateFields = [
         order.orderDate, order.date, order.createdAt, order.timestamp, 
         order.order_date, order.created_at, order.orderTime, order.created, 
@@ -161,7 +158,7 @@ const salesData = products.map((product) => {
       ].find(field => field !== undefined && field !== null);
       return (order.orderItems || []).map(item => {
         // Log all keys and values in the orderItem object
-        console.log(`Order item keys and values for product ${product.Name}:`, item);
+        // console.log(`Order item keys and values for product ${product.Name}:`, item);
         return {
           ...item,
           orderDate: item.orderDate || item.date || item.createdAt || item.timestamp || 
@@ -180,7 +177,7 @@ const salesData = products.map((product) => {
       }
       const match = String(item.productId).toLowerCase() === String(product.Id).toLowerCase();
       if (!match) {
-        console.log(`No match for product ID ${product.Id} with order item productId ${item.productId}`);
+        // console.log(`No match for product ID ${product.Id} with order item productId ${item.productId}`);
       }
       return match;
     })
@@ -191,7 +188,7 @@ const salesData = products.map((product) => {
     });
 
   // Debug: Log orders for this product
-  console.log(`Product ID: ${product.Id}, Name: ${product.Name}, Product Orders:`, productOrders);
+  // console.log(`Product ID: ${product.Id}, Name: ${product.Name}, Product Orders:`, productOrders);
 
   // Calculate total sold
   const totalSold = productOrders.reduce((sum, item) => sum + (item.qty || 0), 0);
@@ -200,7 +197,7 @@ const salesData = products.map((product) => {
   let lastSold = "Not Sold";
   if (productOrders.length) {
     const firstOrder = productOrders[0];
-    console.log(`Checking order date for ${product.Name}:`, firstOrder.orderDate, "Full order:", firstOrder);
+    // console.log(`Checking order date for ${product.Name}:`, firstOrder.orderDate, "Full order:", firstOrder);
     if (firstOrder.orderDate) {
       const parsedDate = parseCustomDate(firstOrder.orderDate);
       if (parsedDate) {
@@ -220,10 +217,10 @@ const salesData = products.map((product) => {
       }
     } else {
       console.warn(`Order date missing for product ${product.Name} in order:`, firstOrder);
-      console.log(`Available keys in order item for ${product.Name}:`, Object.keys(firstOrder));
+      // console.log(`Available keys in order item for ${product.Name}:`, Object.keys(firstOrder));
       // Find the parent order and log its keys and values
       const parentOrder = rawOrders.find(order => order.orderItems?.some(item => item.productId === firstOrder.productId)) || {};
-      console.log(`Parent order keys and values for ${product.Name}:`, parentOrder);
+      // console.log(`Parent order keys and values for ${product.Name}:`, parentOrder);
     }
   }
 
@@ -236,7 +233,7 @@ const salesData = products.map((product) => {
 });
 
 // Debug: Log sales data
-console.log("Seller Sales Data:", salesData);
+// console.log("Seller Sales Data:", salesData);
 
 // Populate table
 tableBody.innerHTML = "";
@@ -254,7 +251,7 @@ if (salesData.length === 0) {
     `;
     tableBody.appendChild(row);
   });
-  console.log("Table populated with seller's product rows:", tableBody.innerHTML);
+  // console.log("Table populated with seller's product rows:", tableBody.innerHTML);
 }
 
 // Update stats for seller's products only
@@ -293,7 +290,7 @@ if (ctx) {
       scales: { y: { beginAtZero: true } },
     },
   });
-  console.log("Chart initialized with seller's data:", salesData);
+  // console.log("Chart initialized with seller's data:", salesData);
 } else {
   console.error("Chart context not available.");
 }
@@ -308,7 +305,7 @@ if (searchInput) {
       const product = row.cells[0].textContent.toLowerCase();
       row.style.display = product.includes(searchTerm) ? "" : "none";
     });
-    console.log("Search applied with term:", searchTerm);
+    // console.log("Search applied with term:", searchTerm);
   });
 } else {
   console.warn("Search input not found.");
