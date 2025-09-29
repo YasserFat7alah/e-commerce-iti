@@ -7,9 +7,12 @@ import { uploader } from "../../scripts/utils/uploader.js";
 import { toProduct } from "../../scripts/utils/data.js";
 import Toast from "../../components/ui/toast.js";
 
+// Global sorting state
+let currentSort = { field: null, direction: 'asc' };
 export default class SellerProducts extends View {
   template() {
     return `
+    <div id="sellerProductsContainer">
     <div class="toast-body" id="toastMsg"></div>
 
       <div class="container-fluid mt-4">
@@ -22,15 +25,21 @@ export default class SellerProducts extends View {
 
             <div class="table-responsive">
               <table class="table table-bordered table-striped text-center align-middle">
-                <thead class="table-dark">
+                <thead class="table-primary admin-th">
                   <tr>
-                    <th>Index</th>
-                    <th>Name</th>
-                    <th>Category</th>
-                    <th>SubCategory</th>
-                    <th>Price</th>
-                    <th>Status</th>
-                    <th style="width: 180px;">Actions</th>
+                    <th scope="col" class="sortable-header" data-sort="index" style="cursor: pointer;">
+                    Index <i class="fas fa-sort ms-1" data-field="index"></i></th>
+                    <th scope="col" class="sortable-header" data-sort="name" style="cursor: pointer;">
+                    Name <i class="fas fa-sort ms-1" data-field="name"></i></th>
+                    <th scope="col" class="sortable-header" data-sort="category" style="cursor: pointer;">
+                    Category <i class="fas fa-sort ms-1" data-field="category"></i></th>
+                    <th scope="col" class="sortable-header" data-sort="subcategory" style="cursor: pointer;">
+                    SubCategory <i class="fas fa-sort ms-1" data-field="subcategory"></i></th>
+                    <th scope="col" class="sortable-header" data-sort="price" style="cursor: pointer;">
+                    Price <i class="fas fa-sort ms-1" data-field="price"></i></th>
+                    <th scope="col" class="sortable-header" data-sort="status" style="cursor: pointer;">
+                    Status <i class="fas fa-sort ms-1" data-field="status"></i></th>
+                    <th scope="col" class="text-center">Actions</th>
                   </tr>
                 </thead>
                 <tbody id="productTableBody"></tbody>
@@ -67,6 +76,7 @@ export default class SellerProducts extends View {
             <div class="modal-body" id="productEditBody"></div>
           </div>
         </div>
+      </div>
       </div>
     `;
   }
@@ -317,7 +327,7 @@ export default class SellerProducts extends View {
         updateImagePreview();
       });
 
-      // Image removal handler with robust event handling
+      // Image removal handler 
       preview.addEventListener("click", function (e) {
         const removeBtn = e.target.closest(".remove-image-btn");
         if (!removeBtn) return;
@@ -468,14 +478,12 @@ export default class SellerProducts extends View {
       return valid;
     }
 
-    function loadProducts() {
+    function loadProducts(sortedProducts = null) {
       let user = getCurrentUser();
-      let products = localStore.read("products", []).filter(prod => prod.sellerId === user.id);
+      let products = sortedProducts || localStore.read("products", []).filter(prod => prod.sellerId === user.id);
       const tableBody = document.getElementById("productTableBody");
 
-
       tableBody.innerHTML = "";
-
 
       products.forEach((product, index) => {
         const row = document.createElement("tr");
@@ -503,13 +511,13 @@ export default class SellerProducts extends View {
                 </div></td>
       <td><span class="badge ${product.status === "approved" ? "bg-success" : "bg-warning"}">${product.status}</span></td>
       <td>
-        <button class="btn btn-sm btn-info text-white btn-view" data-product-index="${index}">
+        <button class="btn btn-sm  text-info btn-view" data-product-index="${index}">
           <i class="fas fa-eye"></i>
         </button>
-        <button class="btn btn-sm btn-warning btn-edit" data-product-index="${index}">
+        <button class="btn btn-sm text-warning btn-edit" data-product-index="${index}">
           <i class="fas fa-edit"></i>
         </button>
-        <button class="btn btn-sm btn-danger btn-remove" data-product-index="${index}">
+        <button class="btn btn-sm text-danger btn-remove" data-product-index="${index}">
           <i class="fas fa-trash"></i>
         </button>
       </td>
@@ -585,9 +593,9 @@ export default class SellerProducts extends View {
           </div>
 
           ${product.sale ?
-             `<div class="col-md-6">
+          `<div class="col-md-6">
                   <label class="form-label">Sale</label>
-                  <input type="text" class="form-control" value="%${product.sale*100}" readonly>
+                  <input type="text" class="form-control" value="%${(product.sale * 100).toFixed(0)}" readonly>
               </div>`: ``}
 
           <div class="col-md-6">
@@ -642,7 +650,7 @@ export default class SellerProducts extends View {
           <div class="col-md-6">
             <label for="sale" class="form-label fw-bold">Sale</label>
             <div class="input-group shadow-sm">
-              <input type="number" step="1" min="0" max="100" name="sale" class="form-control" value="${product.sale*100}" required>
+              <input type="number" step="1" min="0" max="100" name="sale" class="form-control" value="${(product.sale * 100).toFixed(0)}" required>
               <span class="input-group-text bg-success text-white fw-bold">%</span>
             </div>
             <div class="invalid-feedback">Sale must be between 0 and 100.</div>
@@ -759,7 +767,7 @@ export default class SellerProducts extends View {
           category: formData.get("category"),
           subCategory: formData.get("subcategory"),
           price: parseFloat(formData.get("price")),
-          sale: parseFloat(formData.get("sale"))/100,
+          sale: parseFloat(formData.get("sale")) / 100,
           material: formData.get("material"),
           brand: formData.get("brand"),
           description: formData.get("description"),
@@ -934,5 +942,73 @@ export default class SellerProducts extends View {
 
     // Initialize
     loadProducts();
+
+    const container = document.getElementById("sellerProductsContainer");
+    // Sorting table
+    container.addEventListener('click', (e) => {
+      const header = e.target.closest('.sortable-header');
+      if (header) {
+        handleSort(e);
+      }
+    });
+
+
+    function handleSort(e) {
+      const header = e.target.closest('.sortable-header');
+      const field = header.getAttribute('data-sort');
+      // console.log('Sorting field:', field);
+
+      if (currentSort.field === field) {
+        currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+      } else {
+        currentSort.field = field;
+        currentSort.direction = 'asc';
+      }
+
+      sortProducts(field, currentSort.direction);
+    }
+
+    function sortProducts(field, direction) {
+      let user = getCurrentUser();
+      let products = localStore.read("products", []).filter(prod => prod.sellerId === user.id);
+
+      const sortedProducts = [...products].sort((a, b) => {
+        let aVal, bVal;
+
+        switch (field) {
+          case 'index':
+            return 0;
+          case 'name':
+            aVal = (a.name || '').toLowerCase();
+            bVal = (b.name || '').toLowerCase();
+            break;
+          case 'category':
+            aVal = (a.category || '').toLowerCase();
+            bVal = (b.category || '').toLowerCase();
+            break;
+          case 'subcategory':
+            aVal = (a.subcategory || '').toLowerCase();
+            bVal = (b.subcategory || '').toLowerCase();
+            break;
+          case 'price':
+            aVal = parseFloat(a.price) || 0;
+            bVal = parseFloat(b.price) || 0;
+            break;
+          case 'status':
+            aVal = (a.status || '').toLowerCase();
+            bVal = (b.status || '').toLowerCase();
+            break;
+          default:
+            return 0;
+        }
+
+        if (typeof aVal === 'string' && typeof bVal === 'string') {
+          return direction === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+        }
+        return direction === 'asc' ? aVal - bVal : bVal - aVal;
+      });
+
+      loadProducts(sortedProducts);
+    }
   }
 }
