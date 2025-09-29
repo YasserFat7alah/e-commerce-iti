@@ -509,11 +509,11 @@ export default class AddProduct extends View {
           localStore.write("products", products);
 
           setTimeout(() => {
-            Toast.notify("✔ New Product has been added!", "success");
+            Toast.notify(" New Product has been added!", "success");
           }, 300);
           navigate("/seller/products");
         } catch (err) {
-          Toast.notify("❌ Image upload failed. Please try again.", "danger");
+          Toast.notify("Image upload failed. Please try again.", "danger");
           submitBtn.disabled = false;
           console.error(err);
         }
